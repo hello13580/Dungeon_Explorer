@@ -19,7 +19,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float minZoom = 1f;
 
     private float targetZoom;
-    private float initialZoom = 20f;
+    private float initialZoom = 15f;
     private Vector3 initialAngle;
     private float zoomVelocity;
 

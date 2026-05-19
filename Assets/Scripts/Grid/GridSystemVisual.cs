@@ -203,36 +203,21 @@ public class GridSystemVisual : MonoBehaviour
 		}
 	}
 
-	private GridVisualType GetGridVisualTypeForAction(BaseAction action)
-	{
-		if (!(action is MoveAction))
-		{
-			if (!(action is SpinAction))
-			{
-				if (!(action is ShootAction))
-				{
-					if (!(action is AOEAction))
-					{
-						if (!(action is MeleeAction))
-						{
-							if (action is InteractAction)
-							{
-								return GridVisualType.Green;
-							}
-							return GridVisualType.White;
-						}
-						return GridVisualType.Green;
-					}
-					return GridVisualType.Green;
-				}
-				return GridVisualType.Green;
-			}
-			return GridVisualType.Green;
-		}
-		return GridVisualType.Green;
-	}
+    private GridVisualType GetGridVisualTypeForAction(BaseAction action)
+    {
+        return action switch
+        {
+            MoveAction => GridVisualType.Green,
+            SpinAction => GridVisualType.Green,
+            ShootAction => GridVisualType.Green,
+            AOEAction => GridVisualType.Green,
+            MeleeAction => GridVisualType.Green,
+            InteractAction => GridVisualType.Green,
+            _ => GridVisualType.White,
+        };
+    }
 
-	private Material GetGridVisualTypeMaterial(GridVisualType gridVisualType)
+    private Material GetGridVisualTypeMaterial(GridVisualType gridVisualType)
 	{
 		foreach (GridVisualTypeMaterial gridVisualTypeMaterial in gridVisualTypeMaterialList)
 		{
