@@ -146,8 +146,9 @@ GameObject:
   - component: {fileID: 1213345925212744562}
   - component: {fileID: 1530180869234286455}
   - component: {fileID: 6281880740096184127}
-  - component: {fileID: 4000303721034473104}
   - component: {fileID: 5405260033335196679}
+  - component: {fileID: 6841203341150570205}
+  - component: {fileID: 7364901892537136982}
   m_Layer: 3
   m_Name: Unit
   m_TagString: Untagged
@@ -211,27 +212,6 @@ MonoBehaviour:
   rotateSpeed: 20
   approachRange: 3
   visionRange: 10
---- !u!114 &4000303721034473104
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8531198773615253123}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e1c7009ed56861c48a876502f23ee894, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AOEAction
-  actionCost: 0
-  grenadeProjectilePrefab: {fileID: 0}
-  shootPointTransform: {fileID: 0}
-  obstacleLayerMask:
-    serializedVersion: 2
-    m_Bits: 0
-  maxRange: 7
-  damageRadius: 1
-  targetingYAxis: 0.5
 --- !u!65 &5405260033335196679
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -253,6 +233,33 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 2.039388, z: 1}
   m_Center: {x: 0, y: 1.0544614, z: 0}
+--- !u!114 &6841203341150570205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8531198773615253123}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27a5c585c8ee4954dad3f5890b2c25f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitAnimator
+  unitAnimator: {fileID: 198991939103538677}
+--- !u!114 &7364901892537136982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8531198773615253123}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 867363dfbcc14f64bafa7af5572eabe3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HealthSystem
+  maxHealth: 100
+  currentHealth: 0
 --- !u!1001 &3070479938424045347
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1040,8 +1047,38 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5572107608260648896, guid: b7afbbc4cc52c5747839a31f0f759d30, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 198991939103538677}
   m_SourcePrefab: {fileID: 100100000, guid: b7afbbc4cc52c5747839a31f0f759d30, type: 3}
+--- !u!1 &7478389241422733539 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5572107608260648896, guid: b7afbbc4cc52c5747839a31f0f759d30, type: 3}
+  m_PrefabInstance: {fileID: 3070479938424045347}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &198991939103538677
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7478389241422733539}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: d49c65de9fce66146b5d0e164b1f9d2d, type: 3}
+  m_Controller: {fileID: 9100000, guid: 4b002ab2c3587bb44b0d377af27d0102, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &7819167904480016985 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5052980458033300858, guid: b7afbbc4cc52c5747839a31f0f759d30, type: 3}
