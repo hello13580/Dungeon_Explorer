@@ -64,7 +64,7 @@ public class Unit : MonoBehaviour
 		transform.position = new Vector3(worldPosition.x + num, transform.position.y, worldPosition.z + num);
 		LevelGrid.Instance.AddUnitAtGridPosition(savedPosition, this);
 		TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
-		//healthSystem.OnUnitDeath += HealthSystem_OnUnitDeath;
+		healthSystem.OnUnitDeath += HealthSystem_OnUnitDeath;
 		Unit.OnAnyUnitSpawned?.Invoke(this, EventArgs.Empty);
 	}
 

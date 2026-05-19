@@ -9,7 +9,7 @@ public class UnitAnimationRelay : MonoBehaviour
 	{
 		if (meleeAction != null)
 		{
-			meleeAction.Melee();
+            meleeAction.Melee();
 		}
 		else
 		{
