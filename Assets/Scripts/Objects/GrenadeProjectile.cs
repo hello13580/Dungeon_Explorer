@@ -88,7 +88,7 @@ public class GrenadeProjectile : MonoBehaviour
         }
 
         // 폭발 이펙트 생성
-        Instantiate(grenadeExplodeVFXPrefab, transform.position, Quaternion.identity);
+       Instantiate(grenadeExplodeVFXPrefab, transform.position, Quaternion.identity);
 
         // 스크립트 및 오브젝트 정리
         onAnyGrenadeAction?.Invoke(this, EventArgs.Empty);

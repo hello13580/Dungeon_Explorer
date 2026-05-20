@@ -13,7 +13,7 @@ public class MeleeAction : BaseAction
 	}
 
 	[SerializeField] private int maxRange = 1;
-	[SerializeField] private int damage = 100;
+	[SerializeField] private int damage = 10;
 	[SerializeField] private float hitForce = 500f;
 	[SerializeField] private float rotateSpeed = 30f;
 
@@ -22,8 +22,9 @@ public class MeleeAction : BaseAction
 	private bool canMeleeAttack;
 
 	public event EventHandler OnSwordActionStarted;
+    public event EventHandler OnSwordActionEnded;
 
-	protected override void Awake()
+    protected override void Awake()
 	{
 		base.Awake();
 		actionCost = 1;
@@ -58,7 +59,8 @@ public class MeleeAction : BaseAction
 		state = State.Cooloff;
 
 		yield return new WaitForSeconds(0.2f);
-		ActionComplete();
+        OnSwordActionEnded?.Invoke(this, EventArgs.Empty);
+        ActionComplete();
 	}
 
 	private void AimToTarget()

@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1213345925212744562, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 15.440001
       objectReference: {fileID: 0}
     - target: {fileID: 1213345925212744562, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_LocalPosition.y
@@ -18,7 +18,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1213345925212744562, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 12.369664
       objectReference: {fileID: 0}
     - target: {fileID: 1213345925212744562, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_LocalRotation.w
@@ -59,6 +59,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5067843931317994958}
+    - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3928805389141054875}
     - targetCorrespondingSourceObject: {fileID: 7478389241422733539, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4048200313592570681}
@@ -82,9 +85,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MeleeAction
   actionCost: 0
   maxRange: 1
-  damage: 50
+  damage: 10
   hitForce: 500
   rotateSpeed: 30
+--- !u!114 &3928805389141054875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 416177728078544639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1c7009ed56861c48a876502f23ee894, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AOEAction
+  actionCost: 0
+  grenadeProjectilePrefab: {fileID: 627709876669706913, guid: e63eaddc83a11894e89299f2b5b19d92, type: 3}
+  shootPointTransform: {fileID: 7661030039787695572}
+  obstacleLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  maxRange: 7
+  damageRadius: 1
+  targetingYAxis: 0.5
 --- !u!1 &1471256514613463199 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7478389241422733539, guid: 31ff398b13221204abf58d215dd04293, type: 3}
@@ -103,3 +127,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitAnimationRelay
   meleeAction: {fileID: 5067843931317994958}
+--- !u!4 &7661030039787695572 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1869861767572440488, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+  m_PrefabInstance: {fileID: 8332335947636615292}
+  m_PrefabAsset: {fileID: 0}

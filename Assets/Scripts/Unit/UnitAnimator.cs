@@ -20,13 +20,29 @@ public class UnitAnimator : MonoBehaviour
 		{
 			shootAction.OnStartShooting += ShootAction_OnStartShooting;
 		}
-		if (TryGetComponent<MeleeAction>(out var meleeAction))
+
+        if (TryGetComponent<BowAction>(out var bowAction))
+        {
+            bowAction.OnStartDrawing += BowAction_OnStartShooting;
+        }
+        if (TryGetComponent<MeleeAction>(out var meleeAction))
 		{
 			meleeAction.OnSwordActionStarted += MeleeAction_OnSwordActionStarted;
-		}
+			meleeAction.OnSwordActionEnded += MeleeAction_OnSwordActionEnded;
+        }
 	}
 
-	private void moveAction_OnChangeFloorsStarted(object sender, MoveAction.OnChangeFloorStartedEventArgs e)
+    private void BowAction_OnStartShooting(object sender, BowAction.OnShootEventArgs e)
+    {
+		unitAnimator.SetTrigger("isDrawing");
+    }
+
+    private void MeleeAction_OnSwordActionEnded(object sender, EventArgs e)
+    {
+        //unitAnimator.applyRootMotion = false;
+    }
+
+    private void moveAction_OnChangeFloorsStarted(object sender, MoveAction.OnChangeFloorStartedEventArgs e)
 	{
 		if (e.unitGridPosition.floor <= e.targetPosition.floor)
 		{
@@ -40,7 +56,8 @@ public class UnitAnimator : MonoBehaviour
 
 	private void MeleeAction_OnSwordActionStarted(object sender, EventArgs e)
 	{
-		unitAnimator.SetTrigger("SwordSlash");
+		//unitAnimator.applyRootMotion= true;
+        unitAnimator.SetTrigger("SwordSlash");
 	}
 
 	private void MoveAction_OnStartMoving(object sender, EventArgs empty)
