@@ -71,6 +71,7 @@ public abstract class BaseAction : MonoBehaviour
 		BaseAction.OnAnyActionEnded?.Invoke(this, EventArgs.Empty);
 	}
 
+
 	public EnemyAIAction GetBestEnemyAIAction()
 	{
 		List<EnemyAIAction> list = new List<EnemyAIAction>();

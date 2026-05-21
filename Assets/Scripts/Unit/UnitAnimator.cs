@@ -9,7 +9,7 @@ public class UnitAnimator : MonoBehaviour
 	private Vector3 hitPosition;
 
 	private void Awake()
-	{
+	{ 
 		if (TryGetComponent<MoveAction>(out var moveAction))
 		{
 			moveAction.OnStartMoving += MoveAction_OnStartMoving;
@@ -30,7 +30,17 @@ public class UnitAnimator : MonoBehaviour
 			meleeAction.OnSwordActionStarted += MeleeAction_OnSwordActionStarted;
 			meleeAction.OnSwordActionEnded += MeleeAction_OnSwordActionEnded;
         }
-	}
+
+        if (TryGetComponent<AOEAction>(out var aoeAction))
+        {
+			aoeAction.OnAOEActionStarted += AOEAction_OnAOEActionStarted;
+        }
+    }
+
+    private void AOEAction_OnAOEActionStarted(object sender, EventArgs e)
+    {
+        unitAnimator.SetTrigger("isThrowing");
+    }
 
     private void BowAction_OnStartShooting(object sender, BowAction.OnShootEventArgs e)
     {

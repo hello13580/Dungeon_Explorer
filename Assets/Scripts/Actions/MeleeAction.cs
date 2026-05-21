@@ -27,7 +27,7 @@ public class MeleeAction : BaseAction
     protected override void Awake()
 	{
 		base.Awake();
-		actionCost = 1;
+	
 	}
 
 	public override string GetActionName() => "Melee";
@@ -58,7 +58,7 @@ public class MeleeAction : BaseAction
 		yield return new WaitForSeconds(0.3f);
 		state = State.Cooloff;
 
-		yield return new WaitForSeconds(0.2f);
+		yield return new WaitForSeconds(0.5f);
         OnSwordActionEnded?.Invoke(this, EventArgs.Empty);
         ActionComplete();
 	}

@@ -1,9 +1,13 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class AOEAction : BaseAction
 {
+    private enum State { Aiming, Throwing }
+
+    public event EventHandler OnAOEActionStarted;
     [SerializeField] private Transform grenadeProjectilePrefab;
     [SerializeField] private Transform shootPointTransform;
     [SerializeField] private LayerMask obstacleLayerMask;
@@ -11,11 +15,13 @@ public class AOEAction : BaseAction
     [SerializeField] private int maxRange = 7;
     [SerializeField] private int damageRadius = 1;
     [SerializeField] private float targetingYAxis = 0.5f;
+    [SerializeField] private float rotateSpeed = 15f;
+    private GridPosition targetGridPosition;
+    private State state;
 
     protected override void Awake()
     {
         base.Awake();
-        // Awake¿¡¼­ º¯¼ö ÃÊ±âÈ­ (ÀÎ½ºÆåÅÍ ¼³Á¤ÀÌ ¿ì¼±µÊ)
         actionCost = 1;
     }
 
@@ -24,13 +30,44 @@ public class AOEAction : BaseAction
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
         ActionStart(onActionComplete);
+        targetGridPosition = gridPosition;
+        state = State.Aiming;
+        StartCoroutine(AimAndThrowRoutine());
+    }
 
-        // ¼ö·ùÅº »ý¼º ¹× ¼³Á¤
+    private IEnumerator AimAndThrowRoutine()
+    {
+        while (state == State.Aiming)
+        {
+            AimToTarget();
+            yield return null;
+        }
+
+        OnAOEActionStarted?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void AimToTarget()
+    {
+        Vector3 targetPos = LevelGrid.Instance.GetWorldPosition(targetGridPosition);
+        targetPos.y = transform.position.y;
+
+        Vector3 aimDir = (targetPos - transform.position).normalized;
+        transform.forward = Vector3.Slerp(transform.forward, aimDir, Time.deltaTime * rotateSpeed);
+
+        if (Vector3.Angle(transform.forward, aimDir) < 1f)
+        {
+            state = State.Throwing;
+        }
+    }
+
+    public void ThrowGrenade()
+    {
+        // ï¿½ï¿½ï¿½ï¿½Åº ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         Transform grenadeTransform = Instantiate(grenadeProjectilePrefab, shootPointTransform.position, Quaternion.identity);
         GrenadeProjectile grenadeProjectile = grenadeTransform.GetComponent<GrenadeProjectile>();
 
-        // ¼ö·ùÅº ÅõÃ´ ÈÄ ¿Ï·á ½Ã ActionComplete È£ÃâµÇµµ·Ï Àü´Þ
-        grenadeProjectile.Setup(gridPosition, damageRadius, this, ActionComplete);
+        // ï¿½ï¿½ï¿½ï¿½Åº ï¿½ï¿½Ã´ ï¿½ï¿½ ï¿½Ï·ï¿½ ï¿½ï¿½ ActionComplete È£ï¿½ï¿½Çµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        grenadeProjectile.Setup(targetGridPosition, damageRadius, this, ActionComplete);
     }
 
     public override List<GridPosition> GetActionRangeGridPositionList()
@@ -46,7 +83,7 @@ public class AOEAction : BaseAction
         {
             for (int z = -maxRange; z <= maxRange; z++)
             {
-                // ¿øÇü ¹üÀ§ Ã¼Å©
+                // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼Å©
                 if (Mathf.Sqrt(x * x + z * z) > maxRange) continue;
 
                 for (int floor = minFloor; floor <= maxFloor; floor++)
@@ -90,7 +127,7 @@ public class AOEAction : BaseAction
                     if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition)) continue;
                     if (!PathFinding.Instance.IsWalkableGridPosition(testGridPosition)) continue;
 
-                    // ÅõÃ´ °¡´É ¿©ºÎ (Àå¾Ö¹° Ã¼Å©)
+                    // ï¿½ï¿½Ã´ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½Ö¹ï¿½ Ã¼Å©)
                     Vector3 startPos;
                     if (shootPointTransform != null)
                     {
@@ -105,7 +142,7 @@ public class AOEAction : BaseAction
                     Vector3 dirToTarget = (targetPos - startPos).normalized;
                     float distance = Vector3.Distance(startPos, targetPos);
 
-                    // ·¹ÀÌÄ³½ºÆ®·Î ÅõÃ´ °æ·Î¿¡ º®ÀÌ ÀÖ´ÂÁö È®ÀÎ
+                    // ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½Ã´ ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½
                     if (!Physics.Raycast(startPos, dirToTarget, distance, obstacleLayerMask))
                     {
                         validList.Add(testGridPosition);
@@ -133,7 +170,7 @@ public class AOEAction : BaseAction
 
                 if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition)) continue;
 
-                // Áß½ÉÁ¡Àº ¹«Á¶°Ç Æ÷ÇÔ, ±× ¿Ü´Â Àå¾Ö¹° À¯¹« È®ÀÎ
+                // ï¿½ß½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ ï¿½Ü´ï¿½ ï¿½ï¿½Ö¹ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
                 if (targetGridPosition == testGridPosition || HasClearLineOfSight(targetGridPosition, testGridPosition))
                 {
                     affectedList.Add(testGridPosition);
@@ -151,13 +188,13 @@ public class AOEAction : BaseAction
         Vector3 dir = (targetPos - centerPos).normalized;
         float distance = Vector3.Distance(centerPos, targetPos);
 
-        // Æø¹ß Áß½ÉÁö¿¡¼­ Å¸°Ù ±×¸®µå »çÀÌ¿¡ º®ÀÌ ÀÖ´ÂÁö Ã¼Å©
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ß½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ Ã¼Å©
         return !Physics.Raycast(centerPos, dir, distance, obstacleLayerMask);
     }
 
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
     {
-        // AI°¡ ¼ö·ùÅºÀ» ´øÁú ¶§ÀÇ °¡Ä¡ ÆÇ´Ü (ÇöÀç -40À¸·Î µÇ¾î ÀÖÀ¸³ª ·ÎÁ÷ Ãß°¡ °¡´É)
+        // AIï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Åºï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½Ç´ï¿½ (ï¿½ï¿½ï¿½ï¿½ -40ï¿½ï¿½ï¿½ï¿½ ï¿½Ç¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½)
         return new EnemyAIAction
         {
             gridPosition = gridPosition,

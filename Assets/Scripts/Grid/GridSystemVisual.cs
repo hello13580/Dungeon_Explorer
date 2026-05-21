@@ -210,6 +210,7 @@ public class GridSystemVisual : MonoBehaviour
             MoveAction => GridVisualType.Green,
             SpinAction => GridVisualType.Green,
             ShootAction => GridVisualType.Green,
+            BowAction => GridVisualType.Green,
             AOEAction => GridVisualType.Green,
             MeleeAction => GridVisualType.Green,
             InteractAction => GridVisualType.Green,

@@ -90,7 +90,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MeleeAction
   actionCost: 5
   maxRange: 1
-  damage: 100
+  damage: 10
   hitForce: 500
   rotateSpeed: 30
 --- !u!1 &2032599012271437470 stripped

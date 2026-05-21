@@ -8,7 +8,7 @@ public class GrenadeProjectile : MonoBehaviour
     [SerializeField] private float hitForce = 3000f;
     [SerializeField] private Transform grenadeExplodeVFXPrefab;
     [SerializeField] private TrailRenderer trailRenderer;
-    [SerializeField] private AnimationCurve arcYAnimationCurve; // Æ÷¹°¼± ³ôÀÌ¸¦ Á¶ÀýÇÏ´Â Ä¿ºê
+    [SerializeField] private AnimationCurve arcYAnimationCurve; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ Ä¿ï¿½ï¿½
 
     private AOEAction aoeAction;
     private Vector3 targetPosition;
@@ -17,7 +17,7 @@ public class GrenadeProjectile : MonoBehaviour
 
     private float totalDistance;
     private float spawnY;
-    private Vector3 positionXZ; // ³ôÀÌ¸¦ Á¦¿ÜÇÑ X, Z ÃàÀÇ ÇöÀç À§Ä¡
+    private Vector3 positionXZ; // ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ X, Z ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡
 
     private Action onGrenadeBehaviourComplete;
     public static event EventHandler onAnyGrenadeAction;
@@ -29,22 +29,22 @@ public class GrenadeProjectile : MonoBehaviour
 
     private void MoveToTarget()
     {
-        // 1. XZ Æò¸é»ó¿¡¼­ÀÇ ÀÌµ¿ ¹æÇâ ¹× À§Ä¡ °è»ê
+        // 1. XZ ï¿½ï¿½ï¿½ó¿¡¼ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½
         Vector3 moveDir = (targetPosition - positionXZ).normalized;
         positionXZ += moveDir * moveSpeed * Time.deltaTime;
 
-        // 2. ÀüÃ¼ ÀÌµ¿ °Å¸® Áß ÇöÀç ÁøÇà·ü(0~1) °è»ê
+        // 2. ï¿½ï¿½Ã¼ ï¿½Ìµï¿½ ï¿½Å¸ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½(0~1) ï¿½ï¿½ï¿½
         float distanceToTarget = Vector3.Distance(positionXZ, new Vector3(targetPosition.x, positionXZ.y, targetPosition.z));
         float moveProgress = 1f - (distanceToTarget / totalDistance);
 
-        // 3. Æ÷¹°¼± ³ôÀÌ °è»ê
-        // Lerp·Î ±âº» ³ôÀÌ¸¦ ¸ÂÃß°í, AnimationCurve¸¦ ´õÇØ "Á¡ÇÁ"ÇÏ´Â ´À³¦À» ÁÜ
+        // 3. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+        // Lerpï¿½ï¿½ ï¿½âº» ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ß°ï¿½, AnimationCurveï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ "ï¿½ï¿½ï¿½ï¿½"ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         float currentHeight = Mathf.Lerp(spawnY, targetPosition.y, moveProgress);
         float arcHeight = arcYAnimationCurve.Evaluate(moveProgress);
 
         transform.position = new Vector3(positionXZ.x, currentHeight + arcHeight, positionXZ.z);
 
-        // 4. Å¸°Ù ÁöÁ¡ µµ´Þ ÆÇÁ¤ (¿ÀÂ÷ ¹üÀ§ 0.2f)
+        // 4. Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 0.2f)
         float reachingDistance = 0.2f;
         if (Vector3.Distance(positionXZ, new Vector3(targetPosition.x, positionXZ.y, targetPosition.z)) < reachingDistance)
         {
@@ -54,23 +54,24 @@ public class GrenadeProjectile : MonoBehaviour
 
     private void Explode()
     {
+
         GridPosition targetGridPosition = LevelGrid.Instance.GetGridPosition(targetPosition);
 
-        // AOEAction¿¡ Á¤ÀÇµÈ ¹üÀ§ ³» ±×¸®µå ¸®½ºÆ® °¡Á®¿À±â
+        // AOEActionï¿½ï¿½ ï¿½ï¿½ï¿½Çµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         List<GridPosition> affectedGridPositions = aoeAction.GetDamageAffectedGridPosition(targetGridPosition, damageRadius);
 
-        HashSet<Unit> unitSet = new HashSet<Unit>(); // Áßº¹ µ¥¹ÌÁö ¹æÁö¿ë
+        HashSet<Unit> unitSet = new HashSet<Unit>(); // ï¿½ßºï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
         foreach (GridPosition gridPos in affectedGridPositions)
         {
-            List<Unit> unitListAtPosition = LevelGrid.Instance.GetUnitListAtGridPosition(gridPos);
+            List<Unit> unitListAtPosition = new List<Unit>(LevelGrid.Instance.GetUnitListAtGridPosition(gridPos));
             foreach (Unit targetUnit in unitListAtPosition)
             {
                 if (!unitSet.Contains(targetUnit))
                 {
                     unitSet.Add(targetUnit);
 
-                    // ³Ë¹é ¹æÇâ °è»ê (Æø¹ß Áß½ÉÁö¿¡¼­ À¯´Ö ¹æÇâÀ¸·Î)
+                    // ï¿½Ë¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ß½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
                     Vector3 knockbackDir = (targetUnit.transform.position - targetPosition).normalized;
                     targetUnit.GetHitReaction().SetHitDirection(knockbackDir);
                     targetUnit.GetHitReaction().SetHitForce(hitForce);
@@ -80,17 +81,17 @@ public class GrenadeProjectile : MonoBehaviour
             }
         }
 
-        // ÀÜ»ó(Trail) Ã³¸®: ºÎ¸ð¸¦ ÇØÁ¦ÇÏ¿© Æø¹ß ÈÄ¿¡µµ ¿¬±â°¡ Àá½Ã ³²°Ô ÇÔ
+        // ï¿½Ü»ï¿½(Trail) Ã³ï¿½ï¿½: ï¿½Î¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ä¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â°¡ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         if (trailRenderer != null)
         {
             trailRenderer.transform.parent = null;
             Destroy(trailRenderer.gameObject, trailRenderer.time);
         }
 
-        // Æø¹ß ÀÌÆåÆ® »ý¼º
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
        Instantiate(grenadeExplodeVFXPrefab, transform.position, Quaternion.identity);
 
-        // ½ºÅ©¸³Æ® ¹× ¿ÀºêÁ§Æ® Á¤¸®
+        // ï¿½ï¿½Å©ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
         onAnyGrenadeAction?.Invoke(this, EventArgs.Empty);
         onGrenadeBehaviourComplete?.Invoke();
 
@@ -107,7 +108,7 @@ public class GrenadeProjectile : MonoBehaviour
         positionXZ = transform.position;
         spawnY = positionXZ.y;
 
-        // XZ Æò¸é»óÀÇ ¼ø¼ö ¼öÆò °Å¸® °è»ê
+        // XZ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½
         Vector3 targetPosXZ = targetPosition;
         targetPosXZ.y = spawnY;
         totalDistance = Vector3.Distance(positionXZ, targetPosXZ);
