@@ -92,6 +92,7 @@ public class UnitActionSystem : MonoBehaviour
         if (selectedUnit == null || selectedAction == null) return;
 
         GridPosition targetGridPosition = LevelGrid.Instance.GetGridPosition(mouseWorldPosition);
+        Debug.Log($"[Click] world={mouseWorldPosition} → grid=x:{targetGridPosition.x}, z:{targetGridPosition.z}, floor:{targetGridPosition.floor}, valid={selectedAction?.IsValidActionGridPosition(targetGridPosition)}");
 
         // ���� ����: �� �����ΰ�? + �� ���ΰ�? + ��Ÿ� ���ΰ�? + ����Ʈ�� ����Ѱ�?
         if (selectedUnit.GetTeamType() == TeamType.Player &&

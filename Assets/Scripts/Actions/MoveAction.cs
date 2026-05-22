@@ -22,6 +22,7 @@ public class MoveAction : BaseAction
 
     private float leftMoveDistance;
     private List<Vector3> targetPosList;
+    private List<bool> isLinkStep;
     private int currentPositionIndex;
     private GridPosition targetGridPosition;
 
@@ -89,21 +90,35 @@ public class MoveAction : BaseAction
         List<GridPosition> simplifiedPath = SimplifyPath(path);
 
         targetPosList = new List<Vector3>();
+        isLinkStep = new List<bool>();
         float cellSize = LevelGrid.Instance.GetCellSize();
 
         // ���� ũ�Ⱑ 1���� ũ�� �߽����� ���߱� ���� ������ ���
         float centerOffset = (unit.GetSize() - 1) * cellSize * 0.5f;
         Vector3 offsetVector = new Vector3(centerOffset, 0f, centerOffset);
 
-        foreach (GridPosition pos in simplifiedPath)
+        for (int i = 0; i < simplifiedPath.Count; i++)
         {
-            targetPosList.Add(LevelGrid.Instance.GetWorldPosition(pos) + offsetVector);
+            GridPosition pos = simplifiedPath[i];
+
+            bool isLink = i > 0 && PathFinding.Instance.IsAnyLink(simplifiedPath[i - 1], pos);
+
+            Vector3 targetPos = LevelGrid.Instance.GetWorldPosition(pos) + offsetVector;
+            LayerMask snapMask = unit.GetGroundSnapLayerMask();
+            if (snapMask != 0 &&
+                Physics.Raycast(targetPos + Vector3.up * 2f, Vector3.down, out RaycastHit groundHit, 3f, snapMask))
+            {
+                targetPos.y = groundHit.point.y;
+            }
+            targetPosList.Add(targetPos);
+            isLinkStep.Add(isLink);
         }
 
         // �̹� ���� ��ġ�� �ִٸ� ����Ʈ���� ����
         if (targetPosList.Count > 0 && Vector3.Distance(transform.position, targetPosList[0]) < 0.1f)
         {
             targetPosList.RemoveAt(0);
+            isLinkStep.RemoveAt(0);
         }
 
         currentPositionIndex = 0;
@@ -133,9 +148,11 @@ public class MoveAction : BaseAction
 
             GridPosition targetPosGrid = LevelGrid.Instance.GetGridPosition(targetPos);
             GridPosition currentPosGrid = LevelGrid.Instance.GetGridPosition(transform.position);
+            bool currentIsLink = isLinkStep[currentPositionIndex];
 
-            // ��(Floor)�� �ٸ��� ����/���� ���� Ʈ����
-            if (targetPosGrid.floor != currentPosGrid.floor)
+            // 링크 기반 이동(사다리 등)일 때만 층 전환 이벤트 발동
+            // 계단 인접 타일 이동은 링크가 아니므로 층이 바뀌어도 부드럽게 이동
+            if (currentIsLink && targetPosGrid.floor != currentPosGrid.floor)
             {
                 OnChangeFloorsStarted?.Invoke(this, new OnChangeFloorStartedEventArgs
                 {
@@ -146,7 +163,7 @@ public class MoveAction : BaseAction
             }
             else
             {
-                // �Ϲ� ���� �̵�
+                // 일반 이동 및 경사로 이동
                 while (Vector3.Distance(transform.position, targetPos) > stoppingDistance)
                 {
                     Vector3 moveDir = (targetPos - transform.position).normalized;
@@ -157,6 +174,7 @@ public class MoveAction : BaseAction
                         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotateSpeed);
 
                         // �չ���� �̵������� ��� ���� ��ġ�� ���� ���� (�ڿ������� ȸ�� �̵�)
+                      
                         if (Vector3.Dot(transform.forward, moveDir) > 0.7f)
                         {
                             transform.position += moveDir * moveSpeed * Time.deltaTime;
@@ -258,10 +276,16 @@ public class MoveAction : BaseAction
             GridPosition curr = path[i];
             GridPosition next = path[i + 1];
 
-            // ������ �ٲ�� ����(���̴� ��)�� ����Ʈ�� �߰�
+            // 층이 바뀌는 구간의 타일은 항상 유지 (계단/경사로가 평지처럼 이동되는 것 방지)
+            if (prev.floor != curr.floor || curr.floor != next.floor)
+            {
+                simplifiedPath.Add(curr);
+                continue;
+            }
+
+            // 방향이 바뀌는 지점도 유지
             if (prev.x - curr.x != curr.x - next.x ||
-                prev.z - curr.z != curr.z - next.z ||
-                prev.floor - curr.floor != curr.floor - next.floor)
+                prev.z - curr.z != curr.z - next.z)
             {
                 simplifiedPath.Add(curr);
             }

@@ -27,6 +27,10 @@ public class GridSystemVisual : MonoBehaviour
 	[SerializeField]
 	private List<GridVisualTypeMaterial> gridVisualTypeMaterialList;
 
+	// 계단·경사로처럼 실제 지면이 그리드 높이(y=floor*FLOOR_HEIGHT)와 다를 때
+	// 그리드 비주얼을 실제 지면 표면에 붙이기 위한 레이어마스크
+	[SerializeField] private LayerMask groundSnapLayerMask;
+
 	private GridSystemVisualSingle[,,] gridSystemVisualSingleArray;
 
 	// 현재 화면에 표시 중인 타일만 추적
@@ -63,7 +67,19 @@ public class GridSystemVisual : MonoBehaviour
 				for (int k = 0; k < LevelGrid.Instance.GetFloorAmount(); k++)
 				{
 					GridPosition gridPosition = new GridPosition(i, j, k);
-					GameObject val = Instantiate(gridSystemVisualSinglePrefab, LevelGrid.Instance.GetWorldPosition(gridPosition), Quaternion.identity);
+
+					// 기본 스폰 위치는 그리드 월드 좌표 (y = floor * FLOOR_HEIGHT)
+					Vector3 spawnPos = LevelGrid.Instance.GetWorldPosition(gridPosition);
+
+					// groundSnapLayerMask가 설정된 경우 실제 지면 표면 높이로 Y를 보정
+					// → 계단·경사로 위에서도 그리드 비주얼이 지면에 붙어서 표시됨
+					if (groundSnapLayerMask != 0 &&
+						Physics.Raycast(spawnPos + Vector3.up * 2f, Vector3.down, out RaycastHit hit, 3f, groundSnapLayerMask))
+					{
+						spawnPos.y = hit.point.y;
+					}
+
+					GameObject val = Instantiate(gridSystemVisualSinglePrefab, spawnPos, Quaternion.identity);
 					gridSystemVisualSingleArray[i, j, k] = val.GetComponent<GridSystemVisualSingle>();
 					// 생성 직후 visibleTiles에 추가해야 아래 HideAllGridPositionInstant()가 전체 타일을 숨길 수 있음
 					// 최적화된 Hide는 visibleTiles만 순회하므로 여기서 추가하지 않으면 초기 Hide가 동작 안 함

@@ -29,8 +29,8 @@ public class LevelGrid : MonoBehaviour
 
 	private void Awake()
 	{
-		width = 50;
-		height = 50;
+		width = 100;
+		height = 100;
 		cellSize = 2f;
 		if (Instance != null && Instance != this)
 		{

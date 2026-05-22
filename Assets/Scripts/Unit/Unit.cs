@@ -39,11 +39,44 @@ public class Unit : MonoBehaviour
 
 	private bool isStealthed;
 
+	// Y 스냅: 경사로처럼 높이가 다른 지형 위에 서있을 때 발밑 지면에 시각적으로 붙이기 위한 설정
+	[SerializeField] private LayerMask groundSnapLayerMask;
+	// 스냅 보간 속도 — 값이 클수록 빠르게 붙음
+	[SerializeField] private float groundSnapSpeed = 20f;
+
 	public static event EventHandler OnAnyActionPointsChanged;
 
 	public static event EventHandler OnAnyUnitSpawned;
 
 	public static event EventHandler OnAnyUnitDead;
+
+	private void LateUpdate()
+	{
+		SnapToGround();
+	}
+
+	private void SnapToGround()
+	{
+		// groundSnapLayerMask가 설정되지 않으면 스냅하지 않음
+		if (groundSnapLayerMask == 0) return;
+
+		// 현재 위치보다 2유닛 위에서 아래로 레이캐스트
+		// 위에서 쏘는 이유: 경사로 표면이 현재 Y보다 위에 있을 수 있어서
+		// 아래쪽 3유닛 거리 내의 첫 번째 지면을 찾음 (y+2 ~ y-1 범위)
+		Vector3 rayOrigin = transform.position + Vector3.up * 2f;
+		if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, 3f, groundSnapLayerMask))
+		{
+			float targetY = hit.point.y;
+
+			// 1.5유닛 이상 차이나면 스냅하지 않음
+			// → 다른 층의 지면으로 끌려가는 것을 방지
+			if (Mathf.Abs(targetY - transform.position.y) > 1.5f) return;
+
+			// 부드럽게 보간해서 지면에 붙임 (즉시 이동하면 이동 중 떨림 발생)
+			float snappedY = Mathf.Lerp(transform.position.y, targetY, groundSnapSpeed * Time.deltaTime);
+			transform.position = new Vector3(transform.position.x, snappedY, transform.position.z);
+		}
+	}
 
 	private void Awake()
 	{
@@ -222,6 +255,11 @@ public class Unit : MonoBehaviour
 	public int GetSize()
 	{
 		return size;
+	}
+
+	public LayerMask GetGroundSnapLayerMask()
+	{
+		return groundSnapLayerMask;
 	}
 
 	public void SetGridPosition(GridPosition newGridPosition)

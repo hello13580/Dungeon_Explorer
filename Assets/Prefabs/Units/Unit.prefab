@@ -565,6 +565,10 @@ MonoBehaviour:
   actionGauge: 0
   ShootPointTransform: {fileID: 0}
   size: 1
+  groundSnapLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  groundSnapSpeed: 20
 --- !u!114 &6281880740096184127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -674,7 +678,6 @@ MonoBehaviour:
   obstacleLayerMask:
     serializedVersion: 2
     m_Bits: 128
-  shootPointTransform: {fileID: 0}
 --- !u!1 &8639382682928058527
 GameObject:
   m_ObjectHideFlags: 0

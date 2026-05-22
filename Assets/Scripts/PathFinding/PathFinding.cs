@@ -32,6 +32,9 @@ public class PathFinding : MonoBehaviour
 
 	private List<PathFindingLink> pathFindingLinkList;
 
+	private HashSet<GridPosition> staircaseExclusiveTiles;
+	private Dictionary<GridPosition, List<GridPosition>> staircaseConnections;
+
 	private int currentSearchId;
 
 	public static PathFinding Instance { get; private set; }
@@ -102,6 +105,33 @@ public class PathFinding : MonoBehaviour
 				pathFindingLinkList.Add(link.GetPathfindingLink());
 			}
 		}
+
+		staircaseExclusiveTiles = new HashSet<GridPosition>();
+		staircaseConnections = new Dictionary<GridPosition, List<GridPosition>>();
+		foreach (Transform child in PathfindingLinkContainer)
+		{
+			if (child.TryGetComponent<StaircaseMonoBehaviour>(out var staircase))
+			{
+				staircase.Initialize();
+			}
+		}
+	}
+
+	// 계단 타일 등록: exclusive 타일은 일반 이웃 탐색을 건너뛰고 등록된 이웃만 사용
+	public void RegisterStaircaseTile(GridPosition pos, List<GridPosition> connections, bool isExclusive)
+	{
+		staircaseConnections[pos] = connections;
+		if (isExclusive)
+		{
+			staircaseExclusiveTiles.Add(pos);
+			SetIsWalkable(pos, false);
+		}
+		else
+		{
+			// 입구·출구 타일은 계단 메시가 장애물로 감지돼 Setup에서 non-walkable이 될 수 있음
+			// 명시적으로 walkable로 복구해야 올바른 floor 노드를 사용 (floor 0 fallback으로 꺼지는 현상 방지)
+			SetIsWalkable(pos, true);
+		}
 	}
 
 	public List<GridPosition> FindPath(GridPosition startGridPosition, GridPosition endGridPosition, int unitSize, out int pathLength)
@@ -131,7 +161,9 @@ public class PathFinding : MonoBehaviour
 				{
 					neighbor.Reset(currentSearchId);
 				}
-				if (hashSet.Contains(neighbor) || !IsWalkableArea(neighbor.GetGridPosition(), unitSize, neighbor.GetGridPosition().floor))
+				if (hashSet.Contains(neighbor) ||
+					(!IsWalkableArea(neighbor.GetGridPosition(), unitSize, neighbor.GetGridPosition().floor) &&
+					 !staircaseExclusiveTiles.Contains(neighbor.GetGridPosition())))
 				{
 					continue;
 				}
@@ -197,6 +229,22 @@ public class PathFinding : MonoBehaviour
 	{
 		List<PathNode> list = new List<PathNode>();
 		GridPosition gridPosition = currentNode.GetGridPosition();
+
+		// 계단 exclusive 타일은 일반 이웃 탐색을 건너뛰고 등록된 계단 이웃만 사용
+		if (staircaseExclusiveTiles.Contains(gridPosition))
+		{
+			if (staircaseConnections.TryGetValue(gridPosition, out List<GridPosition> exclusiveNeighbors))
+			{
+				foreach (GridPosition pos in exclusiveNeighbors)
+				{
+					PathNode node = GetNode(pos.x, pos.z, pos.floor);
+					if (node != null) list.Add(node);
+				}
+			}
+			return list;
+		}
+
+		// 일반 이웃 탐색
 		for (int i = -1; i <= 1; i++)
 		{
 			for (int j = -1; j <= 1; j++)
@@ -226,6 +274,8 @@ public class PathFinding : MonoBehaviour
 				}
 			}
 		}
+
+		// PathfindingLink 연결
 		foreach (GridPosition pathfindingLinkConnectedGridPosition in GetPathfindingLinkConnectedGridPositionList(gridPosition))
 		{
 			if (IsWalkableArea(pathfindingLinkConnectedGridPosition, currentUnitSize, pathfindingLinkConnectedGridPosition.floor))
@@ -233,6 +283,17 @@ public class PathFinding : MonoBehaviour
 				list.Add(GetNode(pathfindingLinkConnectedGridPosition.x, pathfindingLinkConnectedGridPosition.z, pathfindingLinkConnectedGridPosition.floor));
 			}
 		}
+
+		// 계단 entry/exit 타일의 추가 계단 연결 (일반 이웃 + 계단 이웃 모두 포함)
+		if (staircaseConnections.TryGetValue(gridPosition, out List<GridPosition> additionalNeighbors))
+		{
+			foreach (GridPosition pos in additionalNeighbors)
+			{
+				PathNode node = GetNode(pos.x, pos.z, pos.floor);
+				if (node != null && !list.Contains(node)) list.Add(node);
+			}
+		}
+
 		return list;
 	}
 
@@ -256,6 +317,19 @@ public class PathFinding : MonoBehaviour
 	public bool IsWalkableGridPosition(GridPosition gridPosition)
 	{
 		return GetNode(gridPosition.x, gridPosition.z, gridPosition.floor).IsWalkable();
+	}
+
+	public bool IsAnyLink(GridPosition fromPosition, GridPosition toPosition)
+	{
+		foreach (PathFindingLink link in pathFindingLinkList)
+		{
+			if ((link.gridPositionA == fromPosition && link.gridPositionB == toPosition) ||
+				(link.gridPositionB == fromPosition && link.gridPositionA == toPosition))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	// [플러드 필] 시작 위치에서 Dijkstra로 퍼져나가며 maxCost 이내에 도달 가능한 모든 위치 반환
@@ -286,7 +360,8 @@ public class PathFinding : MonoBehaviour
 			if (visited.Contains(current)) continue;
 			visited.Add(current);
 
-			// 시작 위치 자체는 이동 목적지가 아니므로 결과에서 제외
+			// 시작 위치는 이동 목적지가 아니므로 결과에서 제외
+			// 계단 exclusive 타일도 목적지로 허용 (경사면 클릭 시 해당 좌표가 나오므로)
 			if (current.GetGridPosition() != startPosition)
 			{
 				reachable.Add(current.GetGridPosition());
@@ -295,7 +370,8 @@ public class PathFinding : MonoBehaviour
 			foreach (PathNode neighbor in GetNeighborList(current, unitSize))
 			{
 				if (visited.Contains(neighbor)) continue;
-				if (!IsWalkableArea(neighbor.GetGridPosition(), unitSize, neighbor.GetGridPosition().floor)) continue;
+				if (!IsWalkableArea(neighbor.GetGridPosition(), unitSize, neighbor.GetGridPosition().floor) &&
+					!staircaseExclusiveTiles.Contains(neighbor.GetGridPosition())) continue;
 
 				// 이번 탐색에서 처음 방문하는 노드면 초기화
 				if (neighbor.LastSearchId != currentSearchId)
