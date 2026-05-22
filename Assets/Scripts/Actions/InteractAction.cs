@@ -10,8 +10,6 @@ public class InteractAction : BaseAction
 	[SerializeField]
 	private LayerMask obstacleLayerMask;
 
-	[SerializeField]
-	private Transform shootPointTransform;
 
 	protected override void Awake()
 	{
