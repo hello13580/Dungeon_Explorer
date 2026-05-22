@@ -21,14 +21,34 @@ public class MeleeAction : BaseAction
 	private State state;
 	private bool canMeleeAttack;
 
+	// 유효 공격 위치 목록 캐시 — 매 UpdateGridVisual마다 점유·팀 체크를 반복하는 비용을 줄임
+	private List<GridPosition> cachedValidGridPositionList;
+	private bool isCacheDirty = true;
+
 	public event EventHandler OnSwordActionStarted;
     public event EventHandler OnSwordActionEnded;
 
     protected override void Awake()
 	{
 		base.Awake();
-	
 	}
+
+	private void Start()
+	{
+		// 턴이 바뀌면 적 위치가 달라질 수 있으므로 캐시 무효화
+		TurnSystem.Instance.OnTurnChanged += OnTurnChanged;
+		// 이동·공격 등 액션이 끝나면 유닛이 죽거나 이동했을 수 있으므로 캐시 무효화
+		BaseAction.OnAnyActionEnded += OnAnyActionEnded;
+	}
+
+	private void OnDestroy()
+	{
+		TurnSystem.Instance.OnTurnChanged -= OnTurnChanged;
+		BaseAction.OnAnyActionEnded -= OnAnyActionEnded;
+	}
+
+	private void OnTurnChanged(object sender, EventArgs e) => isCacheDirty = true;
+	private void OnAnyActionEnded(object sender, EventArgs e) => isCacheDirty = true;
 
 	public override string GetActionName() => "Melee";
 
@@ -117,6 +137,15 @@ public class MeleeAction : BaseAction
 
 	public override List<GridPosition> GetValidActionGridPositionList()
 	{
+		// [최적화 전] 매 호출마다 인접 타일 전체를 순회하며 점유·팀 체크
+		// List<GridPosition> validList = new List<GridPosition>();
+		// GridPosition unitGridPos = unit.GetGridPosition();
+		// int unitSize = unit.GetSize();
+		// ... (아래 로직 그대로)
+
+		// [최적화 후] 캐시가 유효하면 재계산 없이 바로 반환
+		if (!isCacheDirty && cachedValidGridPositionList != null) return cachedValidGridPositionList;
+
 		List<GridPosition> validList = new List<GridPosition>();
 		GridPosition unitGridPos = unit.GetGridPosition();
 		int unitSize = unit.GetSize();
@@ -140,7 +169,9 @@ public class MeleeAction : BaseAction
 				}
 			}
 		}
-		return validList;
+		cachedValidGridPositionList = validList;
+		isCacheDirty = false;
+		return cachedValidGridPositionList;
 	}
 
 	public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)

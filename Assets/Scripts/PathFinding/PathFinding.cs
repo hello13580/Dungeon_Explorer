@@ -258,6 +258,78 @@ public class PathFinding : MonoBehaviour
 		return GetNode(gridPosition.x, gridPosition.z, gridPosition.floor).IsWalkable();
 	}
 
+	// [플러드 필] 시작 위치에서 Dijkstra로 퍼져나가며 maxCost 이내에 도달 가능한 모든 위치 반환
+	// 기존 방식(각 타일마다 A* 전체 실행)과 달리 탐색을 단 한 번만 수행하므로
+	// 이동 범위가 넓어도 성능이 크게 저하되지 않음
+	public List<GridPosition> GetReachableGridPositions(GridPosition startPosition, int maxCost, int unitSize)
+	{
+		// searchId를 올려서 이전 탐색 결과가 남아있는 노드를 구분함
+		// Reset()을 전체 노드에 호출하지 않아도 되므로 초기화 비용이 없음
+		currentSearchId++;
+		Heap<PathNode> heap = new Heap<PathNode>(width * height);
+		HashSet<PathNode> visited = new HashSet<PathNode>(); // 최적 비용 확정된 노드 추적
+		List<GridPosition> reachable = new List<GridPosition>();
+
+		PathNode startNode = GetGridSystem(startPosition.floor).GetGridObject(startPosition);
+		startNode.Reset(currentSearchId);
+		startNode.SetGCost(0);
+		startNode.SetHCost(0); // 휴리스틱 없음 — A*와 달리 목적지가 없으므로 순수 Dijkstra
+		startNode.CalculateFCost();  // FCost = GCost + HCost = GCost, 힙 정렬 기준
+		heap.Add(startNode);
+
+		while (heap.Count > 0)
+		{
+			// 힙에서 현재까지 비용이 가장 낮은 노드를 꺼냄
+			PathNode current = heap.RemoveFirst();
+
+			// 같은 노드가 힙에 여러 번 들어갔을 경우(UpdateItem 전 중복) 건너뜀
+			if (visited.Contains(current)) continue;
+			visited.Add(current);
+
+			// 시작 위치 자체는 이동 목적지가 아니므로 결과에서 제외
+			if (current.GetGridPosition() != startPosition)
+			{
+				reachable.Add(current.GetGridPosition());
+			}
+
+			foreach (PathNode neighbor in GetNeighborList(current, unitSize))
+			{
+				if (visited.Contains(neighbor)) continue;
+				if (!IsWalkableArea(neighbor.GetGridPosition(), unitSize, neighbor.GetGridPosition().floor)) continue;
+
+				// 이번 탐색에서 처음 방문하는 노드면 초기화
+				if (neighbor.LastSearchId != currentSearchId)
+				{
+					neighbor.Reset(currentSearchId); // GCost = int.MaxValue로 초기화
+				}
+
+				int newCost = current.GetGCost() + CalculateDistanceCost(current.GetGridPosition(), neighbor.GetGridPosition());
+
+				// 이동 비용 초과 시 이 방향으로는 더 탐색하지 않음 — 자연스럽게 범위가 잘림
+				if (newCost > maxCost) continue;
+
+				// 더 낮은 비용 경로를 발견하면 갱신
+				if (newCost < neighbor.GetGCost())
+				{
+					neighbor.SetGCost(newCost);
+					neighbor.SetHCost(0);
+					neighbor.CalculateFCost();
+					if (!heap.Contains(neighbor))
+					{
+						heap.Add(neighbor);
+					}
+					else
+					{
+						// 이미 힙에 있으면 비용이 바뀌었으므로 힙 순서 재정렬
+						heap.UpdateItem(neighbor);
+					}
+				}
+			}
+		}
+
+		return reachable;
+	}
+
 	public int GetPathLength(GridPosition startGridPosition, GridPosition endGridPosition, int unitSize)
 	{
 		FindPath(startGridPosition, endGridPosition, unitSize, out var pathLength);

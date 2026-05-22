@@ -10,6 +10,9 @@ public class InteractAction : BaseAction
 	[SerializeField]
 	private LayerMask obstacleLayerMask;
 
+	// 유효 상호작용 위치 목록 캐시 — 매 UpdateGridVisual마다 MapObject 체크를 반복하는 비용을 줄임
+	private List<GridPosition> cachedValidGridPositionList;
+	private bool isCacheDirty = true;
 
 	protected override void Awake()
 	{
@@ -17,6 +20,23 @@ public class InteractAction : BaseAction
 		base.Awake();
 		maxRange = 1;
 	}
+
+	private void Start()
+	{
+		// 턴이 바뀌면 오브젝트 상태가 달라질 수 있으므로 캐시 무효화
+		TurnSystem.Instance.OnTurnChanged += OnTurnChanged;
+		// 문 열기 등 액션이 끝나면 상호작용 가능 오브젝트가 바뀔 수 있으므로 캐시 무효화
+		BaseAction.OnAnyActionEnded += OnAnyActionEnded;
+	}
+
+	private void OnDestroy()
+	{
+		TurnSystem.Instance.OnTurnChanged -= OnTurnChanged;
+		BaseAction.OnAnyActionEnded -= OnAnyActionEnded;
+	}
+
+	private void OnTurnChanged(object sender, EventArgs e) => isCacheDirty = true;
+	private void OnAnyActionEnded(object sender, EventArgs e) => isCacheDirty = true;
 
 	public override string GetActionName()
 	{
@@ -56,8 +76,15 @@ public class InteractAction : BaseAction
 
 	public override List<GridPosition> GetValidActionGridPositionList()
 	{
-		GridPosition gridPosition = unit.GetGridPosition();
-		return GetValidActionGridPositionList(gridPosition);
+		// [최적화 전] 매 호출마다 인접 타일 전체를 순회하며 MapObject 체크
+		// return GetValidActionGridPositionList(unit.GetGridPosition());
+
+		// [최적화 후] 캐시가 유효하면 재계산 없이 바로 반환
+		if (!isCacheDirty && cachedValidGridPositionList != null) return cachedValidGridPositionList;
+
+		cachedValidGridPositionList = GetValidActionGridPositionList(unit.GetGridPosition());
+		isCacheDirty = false;
+		return cachedValidGridPositionList;
 	}
 
 	public List<GridPosition> GetValidActionGridPositionList(GridPosition unitGridPosition)

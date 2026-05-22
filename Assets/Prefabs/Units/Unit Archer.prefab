@@ -201,15 +201,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1213345925212744562, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 7.5677795
+      value: 8.440001
       objectReference: {fileID: 0}
     - target: {fileID: 1213345925212744562, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 1213345925212744562, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 8.583201
+      value: 18.583202
       objectReference: {fileID: 0}
     - target: {fileID: 1213345925212744562, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_LocalRotation.w
@@ -299,7 +299,7 @@ MonoBehaviour:
   shootPointTransform: {fileID: 4486312566150377040}
   obstacleLayerMask:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 192
   ArrowInBow: {fileID: 6466679900585911220}
 --- !u!114 &6900218557934376640
 MonoBehaviour:
@@ -318,7 +318,8 @@ MonoBehaviour:
   shootPointTransform: {fileID: 4486312566150377040}
   obstacleLayerMask:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 192
   maxRange: 7
   damageRadius: 1
   targetingYAxis: 0.5
+  rotateSpeed: 15

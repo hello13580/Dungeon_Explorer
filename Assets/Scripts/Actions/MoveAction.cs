@@ -179,63 +179,50 @@ public class MoveAction : BaseAction
     {
         if (!isCacheDirty && cachedValidGridPositionList != null) return cachedValidGridPositionList;
 
-        List<GridPosition> validGridPositionList = new List<GridPosition>();
         GridPosition unitGridPosition = unit.GetGridPosition();
         int unitSize = unit.GetSize();
-        int range = Mathf.RoundToInt(leftMoveDistance);
+        // PathFinding 비용 단위로 변환 (직선 1칸 = 10, 대각선 1칸 = 14)
+        int maxCost = Mathf.RoundToInt(leftMoveDistance * 10f);
 
-        for (int x = -range; x <= range; x++)
+        // [최적화 전] 범위 내 타일마다 A* 전체 실행 → 범위가 넓을수록 타일 수가 제곱으로 증가
+        // int range = Mathf.RoundToInt(leftMoveDistance);
+        // for (int x = -range; x <= range; x++)
+        // {
+        //     for (int z = -range; z <= range; z++)
+        //     {
+        //         for (int floor = unitGridPosition.floor - 1; floor <= unitGridPosition.floor + 1; floor++)
+        //         {
+        //             ...walkable 체크...
+        //             int pathLength = PathFinding.Instance.GetPathLength(unitGridPosition, testGridPosition, unitSize);
+        //             // GetPathLength 내부에서 FindPath(A* 전체)를 실행 → 타일 수만큼 반복
+        //             if (pathLength != 0 && pathLength <= leftMoveDistance * 10f)
+        //                 validGridPositionList.Add(testGridPosition);
+        //         }
+        //     }
+        // }
+
+        // [최적화 후] 플러드 필(Dijkstra)로 한 번만 탐색 → 도달 가능한 타일만 자연스럽게 수집
+        // GetReachableGridPositions 내부에서 비용이 maxCost를 초과하는 방향은 즉시 탐색 중단
+        List<GridPosition> reachable = PathFinding.Instance.GetReachableGridPositions(unitGridPosition, maxCost, unitSize);
+
+        List<GridPosition> validGridPositionList = new List<GridPosition>();
+        foreach (GridPosition pos in reachable)
         {
-            for (int z = -range; z <= range; z++)
+            // 플러드 필은 walkable 여부만 보므로, 다른 유닛이 서있는 위치는 여기서 후처리로 제외
+            // 크기 2 이상 유닛은 점유하는 모든 서브 타일을 확인해야 함
+            if (unitSize > 1)
             {
-                // ������ ��(-1, 0, 1) �˻�
-                for (int floor = unitGridPosition.floor - 1; floor <= unitGridPosition.floor + 1; floor++)
-                {
-                    if (floor < 0 || floor >= LevelGrid.Instance.GetFloorAmount()) continue;
-
-                    GridPosition testGridPosition = new GridPosition(unitGridPosition.x + x, unitGridPosition.z + z, floor);
-
-                    if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition)) continue;
-                    if (unitGridPosition == testGridPosition) continue;
-
-                    bool isValidPath = true;
-                    // ���� ����(Size > 1)�� ��� ���� ���� ��� üũ
-                    if (unitSize > 1)
-                    {
-                        for (int i = 0; i < unitSize; i++)
-                        {
-                            for (int j = 0; j < unitSize; j++)
-                            {
-                                GridPosition subPos = testGridPosition + new GridPosition(i, j, 0);
-                                if (!LevelGrid.Instance.IsValidGridPosition(subPos) ||
-                                    !PathFinding.Instance.IsWalkableGridPosition(subPos) ||
-                                    IsOccupiedByOtherUnit(subPos))
-                                {
-                                    isValidPath = false;
-                                    break;
-                                }
-                            }
-                            if (!isValidPath) break;
-                        }
-                    }
-                    else
-                    {
-                        if (!PathFinding.Instance.IsWalkableGridPosition(testGridPosition) || IsOccupiedByOtherUnit(testGridPosition))
-                        {
-                            isValidPath = false;
-                        }
-                    }
-
-                    if (isValidPath)
-                    {
-                        int pathLength = PathFinding.Instance.GetPathLength(unitGridPosition, testGridPosition, unitSize);
-                        // ���� ��� �Ÿ��� ���� �̵� �Ÿ� �̳����� Ȯ��
-                        if (pathLength != 0 && pathLength <= leftMoveDistance * 10f)
-                        {
-                            validGridPositionList.Add(testGridPosition);
-                        }
-                    }
-                }
+                bool occupied = false;
+                for (int i = 0; i < unitSize && !occupied; i++)
+                    for (int j = 0; j < unitSize && !occupied; j++)
+                        if (IsOccupiedByOtherUnit(pos + new GridPosition(i, j, 0)))
+                            occupied = true;
+                if (!occupied) validGridPositionList.Add(pos);
+            }
+            else
+            {
+                if (!IsOccupiedByOtherUnit(pos))
+                    validGridPositionList.Add(pos);
             }
         }
 

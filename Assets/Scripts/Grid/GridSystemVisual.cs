@@ -29,6 +29,10 @@ public class GridSystemVisual : MonoBehaviour
 
 	private GridSystemVisualSingle[,,] gridSystemVisualSingleArray;
 
+	// 현재 화면에 표시 중인 타일만 추적
+	// Hide 시 전체 7500개 타일을 순회하는 대신 이 목록만 순회해서 성능 개선
+	private HashSet<GridSystemVisualSingle> visibleTiles = new HashSet<GridSystemVisualSingle>();
+
 	private GridPosition lastMouseGridPosition = new GridPosition(-1, -1, 0);
 
 	private BaseAction selectedAction;
@@ -61,6 +65,9 @@ public class GridSystemVisual : MonoBehaviour
 					GridPosition gridPosition = new GridPosition(i, j, k);
 					GameObject val = Instantiate(gridSystemVisualSinglePrefab, LevelGrid.Instance.GetWorldPosition(gridPosition), Quaternion.identity);
 					gridSystemVisualSingleArray[i, j, k] = val.GetComponent<GridSystemVisualSingle>();
+					// 생성 직후 visibleTiles에 추가해야 아래 HideAllGridPositionInstant()가 전체 타일을 숨길 수 있음
+					// 최적화된 Hide는 visibleTiles만 순회하므로 여기서 추가하지 않으면 초기 Hide가 동작 안 함
+					visibleTiles.Add(gridSystemVisualSingleArray[i, j, k]);
 				}
 			}
 		}
@@ -162,45 +169,64 @@ public class GridSystemVisual : MonoBehaviour
 		{
 			if (LevelGrid.Instance.IsValidGridPosition(gridPosition))
 			{
-				gridSystemVisualSingleArray[gridPosition.x, gridPosition.z, gridPosition.floor].InstantShow(gridVisualTypeMaterial);
+				GridSystemVisualSingle tile = gridSystemVisualSingleArray[gridPosition.x, gridPosition.z, gridPosition.floor];
+				tile.InstantShow(gridVisualTypeMaterial);
+				// 표시한 타일을 목록에 추가해서 나중에 Hide 시 이 타일만 처리할 수 있게 함
+				visibleTiles.Add(tile);
 			}
 		}
 	}
 
 	public void HideAllGridPositionInstant()
 	{
-		GridSystemVisualSingle[,,] array = gridSystemVisualSingleArray;
-		int upperBound = array.GetUpperBound(0);
-		int upperBound2 = array.GetUpperBound(1);
-		int upperBound3 = array.GetUpperBound(2);
-		for (int i = array.GetLowerBound(0); i <= upperBound; i++)
+		// [최적화 전] 전체 타일(50×50×3 = 7500개)을 매번 순회 → 마우스 이동마다 7500번 호출
+		// GridSystemVisualSingle[,,] array = gridSystemVisualSingleArray;
+		// int upperBound = array.GetUpperBound(0);
+		// int upperBound2 = array.GetUpperBound(1);
+		// int upperBound3 = array.GetUpperBound(2);
+		// for (int i = array.GetLowerBound(0); i <= upperBound; i++)
+		// {
+		// 	for (int j = array.GetLowerBound(1); j <= upperBound2; j++)
+		// 	{
+		// 		for (int k = array.GetLowerBound(2); k <= upperBound3; k++)
+		// 		{
+		// 			array[i, j, k].InstantHide();
+		// 		}
+		// 	}
+		// }
+
+		// [최적화 후] 실제로 표시 중인 타일만 순회 → 보통 수십~백여 개 수준
+		foreach (GridSystemVisualSingle tile in visibleTiles)
 		{
-			for (int j = array.GetLowerBound(1); j <= upperBound2; j++)
-			{
-				for (int k = array.GetLowerBound(2); k <= upperBound3; k++)
-				{
-					array[i, j, k].InstantHide();
-				}
-			}
+			tile.InstantHide();
 		}
+		visibleTiles.Clear();
 	}
 
 	public void HideAllGridPositionFade()
 	{
-		GridSystemVisualSingle[,,] array = gridSystemVisualSingleArray;
-		int upperBound = array.GetUpperBound(0);
-		int upperBound2 = array.GetUpperBound(1);
-		int upperBound3 = array.GetUpperBound(2);
-		for (int i = array.GetLowerBound(0); i <= upperBound; i++)
+		// [최적화 전] HideAllGridPositionInstant와 동일하게 전체 타일 순회
+		// GridSystemVisualSingle[,,] array = gridSystemVisualSingleArray;
+		// int upperBound = array.GetUpperBound(0);
+		// int upperBound2 = array.GetUpperBound(1);
+		// int upperBound3 = array.GetUpperBound(2);
+		// for (int i = array.GetLowerBound(0); i <= upperBound; i++)
+		// {
+		// 	for (int j = array.GetLowerBound(1); j <= upperBound2; j++)
+		// 	{
+		// 		for (int k = array.GetLowerBound(2); k <= upperBound3; k++)
+		// 		{
+		// 			array[i, j, k].FadeHide();
+		// 		}
+		// 	}
+		// }
+
+		// [최적화 후] visibleTiles만 순회
+		foreach (GridSystemVisualSingle tile in visibleTiles)
 		{
-			for (int j = array.GetLowerBound(1); j <= upperBound2; j++)
-			{
-				for (int k = array.GetLowerBound(2); k <= upperBound3; k++)
-				{
-					array[i, j, k].FadeHide();
-				}
-			}
+			tile.FadeHide();
 		}
+		visibleTiles.Clear();
 	}
 
     private GridVisualType GetGridVisualTypeForAction(BaseAction action)

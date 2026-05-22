@@ -29,6 +29,10 @@ public class ShootAction : BaseAction
     private Unit targetUnit;
     private float rotateSpeed = 10f;
 
+    // 유효 타겟 목록 캐시 — 매 UpdateGridVisual마다 레이캐스트를 다시 쏘는 비용을 줄임
+    private List<GridPosition> cachedValidGridPositionList;
+    private bool isCacheDirty = true;
+
     public event EventHandler<OnShootEventArgs> OnStartShooting;
     public static event EventHandler<OnShootEventArgs> OnAnyShooting;
     public event EventHandler OnStopShooting;
@@ -38,6 +42,23 @@ public class ShootAction : BaseAction
         base.Awake();
         actionCost = 2;
     }
+
+    private void Start()
+    {
+        // 턴이 바뀌면 적 위치가 달라질 수 있으므로 캐시 무효화
+        TurnSystem.Instance.OnTurnChanged += OnTurnChanged;
+        // 이동·공격 등 액션이 끝나면 적이 죽거나 이동했을 수 있으므로 캐시 무효화
+        BaseAction.OnAnyActionEnded += OnAnyActionEnded;
+    }
+
+    private void OnDestroy()
+    {
+        TurnSystem.Instance.OnTurnChanged -= OnTurnChanged;
+        BaseAction.OnAnyActionEnded -= OnAnyActionEnded;
+    }
+
+    private void OnTurnChanged(object sender, EventArgs e) => isCacheDirty = true;
+    private void OnAnyActionEnded(object sender, EventArgs e) => isCacheDirty = true;
 
     private IEnumerator StateCheck()
     {
@@ -66,8 +87,15 @@ public class ShootAction : BaseAction
 
     public override List<GridPosition> GetValidActionGridPositionList()
     {
-        GridPosition unitGridPosition = unit.GetGridPosition();
-        return GetValidActionGridPositionList(unitGridPosition);
+        // [최적화 전] 매 호출마다 전체 범위를 순회하며 레이캐스트
+        // return GetValidActionGridPositionList(unit.GetGridPosition());
+
+        // [최적화 후] 캐시가 유효하면 재계산 없이 바로 반환
+        if (!isCacheDirty && cachedValidGridPositionList != null) return cachedValidGridPositionList;
+
+        cachedValidGridPositionList = GetValidActionGridPositionList(unit.GetGridPosition());
+        isCacheDirty = false;
+        return cachedValidGridPositionList;
     }
 
     public List<GridPosition> GetValidActionGridPositionList(GridPosition unitGridPosition)
@@ -155,7 +183,9 @@ public class ShootAction : BaseAction
                 for (int floor = minFloor; floor <= maxFloor; floor++)
                 {
                     GridPosition testGridPosition = new GridPosition(unitGridPosition.x + x, unitGridPosition.z + z, floor);
-                    if (LevelGrid.Instance.IsValidGridPosition(testGridPosition))
+                    // IsWalkableGridPosition 체크 없으면 바닥이 없는 허공 타일에도 범위가 표시됨
+                    if (LevelGrid.Instance.IsValidGridPosition(testGridPosition)
+                        && PathFinding.Instance.IsWalkableGridPosition(testGridPosition))
                     {
                         rangeList.Add(testGridPosition);
                     }
