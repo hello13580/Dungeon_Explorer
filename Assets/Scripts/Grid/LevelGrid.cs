@@ -46,11 +46,14 @@ public class LevelGrid : MonoBehaviour
 			GridSystem<GridObject> item = new GridSystem<GridObject>(width, height, cellSize, i, 3f, (GridSystem<GridObject> g, GridPosition p) => new GridObject(g, p));
 			gridSystemList.Add(item);
 		}
+		// MapObject.Start()가 LevelGrid.Start()보다 먼저 실행될 수 있어서
+		// Start()에 두면 PathFinding.gridSystemList가 null인 상태에서 SetIsWalkable이 호출됨
+		// Awake는 모든 오브젝트에서 Start보다 먼저 완료되므로 여기서 초기화해야 함
+		PathFinding.Instance.Setup(width, height, cellSize, floorAmount);
 	}
 
 	private void Start()
 	{
-		PathFinding.Instance.Setup(width, height, cellSize, floorAmount);
 	}
 
 	private void Update()

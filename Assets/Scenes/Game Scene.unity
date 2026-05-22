@@ -276,6 +276,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Unit SwordMan
       objectReference: {fileID: 0}
+    - target: {fileID: 416177728078544639, guid: 16d0a1ab146d0c24a96167ef85649268, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7166578124029690638, guid: 16d0a1ab146d0c24a96167ef85649268, type: 3}
       propertyPath: m_LocalPosition.x
       value: 15.440001
@@ -1828,6 +1832,10 @@ PrefabInstance:
     - target: {fileID: 979890781461446910, guid: 30ee87877c5b0d24bb480b20a440bf83, type: 3}
       propertyPath: m_Name
       value: Unit Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 979890781461446910, guid: 30ee87877c5b0d24bb480b20a440bf83, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7722273530164575503, guid: 30ee87877c5b0d24bb480b20a440bf83, type: 3}
       propertyPath: m_LocalPosition.x

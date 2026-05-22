@@ -43,8 +43,21 @@ public class MoveAction : BaseAction
 
     private void Start()
     {
-        // ���� �ٲ� ������ �̵� �Ÿ� �ʱ�ȭ
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+        // 문 등 오브젝트의 이동 가능 여부가 바뀌면 캐시를 갱신해야 함
+        MapObject.OnAnyWalkableChanged += MapObject_OnAnyWalkableChanged;
+    }
+
+    private void OnDestroy()
+    {
+        MapObject.OnAnyWalkableChanged -= MapObject_OnAnyWalkableChanged;
+    }
+
+    // 같은 턴 안에서 문이 열리거나 닫히면 이동 가능 위치 캐시가 이전 상태로 남아
+    // 닫힌 문이 초록색으로 표시되는 문제를 방지하기 위해 캐시를 무효화
+    private void MapObject_OnAnyWalkableChanged(object sender, EventArgs e)
+    {
+        MarkCacheDirty();
     }
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs empty)
@@ -65,8 +78,14 @@ public class MoveAction : BaseAction
     {
         targetGridPosition = gridPosition;
 
-        // ��� ã�� �� �ܼ�ȭ
         List<GridPosition> path = PathFinding.Instance.FindPath(unit.GetGridPosition(), gridPosition, unit.GetSize(), out int pathLength);
+        // FindPath는 경로가 없으면 null을 반환함. 예: 닫힌 문 위치로 이동 시도할 때
+        // null을 SimplifyPath에 넘기면 NullReferenceException 발생하므로 여기서 처리
+        if (path == null)
+        {
+            onMovingComplete?.Invoke();
+            return;
+        }
         List<GridPosition> simplifiedPath = SimplifyPath(path);
 
         targetPosList = new List<Vector3>();
