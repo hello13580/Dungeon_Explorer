@@ -166,18 +166,22 @@ public class MoveAction : BaseAction
                 // 일반 이동 및 경사로 이동
                 while (Vector3.Distance(transform.position, targetPos) > stoppingDistance)
                 {
-                    Vector3 moveDir = (targetPos - transform.position).normalized;
+                    Vector3 moveDir = (targetPos - transform.position);
+                    // Y축 변화량을 0으로 만들어 앞뒤로 기울어지는 것(Pitch/Roll)을 방지합니다.
+                    moveDir.y = 0f;
+                    moveDir.Normalize();
+
                     if (moveDir != Vector3.zero)
                     {
-                        // ȸ�� ó��
+                        // 이제 오직 좌우(Y축 회전)로만 회전하게 됩니다.
                         Quaternion targetRotation = Quaternion.LookRotation(moveDir);
                         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotateSpeed);
 
-                        // �չ���� �̵������� ��� ���� ��ġ�� ���� ���� (�ڿ������� ȸ�� �̵�)
-                      
+                        // 이동 자체는 높낮이(targetPos)가 반영되어야 하므로 원래 벡터의 방향을 따로 씁니다.
+                        Vector3 actualMoveDir = (targetPos - transform.position).normalized;
                         if (Vector3.Dot(transform.forward, moveDir) > 0.7f)
                         {
-                            transform.position += moveDir * moveSpeed * Time.deltaTime;
+                            transform.position += actualMoveDir * moveSpeed * Time.deltaTime;
                         }
                     }
                     yield return null;

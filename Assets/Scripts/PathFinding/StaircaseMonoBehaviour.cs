@@ -3,48 +3,30 @@ using UnityEngine;
 
 public class StaircaseMonoBehaviour : MonoBehaviour
 {
-	public enum StepDirection { PosX, NegX, PosZ, NegZ }
-
-	[Header("계단 시작 타일 (startFloor 쪽, 너비 왼쪽 끝 타일)")]
-	public Vector3 startTilePosition;
-
-	[Header("계단이 올라가는 방향 (1층→2층 방향)")]
-	public StepDirection stepDirection = StepDirection.NegZ;
-
 	[Min(1)] public int width = 1;
 	[Min(2)] public int stepCount = 2;
 
 	[Header("층 번호 (0 = 1층, 1 = 2층 ...)")]
-	public int startFloor = 0;
-	public int endFloor   = 1;
+	public int endFloor = 1;
 
 	public void Initialize()
 	{
 		float cellSize = LevelGrid.Instance.GetCellSize();
+		int startFloor = LevelGrid.Instance.GetFloor(transform.position);
 
-		Vector3 stepDir = stepDirection switch
-		{
-			StepDirection.PosX => new Vector3( cellSize, 0f, 0f),
-			StepDirection.NegX => new Vector3(-cellSize, 0f, 0f),
-			StepDirection.PosZ => new Vector3(0f, 0f,  cellSize),
-			StepDirection.NegZ => new Vector3(0f, 0f, -cellSize),
-			_ => Vector3.zero
-		};
-
-		// 진행 방향의 오른쪽 수직 방향 (stepDir을 Y축 기준 반시계 90도 회전)
+		Vector3 stepDir = GetStepDir(cellSize);
 		Vector3 widthDir = new Vector3(-stepDir.z, 0f, stepDir.x);
 
 		GridPosition[,] tiles = new GridPosition[stepCount, width];
 		for (int step = 0; step < stepCount; step++)
 		{
-			// 시작·끝 줄은 층 강제, 중간 줄은 실제 pathfinding 그리드에서 감지한 층 사용
 			int forcedFloor = step == 0 ? startFloor
 							: step == stepCount - 1 ? endFloor
-							: -1; // -1 = 자동 감지
+							: -1;
 
 			for (int w = 0; w < width; w++)
 			{
-				Vector3 worldPos = startTilePosition + stepDir * step + widthDir * w;
+				Vector3 worldPos = transform.position + stepDir * step + widthDir * w;
 				GridPosition auto = LevelGrid.Instance.GetGridPosition(worldPos);
 
 				int tileFloor = forcedFloor >= 0 ? forcedFloor : auto.floor;
@@ -76,5 +58,14 @@ public class StaircaseMonoBehaviour : MonoBehaviour
 				}
 			}
 		}
+	}
+
+	private Vector3 GetStepDir(float cellSize)
+	{
+		Vector3 fwd = -transform.forward; // pivot이 1층 방향을 향하므로 반전
+		if (Mathf.Abs(fwd.x) >= Mathf.Abs(fwd.z))
+			return fwd.x > 0 ? new Vector3(cellSize, 0f, 0f) : new Vector3(-cellSize, 0f, 0f);
+		else
+			return fwd.z > 0 ? new Vector3(0f, 0f, cellSize) : new Vector3(0f, 0f, -cellSize);
 	}
 }
