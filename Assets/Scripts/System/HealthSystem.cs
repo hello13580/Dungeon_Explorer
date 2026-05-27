@@ -35,6 +35,12 @@ public class HealthSystem : MonoBehaviour
 		}
 	}
 
+	public void Heal(int healAmount)
+	{
+		currentHealth = Mathf.Min(currentHealth + healAmount, maxHealth);
+		OnUnitDamaged?.Invoke(this, EventArgs.Empty);
+	}
+
 	public void Die()
 	{
 		this.OnUnitDeath?.Invoke(this, EventArgs.Empty);

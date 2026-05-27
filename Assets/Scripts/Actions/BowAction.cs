@@ -47,19 +47,18 @@ public class BowAction : BaseAction
     private void Start()
     {
         // 턴이 바뀌면 적 위치가 달라질 수 있으므로 캐시 무효화
-        TurnSystem.Instance.OnTurnChanged += OnTurnChanged;
+        TurnSystem.Instance.OnTurnChanged += OnCacheInvalidated;
         // 이동·공격 등 액션이 끝나면 적이 죽거나 이동했을 수 있으므로 캐시 무효화
-        BaseAction.OnAnyActionEnded += OnAnyActionEnded;
+        BaseAction.OnAnyActionEnded += OnCacheInvalidated;
     }
 
     private void OnDestroy()
     {
-        TurnSystem.Instance.OnTurnChanged -= OnTurnChanged;
-        BaseAction.OnAnyActionEnded -= OnAnyActionEnded;
+        TurnSystem.Instance.OnTurnChanged -= OnCacheInvalidated;
+        BaseAction.OnAnyActionEnded -= OnCacheInvalidated;
     }
 
-    private void OnTurnChanged(object sender, EventArgs e) => isCacheDirty = true;
-    private void OnAnyActionEnded(object sender, EventArgs e) => isCacheDirty = true;
+    private void OnCacheInvalidated(object sender, EventArgs e) => isCacheDirty = true;
 
     private IEnumerator StateCheck()
     {

@@ -287,6 +287,7 @@ public class GridSystemVisual : MonoBehaviour
             AOEAction => GridVisualType.Green,
             MeleeAction => GridVisualType.Green,
             InteractAction => GridVisualType.Green,
+            HealAction => GridVisualType.Green,
             _ => GridVisualType.White,
         };
     }

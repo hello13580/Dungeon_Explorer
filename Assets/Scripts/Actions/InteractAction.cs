@@ -24,19 +24,18 @@ public class InteractAction : BaseAction
 	private void Start()
 	{
 		// 턴이 바뀌면 오브젝트 상태가 달라질 수 있으므로 캐시 무효화
-		TurnSystem.Instance.OnTurnChanged += OnTurnChanged;
+		TurnSystem.Instance.OnTurnChanged += OnCacheInvalidated;
 		// 문 열기 등 액션이 끝나면 상호작용 가능 오브젝트가 바뀔 수 있으므로 캐시 무효화
-		BaseAction.OnAnyActionEnded += OnAnyActionEnded;
+		BaseAction.OnAnyActionEnded += OnCacheInvalidated;
 	}
 
 	private void OnDestroy()
 	{
-		TurnSystem.Instance.OnTurnChanged -= OnTurnChanged;
-		BaseAction.OnAnyActionEnded -= OnAnyActionEnded;
+		TurnSystem.Instance.OnTurnChanged -= OnCacheInvalidated;
+		BaseAction.OnAnyActionEnded -= OnCacheInvalidated;
 	}
 
-	private void OnTurnChanged(object sender, EventArgs e) => isCacheDirty = true;
-	private void OnAnyActionEnded(object sender, EventArgs e) => isCacheDirty = true;
+	private void OnCacheInvalidated(object sender, EventArgs e) => isCacheDirty = true;
 
 	public override string GetActionName()
 	{

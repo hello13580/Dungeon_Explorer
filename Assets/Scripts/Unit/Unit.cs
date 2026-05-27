@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
@@ -11,7 +12,7 @@ public class Unit : MonoBehaviour
 
 	private HitReactionSystem hitReactionSystem;
 
-	private BaseAction[] baseActionArray;
+	private List<BaseAction> baseActionList;
 
 	[SerializeField]
 	private int currentActionPoint;
@@ -50,6 +51,8 @@ public class Unit : MonoBehaviour
 
 	public static event EventHandler OnAnyUnitDead;
 
+	public static event EventHandler OnAnySkillsChanged;
+
 	private void LateUpdate()
 	{
 		SnapToGround();
@@ -82,7 +85,7 @@ public class Unit : MonoBehaviour
 	{
 		healthSystem = GetComponent<HealthSystem>();
 		hitReactionSystem = GetComponent<HitReactionSystem>();
-		baseActionArray = GetComponents<BaseAction>();
+		baseActionList = new List<BaseAction>(GetComponents<BaseAction>());
 		currentActionPoint = maxActionPoint;
 		currentSpeed = initialSpeed;
 		actionGauge = 0f;
@@ -103,8 +106,7 @@ public class Unit : MonoBehaviour
 
 	public T GetAction<T>() where T : BaseAction
 	{
-		BaseAction[] array = baseActionArray;
-		foreach (BaseAction baseAction in array)
+		foreach (BaseAction baseAction in baseActionList)
 		{
 			if (baseAction is T)
 			{
@@ -112,6 +114,25 @@ public class Unit : MonoBehaviour
 			}
 		}
 		return null;
+	}
+
+	public T AddSkill<T>() where T : BaseAction
+	{
+		T action = gameObject.AddComponent<T>();
+		baseActionList.Add(action);
+		OnAnySkillsChanged?.Invoke(this, EventArgs.Empty);
+		return action;
+	}
+
+	public void RemoveSkill<T>() where T : BaseAction
+	{
+		T action = GetAction<T>();
+		if (action != null)
+		{
+			baseActionList.Remove(action);
+			Destroy(action);
+			OnAnySkillsChanged?.Invoke(this, EventArgs.Empty);
+		}
 	}
 
 	public bool IsStealthed()
@@ -139,7 +160,7 @@ public class Unit : MonoBehaviour
 
 	public BaseAction[] GetBaseActionsArray()
 	{
-		return baseActionArray;
+		return baseActionList.ToArray();
 	}
 
 	public bool CanSpendActionPointsToTakeAction(BaseAction baseAction)
@@ -184,6 +205,11 @@ public class Unit : MonoBehaviour
 	public void Damage(int damageAmount)
 	{
 		healthSystem.Damage(damageAmount);
+	}
+
+	public void Heal(int healAmount)
+	{
+		healthSystem.Heal(healAmount);
 	}
 
 	public HitReactionSystem GetHitReaction()
