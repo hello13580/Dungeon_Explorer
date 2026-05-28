@@ -35,6 +35,16 @@ public class UnitAnimator : MonoBehaviour
         {
 			aoeAction.OnAOEActionStarted += AOEAction_OnAOEActionStarted;
         }
+
+        if (TryGetComponent<HealAction>(out var healAction))
+        {
+			healAction.OnHeal += healAction_OnHeal;
+        }
+    }
+
+    private void healAction_OnHeal(object sender, HealAction.OnHealEventArgs e)
+    {
+        unitAnimator.SetTrigger("isHealing");
     }
 
     private void AOEAction_OnAOEActionStarted(object sender, EventArgs e)

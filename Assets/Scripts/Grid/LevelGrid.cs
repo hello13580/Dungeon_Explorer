@@ -50,6 +50,7 @@ public class LevelGrid : MonoBehaviour
 		// Start()에 두면 PathFinding.gridSystemList가 null인 상태에서 SetIsWalkable이 호출됨
 		// Awake는 모든 오브젝트에서 Start보다 먼저 완료되므로 여기서 초기화해야 함
 		PathFinding.Instance.Setup(width, height, cellSize, floorAmount);
+
 	}
 
 	private void Start()
@@ -58,6 +59,34 @@ public class LevelGrid : MonoBehaviour
 
 	private void Update()
 	{
+	}
+
+	private void OnDrawGizmos()
+	{
+		// 에디터에서는 Inspector 값, 플레이 중에는 Awake에서 덮어쓴 값 사용
+		int w = (width > 0) ? width : 100;
+		int h = (height > 0) ? height : 100;
+		float cs = (cellSize > 0f) ? cellSize : 2f;
+		int floors = (floorAmount > 0) ? floorAmount : 1;
+
+		for (int i = 0; i < floors; i++)
+		{
+			float floorY = i * FLOOR_HEIGHT;
+
+			// 그리드 전체 외곽선 (노란색)
+			Gizmos.color = Color.yellow;
+			Vector3 center = new Vector3((w - 1) * cs / 2f, floorY, (h - 1) * cs / 2f);
+			Vector3 size = new Vector3(w * cs, 0.05f, h * cs);
+			Gizmos.DrawWireCube(center, size);
+
+			// 네 코너 마커 (빨간색)
+			Gizmos.color = Color.red;
+			float markerSize = cs * 0.4f;
+			Gizmos.DrawWireSphere(new Vector3(0f,              floorY, 0f),              markerSize);
+			Gizmos.DrawWireSphere(new Vector3((w - 1) * cs,   floorY, 0f),              markerSize);
+			Gizmos.DrawWireSphere(new Vector3(0f,              floorY, (h - 1) * cs),   markerSize);
+			Gizmos.DrawWireSphere(new Vector3((w - 1) * cs,   floorY, (h - 1) * cs),   markerSize);
+		}
 	}
 
 	private GridSystem<GridObject> GetGridSystem(int floor)
