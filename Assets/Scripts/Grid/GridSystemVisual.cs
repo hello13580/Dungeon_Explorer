@@ -59,65 +59,7 @@ public class GridSystemVisual : MonoBehaviour
 
     private void Start()
     {
-        gridSystemVisualSingleArray = new GridSystemVisualSingle[LevelGrid.Instance.GetWidth(), LevelGrid.Instance.GetHeight(), LevelGrid.Instance.GetFloorAmount()];
-        for (int i = 0; i < LevelGrid.Instance.GetWidth(); i++)
-        {
-            for (int j = 0; j < LevelGrid.Instance.GetHeight(); j++)
-            {
-                for (int k = 0; k < LevelGrid.Instance.GetFloorAmount(); k++)
-                {
-                    GridPosition gridPosition = new GridPosition(i, j, k);
-
-                    // 기본 스폰 위치 및 회전값 (기본은 평지 상태)
-                    Vector3 spawnPos = LevelGrid.Instance.GetWorldPosition(gridPosition);
-                    Quaternion spawnRot = Quaternion.identity;
-
-                    // groundSnapLayerMask가 설정된 경우 지면의 높이(y)와 각도(rotation)를 모두 보정
-                    if (groundSnapLayerMask != 0 &&
-                        Physics.Raycast(spawnPos + Vector3.up * 2f, Vector3.down, out RaycastHit hit, 3f, groundSnapLayerMask))
-                    {
-                        spawnPos.y = hit.point.y + 0.05f;
-
-                        // [핵심] 프리팹의 '위쪽 방향(Vector3.up)'을 경사면의 수직 방향(hit.normal)과 일치시킵니다.
-                        spawnRot = Quaternion.FromToRotation(Vector3.up, hit.normal);
-                    }
-
-                    // Quaternion.identity 대신 계산된 spawnRot을 넣어 프리팹을 생성합니다.
-                    GameObject val = Instantiate(gridSystemVisualSinglePrefab, spawnPos, spawnRot);
-                    gridSystemVisualSingleArray[i, j, k] = val.GetComponent<GridSystemVisualSingle>();
-
-                    visibleTiles.Add(gridSystemVisualSingleArray[i, j, k]);
-                }
-            }
-        }
-        //gridSystemVisualSingleArray = new GridSystemVisualSingle[LevelGrid.Instance.GetWidth(), LevelGrid.Instance.GetHeight(), LevelGrid.Instance.GetFloorAmount()];
-        //for (int i = 0; i < LevelGrid.Instance.GetWidth(); i++)
-        //{
-        //	for (int j = 0; j < LevelGrid.Instance.GetHeight(); j++)
-        //	{
-        //		for (int k = 0; k < LevelGrid.Instance.GetFloorAmount(); k++)
-        //		{
-        //			GridPosition gridPosition = new GridPosition(i, j, k);
-
-        //			// 기본 스폰 위치는 그리드 월드 좌표 (y = floor * FLOOR_HEIGHT)
-        //			Vector3 spawnPos = LevelGrid.Instance.GetWorldPosition(gridPosition);
-
-        //			// groundSnapLayerMask가 설정된 경우 실제 지면 표면 높이로 Y를 보정
-        //			// → 계단·경사로 위에서도 그리드 비주얼이 지면에 붙어서 표시됨
-        //			if (groundSnapLayerMask != 0 &&
-        //				Physics.Raycast(spawnPos + Vector3.up * 2f, Vector3.down, out RaycastHit hit, 3f, groundSnapLayerMask))
-        //			{
-        //				spawnPos.y = hit.point.y;
-        //			}
-
-        //			GameObject val = Instantiate(gridSystemVisualSinglePrefab, spawnPos, Quaternion.identity);
-        //			gridSystemVisualSingleArray[i, j, k] = val.GetComponent<GridSystemVisualSingle>();
-        //			// 생성 직후 visibleTiles에 추가해야 아래 HideAllGridPositionInstant()가 전체 타일을 숨길 수 있음
-        //			// 최적화된 Hide는 visibleTiles만 순회하므로 여기서 추가하지 않으면 초기 Hide가 동작 안 함
-        //			visibleTiles.Add(gridSystemVisualSingleArray[i, j, k]);
-        //		}
-        //	}
-        //}
+        // 이벤트 구독만 수행 — 그리드 비주얼 생성은 StageManager가 맵 로드 후 Initialize()를 호출
         UnitActionSystem.Instance.OnSelectedUnitChanged += delegate
         {
             HideAllGridPositionFade();
@@ -137,6 +79,52 @@ public class GridSystemVisual : MonoBehaviour
             selectedAction = null;
             HideAllGridPositionFade();
         };
+    }
+
+    /// <summary>
+    /// 맵 프리팹 인스턴시에이트 후 StageManager에서 호출.
+    /// 기존 비주얼을 제거하고 현재 씬 지형 기준으로 새로 생성한다.
+    /// </summary>
+    public void Initialize()
+    {
+        // 기존 비주얼 오브젝트 제거
+        if (gridSystemVisualSingleArray != null)
+        {
+            foreach (GridSystemVisualSingle visual in gridSystemVisualSingleArray)
+            {
+                if (visual != null) Destroy(visual.gameObject);
+            }
+        }
+        visibleTiles.Clear();
+        selectedAction = null;
+
+        // 새 배열 생성 및 비주얼 인스턴시에이트
+        gridSystemVisualSingleArray = new GridSystemVisualSingle[LevelGrid.Instance.GetWidth(), LevelGrid.Instance.GetHeight(), LevelGrid.Instance.GetFloorAmount()];
+        for (int i = 0; i < LevelGrid.Instance.GetWidth(); i++)
+        {
+            for (int j = 0; j < LevelGrid.Instance.GetHeight(); j++)
+            {
+                for (int k = 0; k < LevelGrid.Instance.GetFloorAmount(); k++)
+                {
+                    GridPosition gridPosition = new GridPosition(i, j, k);
+
+                    Vector3 spawnPos = LevelGrid.Instance.GetWorldPosition(gridPosition);
+                    Quaternion spawnRot = Quaternion.identity;
+
+                    if (groundSnapLayerMask != 0 &&
+                        Physics.Raycast(spawnPos + Vector3.up * 2f, Vector3.down, out RaycastHit hit, 3f, groundSnapLayerMask))
+                    {
+                        spawnPos.y = hit.point.y + 0.05f;
+                        spawnRot = Quaternion.FromToRotation(Vector3.up, hit.normal);
+                    }
+
+                    GameObject val = Instantiate(gridSystemVisualSinglePrefab, spawnPos, spawnRot);
+                    gridSystemVisualSingleArray[i, j, k] = val.GetComponent<GridSystemVisualSingle>();
+                    visibleTiles.Add(gridSystemVisualSingleArray[i, j, k]);
+                }
+            }
+        }
+
         HideAllGridPositionInstant();
         isVisualHidden = true;
     }
@@ -180,6 +168,7 @@ public class GridSystemVisual : MonoBehaviour
 
     public void UpdateGridVisual()
     {
+        if (gridSystemVisualSingleArray == null) return;
         HideAllGridPositionInstant();
         if (selectedAction == null)
         {

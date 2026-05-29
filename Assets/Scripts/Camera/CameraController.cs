@@ -27,7 +27,7 @@ public class CameraController : MonoBehaviour
 
     private void Awake()
     {
-        // ½Ì±ÛÅæ ·ÎÁ÷ Á¤¸®
+        // ï¿½Ì±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (Instance != null && Instance != this)
         {
             Debug.LogError("There's more than one CameraController! " + transform + " - " + Instance);
@@ -35,9 +35,9 @@ public class CameraController : MonoBehaviour
             return;
         }
         Instance = this;
-        // DontDestroyOnLoad(gameObject); // ÇÊ¿ä ½Ã À¯Áö
+        // DontDestroyOnLoad(gameObject); // ï¿½Ê¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-        // ½Ã³×¸¶½Å ÄÄÆ÷³ÍÆ® ÂüÁ¶
+        // ï¿½Ã³×¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
         if (cinemachineCamera != null)
         {
             follow = cinemachineCamera.GetComponent<CinemachineFollow>();
@@ -70,7 +70,7 @@ public class CameraController : MonoBehaviour
     {
         Vector2 inputMoveVector = InputManager.Instance.GetCameraMoveVector();
         
-        // Ä«¸Ş¶óÀÇ Àü¹æ°ú ¿ìÃø ¹æÇâÀ» ±âÁØÀ¸·Î ÀÌµ¿ (YÃà ¿µÇâ ¹èÁ¦)
+        // Ä«ï¿½Ş¶ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ (Yï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
         Vector3 moveDir = transform.forward * inputMoveVector.y + transform.right * inputMoveVector.x;
         
         transform.position += moveDir * moveSpeed * Time.deltaTime;
@@ -95,7 +95,7 @@ public class CameraController : MonoBehaviour
             targetZoom = Mathf.Clamp(targetZoom, minZoom, maxZoom);
         }
 
-        // ÇöÀç ³ôÀÌ¿¡¼­ Å¸°Ù ³ôÀÌ·Î ºÎµå·´°Ô ÀÌµ¿ (SmoothDamp)
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¿ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½Ì·ï¿½ ï¿½Îµå·´ï¿½ï¿½ ï¿½Ìµï¿½ (SmoothDamp)
         Vector3 currentOffset = follow.FollowOffset;
         float newHeight = Mathf.SmoothDamp(currentOffset.y, targetZoom, ref zoomVelocity, smoothTime);
         
@@ -114,5 +114,19 @@ public class CameraController : MonoBehaviour
     public float GetCameraHeight()
     {
         return follow != null ? follow.FollowOffset.y : 0f;
+    }
+
+    /// <summary>
+    /// ìŠ¤í…Œì´ì§€ ì‹œì‘ ì‹œ StageManagerì—ì„œ í˜¸ì¶œ.
+    /// ì¹´ë©”ë¼ ìœ„ì¹˜Â·ë°©í–¥ì„ ì„¤ì •í•˜ê³  initialAngleë„ í•¨ê»˜ ê°±ì‹ í•œë‹¤.
+    ///
+    /// initialAngleë§Œ ê°±ì‹ í•˜ì§€ ì•Šìœ¼ë©´ ë¦¬ì…‹í‚¤(HandleReturnToInitial)ë¥¼ ëˆŒë €ì„ ë•Œ
+    /// ì´ì „ ìŠ¤í…Œì´ì§€ë‚˜ ì”¬ ì´ˆê¸° ê°ë„ë¡œ ëŒì•„ê°€ëŠ” ë²„ê·¸ê°€ ìƒê¸´ë‹¤.
+    /// </summary>
+    public void SetStageStart(Vector3 position, Vector3 rotation)
+    {
+        transform.position  = position;
+        transform.eulerAngles = rotation;
+        initialAngle        = rotation; // ë¦¬ì…‹í‚¤ ê¸°ì¤€ ê°ë„ë„ ì´ ìŠ¤í…Œì´ì§€ ì‹œì‘ ê°ë„ë¡œ êµì²´
     }
 }

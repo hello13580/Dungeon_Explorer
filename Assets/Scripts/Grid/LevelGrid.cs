@@ -29,8 +29,8 @@ public class LevelGrid : MonoBehaviour
 
 	private void Awake()
 	{
-		width = 100;
-		height = 100;
+		width = 70;
+		height = 70;
 		cellSize = 2f;
 		if (Instance != null && Instance != this)
 		{
@@ -64,8 +64,8 @@ public class LevelGrid : MonoBehaviour
 	private void OnDrawGizmos()
 	{
 		// 에디터에서는 Inspector 값, 플레이 중에는 Awake에서 덮어쓴 값 사용
-		int w = (width > 0) ? width : 100;
-		int h = (height > 0) ? height : 100;
+		int w = (width > 0) ? width : 70;
+		int h = (height > 0) ? height : 70;
 		float cs = (cellSize > 0f) ? cellSize : 2f;
 		int floors = (floorAmount > 0) ? floorAmount : 1;
 
@@ -206,19 +206,35 @@ public class LevelGrid : MonoBehaviour
 	}
 
 	/// <summary>
-	/// 스테이지 전환 시 호출. 그리드 데이터를 새로 생성한다.
-	/// PathFinding.Setup()은 맵 프리팹 인스턴시에이트 이후 StageManager가 별도로 호출한다.
+	/// 스테이지 전환 시 호출. 그리드 데이터를 초기화한다.
+	/// 층 수가 같으면 기존 GridObject를 재사용해 내용만 비운다 (재생성 없음).
+	/// 층 수가 달라질 때만 gridSystemList를 새로 만든다.
 	/// </summary>
 	public void ResetGridSystems(int newFloorAmount)
 	{
-		floorAmount = newFloorAmount;
-		gridSystemList = new List<GridSystem<GridObject>>();
-		for (int i = 0; i < floorAmount; i++)
+		if (newFloorAmount == floorAmount && gridSystemList != null && gridSystemList.Count == floorAmount)
 		{
-			GridSystem<GridObject> item = new GridSystem<GridObject>(
-				width, height, cellSize, i, FLOOR_HEIGHT,
-				(GridSystem<GridObject> g, GridPosition p) => new GridObject(g, p));
-			gridSystemList.Add(item);
+			// 층 수 동일 — 셀 내용만 초기화 (GridObject 재생성 없음)
+			foreach (GridSystem<GridObject> gridSystem in gridSystemList)
+			{
+				foreach (GridObject gridObject in gridSystem.GetAllGridObjects())
+				{
+					gridObject.Clear();
+				}
+			}
+		}
+		else
+		{
+			// 층 수가 달라지는 경우에만 새로 생성
+			floorAmount = newFloorAmount;
+			gridSystemList = new List<GridSystem<GridObject>>();
+			for (int i = 0; i < floorAmount; i++)
+			{
+				GridSystem<GridObject> item = new GridSystem<GridObject>(
+					width, height, cellSize, i, FLOOR_HEIGHT,
+					(GridSystem<GridObject> g, GridPosition p) => new GridObject(g, p));
+				gridSystemList.Add(item);
+			}
 		}
 	}
 }

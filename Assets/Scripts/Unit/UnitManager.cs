@@ -28,10 +28,9 @@ public class UnitManager : MonoBehaviour
 		friendlyUnitList = new List<Unit>();
 		enemyUnitList = new List<Unit>();
 		neutralUnitList = new List<Unit>();
-	}
 
-	private void Start()
-	{
+		// Start()가 아닌 Awake()에서 구독 — Unit.Start()가 UnitManager.Start()보다
+		// 먼저 실행될 경우 이벤트를 놓치는 문제를 방지
 		Unit.OnAnyUnitSpawned += Unit_OnAnyUnitSpawned;
 		Unit.OnAnyUnitDead += Unit_OnAnyUnitDead;
 	}

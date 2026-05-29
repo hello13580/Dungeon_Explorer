@@ -30,6 +30,10 @@ public class EnemyTurnManager : MonoBehaviour
 		if (!TurnSystem.Instance.IsPlayerTurn())
 		{
 			currentUnit = TurnSystem.Instance.GetTurnUnit();
+
+			// currentUnit이 null이면 유효한 적 턴이 아님 (초기화 중 잘못된 이벤트 방지)
+			if (currentUnit == null) return;
+
 			state = State.EnemyTurn;
 			StartCoroutine(OnEnemyTurnRoutine());
 		}

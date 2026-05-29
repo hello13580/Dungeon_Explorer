@@ -13,8 +13,10 @@ public class TurnSystemUI : MonoBehaviour
 
 	private void Start()
 	{
-		UpdateTurnNumberText();
-		UpdateEndTurnButtonVisibility();
+		// 첫 OnTurnChanged 이벤트 전까지 표시하지 않음
+		// (Start 시점엔 isPlayerTurn=false, turnNumber=0이라 "Enemy Turn 0"이 잘못 표시되는 문제 방지)
+		turnNumberText.text = "";
+		endTurnButton.gameObject.SetActive(false);
 		endTurnButton.onClick.AddListener(() => TurnSystem.Instance.NextTurn());
 		TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
 	}

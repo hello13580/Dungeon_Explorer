@@ -15,4 +15,5 @@ public class MapSetup : MonoBehaviour
     [Header("패스파인딩 링크 컨테이너")]
     [Tooltip("계단·링크 오브젝트들의 부모 Transform. 없으면 PathFinding 링크 없이 Setup됨.")]
     public Transform pathfindingLinkContainer;
+
 }

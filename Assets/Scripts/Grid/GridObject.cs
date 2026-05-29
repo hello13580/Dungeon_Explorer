@@ -37,6 +37,13 @@ public class GridObject
 		unitList = new List<Unit>();
 	}
 
+	// 스테이지 전환 시 셀 내용만 초기화 (GridObject 자체는 재사용)
+	public void Clear()
+	{
+		unitList.Clear();
+		mapObject = null;
+	}
+
 	public override string ToString()
 	{
 		string text = "";

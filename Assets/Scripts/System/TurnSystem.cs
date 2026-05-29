@@ -146,7 +146,7 @@ public class TurnSystem : MonoBehaviour
 		turnNumber = 0;
 		lastIndex = 0;
 		currentTurnUnit = null;
-		isPlayerTurn = false;
+		isPlayerTurn = true; // false면 UI가 "Enemy Turn 0"을 잘못 표시하므로 true로 초기화
 	}
 
 	/// <summary>
