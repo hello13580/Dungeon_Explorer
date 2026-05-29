@@ -66,6 +66,15 @@ public class PathFinding : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// 스테이지 전환 시 새 맵의 PathfindingLinkContainer로 교체한다.
+	/// Setup() 호출 전에 실행해야 한다.
+	/// </summary>
+	public void SetPathfindingLinkContainer(Transform container)
+	{
+		PathfindingLinkContainer = container;
+	}
+
 	public void Setup(int width, int height, float cellsize, int floorAmount)
 	{
 		this.width = width;

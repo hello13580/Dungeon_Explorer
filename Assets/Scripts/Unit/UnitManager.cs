@@ -96,4 +96,27 @@ public class UnitManager : MonoBehaviour
 	{
 		unitList.RemoveAt(i);
 	}
+
+	/// <summary>
+	/// 스테이지 전환 시 호출. 모든 유닛 GameObject를 파괴하고 리스트를 비운다.
+	/// 리스트 객체 자체는 재할당하지 않는다 — TurnSystem이 같은 리스트 참조를 유지해야 하기 때문.
+	/// </summary>
+	public void ClearAllUnits()
+	{
+		// 파괴 대상을 먼저 복사 (Destroy 도중 리스트 변경 방지)
+		List<Unit> unitsToDestroy = new List<Unit>(unitList);
+
+		// 리스트 내용만 비움 (참조 객체는 유지)
+		unitList.Clear();
+		friendlyUnitList.Clear();
+		enemyUnitList.Clear();
+		neutralUnitList.Clear();
+
+		// GameObject 파괴 (HealthSystem 사망 이벤트 체인을 타지 않도록 직접 Destroy)
+		foreach (Unit unit in unitsToDestroy)
+		{
+			if (unit != null)
+				Destroy(unit.gameObject);
+		}
+	}
 }

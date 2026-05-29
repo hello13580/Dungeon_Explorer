@@ -204,4 +204,21 @@ public class LevelGrid : MonoBehaviour
 	{
 		return cellSize;
 	}
+
+	/// <summary>
+	/// 스테이지 전환 시 호출. 그리드 데이터를 새로 생성한다.
+	/// PathFinding.Setup()은 맵 프리팹 인스턴시에이트 이후 StageManager가 별도로 호출한다.
+	/// </summary>
+	public void ResetGridSystems(int newFloorAmount)
+	{
+		floorAmount = newFloorAmount;
+		gridSystemList = new List<GridSystem<GridObject>>();
+		for (int i = 0; i < floorAmount; i++)
+		{
+			GridSystem<GridObject> item = new GridSystem<GridObject>(
+				width, height, cellSize, i, FLOOR_HEIGHT,
+				(GridSystem<GridObject> g, GridPosition p) => new GridObject(g, p));
+			gridSystemList.Add(item);
+		}
+	}
 }

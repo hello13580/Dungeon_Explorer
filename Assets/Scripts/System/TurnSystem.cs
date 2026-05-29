@@ -51,8 +51,14 @@ public class TurnSystem : MonoBehaviour
 		Unit.OnAnyUnitDead += Unit_OnAnyUnitDead;
 		unitList = UnitManager.Instance.GetUnitList();
 		enemyUnitList = UnitManager.Instance.GetEnemyUnitList();
-		unitList.Sort((Unit a, Unit b) => b.GetCurrentSpeed().CompareTo(a.GetCurrentSpeed()));
-		NextTurn();
+
+		// StageManager가 있으면 초기 턴 시작을 StageManager에 위임
+		// 없으면 씬에 직접 배치된 유닛으로 바로 시작
+		if (StageManager.Instance == null && unitList.Count > 0)
+		{
+			unitList.Sort((Unit a, Unit b) => b.GetCurrentSpeed().CompareTo(a.GetCurrentSpeed()));
+			NextTurn();
+		}
 	}
 
 	private void StartTurn()
@@ -130,5 +136,26 @@ public class TurnSystem : MonoBehaviour
 		{
 			NextTurn();
 		}
+	}
+
+	/// <summary>
+	/// 스테이지 전환 시 호출. 턴 카운터와 내부 상태를 초기화한다.
+	/// </summary>
+	public void ResetTurn()
+	{
+		turnNumber = 0;
+		lastIndex = 0;
+		currentTurnUnit = null;
+		isPlayerTurn = false;
+	}
+
+	/// <summary>
+	/// StageManager가 유닛 스폰을 마친 뒤 호출. 유닛 목록을 정렬하고 첫 턴을 시작한다.
+	/// </summary>
+	public void StartStage()
+	{
+		// unitList는 UnitManager와 동일한 참조 — 새로 스폰된 유닛들이 이미 들어있음
+		unitList.Sort((Unit a, Unit b) => b.GetCurrentSpeed().CompareTo(a.GetCurrentSpeed()));
+		NextTurn();
 	}
 }
