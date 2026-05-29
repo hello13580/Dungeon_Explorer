@@ -150,6 +150,8 @@ public class StageManager : MonoBehaviour
         // SetStageStart는 transform 설정과 동시에 initialAngle도 갱신 →
         // 리셋키 입력 시 이 스테이지의 시작 각도로 올바르게 복귀함
         CameraController.Instance.SetStageStart(stageData.cameraStartPosition, stageData.cameraStartRotation);
+        // 스테이지별 카메라 이동 가능 범위 설정
+        CameraController.Instance.SetBounds(stageData.cameraBoundsMin, stageData.cameraBoundsMax);
 
         // ── 9. 그리드 비주얼 재생성
         // PathFinding.Setup() 이후에 호출해야 바닥 콜라이더가 씬에 존재 →

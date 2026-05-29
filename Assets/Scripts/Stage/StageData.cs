@@ -25,6 +25,12 @@ public class StageData : ScriptableObject
     // 씬에서 CameraController를 원하는 방향으로 돌리고 Inspector Rotation 값을 복사해서 입력
     [Tooltip("스테이지 시작 시 CameraController의 월드 로테이션 (오일러각)")]
     public Vector3 cameraStartRotation;
+    // 카메라 이동 가능 범위 (XZ 평면 기준 최솟값·최댓값)
+    // X = 월드 X축 범위, Y = 월드 Z축 범위
+    [Tooltip("카메라가 이동할 수 있는 XZ 범위의 최솟값 (X=월드X, Y=월드Z)")]
+    public Vector2 cameraBoundsMin;
+    [Tooltip("카메라가 이동할 수 있는 XZ 범위의 최댓값 (X=월드X, Y=월드Z)")]
+    public Vector2 cameraBoundsMax;
 
     [Header("라이팅")]
     // 씬의 Directional Light Intensity 값 — 낮/밤/실내 분위기 연출에 사용

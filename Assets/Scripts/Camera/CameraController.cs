@@ -23,6 +23,12 @@ public class CameraController : MonoBehaviour
     private Vector3 initialAngle;
     private float zoomVelocity;
 
+    // 카메라 이동 가능 범위 (XZ 평면)
+    // SetBounds()로 설정하며, hasBounds가 false이면 범위 제한 없음
+    private Vector2 boundsMin;
+    private Vector2 boundsMax;
+    private bool hasBounds = false;
+
     public static CameraController Instance { get; private set; }
 
     private void Awake()
@@ -69,11 +75,19 @@ public class CameraController : MonoBehaviour
     private void HandleCameraMove()
     {
         Vector2 inputMoveVector = InputManager.Instance.GetCameraMoveVector();
-        
-        // ī�޶��� ����� ���� ������ �������� �̵� (Y�� ���� ����)
+
+        // 카메라가 바라보는 방향 기준으로 이동 (Y축 성분은 무시)
         Vector3 moveDir = transform.forward * inputMoveVector.y + transform.right * inputMoveVector.x;
-        
         transform.position += moveDir * moveSpeed * Time.deltaTime;
+
+        // 이동 범위 제한 — hasBounds가 true일 때만 XZ를 클램프
+        if (hasBounds)
+        {
+            Vector3 pos = transform.position;
+            pos.x = Mathf.Clamp(pos.x, boundsMin.x, boundsMax.x);
+            pos.z = Mathf.Clamp(pos.z, boundsMin.y, boundsMax.y);
+            transform.position = pos;
+        }
     }
 
     private void HandleCameraRotate()
@@ -120,13 +134,24 @@ public class CameraController : MonoBehaviour
     /// 스테이지 시작 시 StageManager에서 호출.
     /// 카메라 위치·방향을 설정하고 initialAngle도 함께 갱신한다.
     ///
-    /// initialAngle만 갱신하지 않으면 리셋키(HandleReturnToInitial)를 눌렀을 때
+    /// initialAngle을 갱신하지 않으면 리셋키(HandleReturnToInitial)를 눌렀을 때
     /// 이전 스테이지나 씬 초기 각도로 돌아가는 버그가 생긴다.
     /// </summary>
     public void SetStageStart(Vector3 position, Vector3 rotation)
     {
-        transform.position  = position;
+        transform.position    = position;
         transform.eulerAngles = rotation;
-        initialAngle        = rotation; // 리셋키 기준 각도도 이 스테이지 시작 각도로 교체
+        initialAngle          = rotation; // 리셋키 기준 각도도 이 스테이지 시작 각도로 교체
+    }
+
+    /// <summary>
+    /// 카메라 이동 가능 범위를 설정한다. StageManager에서 스테이지 로드 시 호출.
+    /// min·max 모두 Vector2(월드X, 월드Z) 형식.
+    /// </summary>
+    public void SetBounds(Vector2 min, Vector2 max)
+    {
+        boundsMin = min;
+        boundsMax = max;
+        hasBounds = true;
     }
 }
