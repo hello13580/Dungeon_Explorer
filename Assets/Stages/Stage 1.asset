@@ -18,8 +18,14 @@ MonoBehaviour:
   mapSpawnPosition: {x: 60, y: 0, z: 60}
   cameraStartPosition: {x: 70, y: 3, z: 50}
   cameraStartRotation: {x: 0, y: -40, z: 0}
+  cameraBoundsMin: {x: 30, y: 35}
+  cameraBoundsMax: {x: 75, y: 80}
   directionalLightIntensity: 0.25
-  enemySpawnInfos: []
+  enemySpawnInfos:
+  - unitPrefab: {fileID: 979890781461446910, guid: 30ee87877c5b0d24bb480b20a440bf83, type: 3}
+    spawnPointIndex: 0
+  - unitPrefab: {fileID: 979890781461446910, guid: 30ee87877c5b0d24bb480b20a440bf83, type: 3}
+    spawnPointIndex: 1
   playerSpawnInfos:
   - unitPrefab: {fileID: 6482590293035414360, guid: d62549445a4e15641b42d1b09bcc8666, type: 3}
     spawnPointIndex: 0
