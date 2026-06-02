@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BarrierSystem : MonoBehaviour
 {
+
+    private HealthSystem healthSystem;
     private class BarrierEntry
     {
         public int amount;
@@ -24,6 +26,7 @@ public class BarrierSystem : MonoBehaviour
     private void Start()
     {
         TurnSystem.Instance.OnTurnChanged += OnTurnChanged;
+        healthSystem = GetComponent<HealthSystem>();
     }
 
     private void OnDestroy()
@@ -83,5 +86,10 @@ public class BarrierSystem : MonoBehaviour
         int total = 0;
         foreach (var b in barriers) total += b.amount;
         return total;
+    }
+
+    public float GetBarrierNormalized()
+    {
+        return (float)GetTotalBarrierAmount() / (float)healthSystem.GetMaxHealth();
     }
 }
