@@ -40,6 +40,17 @@ public class UnitAnimator : MonoBehaviour
         {
 			healAction.OnHeal += healAction_OnHeal;
         }
+
+        if (TryGetComponent<BarrierAction>(out var barrierAction))
+        {
+            barrierAction.OnBarrier += BarrierAction_OnBarrier;
+        }
+    }
+
+    private void BarrierAction_OnBarrier(object sender, BarrierAction.OnBarrierEventArgs e)
+    {
+		unitAnimator.SetTrigger("isBarriering");
+		Debug.Log("배리어 실행");
     }
 
     private void healAction_OnHeal(object sender, HealAction.OnHealEventArgs e)

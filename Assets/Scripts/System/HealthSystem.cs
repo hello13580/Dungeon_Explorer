@@ -10,6 +10,7 @@ public class HealthSystem : MonoBehaviour
 	private int currentHealth;
 
 	private ShootAction shootAction;
+	private BarrierSystem barrierSystem;
 
 	public event EventHandler OnUnitDeath;
 
@@ -18,11 +19,17 @@ public class HealthSystem : MonoBehaviour
 	private void Awake()
 	{
 		shootAction = GetComponent<ShootAction>();
+		barrierSystem = GetComponent<BarrierSystem>();
 		currentHealth = maxHealth;
 	}
 
 	public void Damage(int damageAmount)
 	{
+		if (barrierSystem != null && barrierSystem.HasBarrier())
+			damageAmount = barrierSystem.AbsorbDamage(damageAmount);
+
+		if (damageAmount <= 0) return;
+
 		currentHealth -= damageAmount;
 		if (currentHealth < 0)
 		{

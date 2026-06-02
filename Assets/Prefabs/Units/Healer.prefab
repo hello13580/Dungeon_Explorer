@@ -521,6 +521,7 @@ GameObject:
   - component: {fileID: 4801007853815582824}
   - component: {fileID: -5454886897658924754}
   - component: {fileID: 5007407375290905714}
+  - component: {fileID: -4001908360079618192}
   m_Layer: 3
   m_Name: Healer
   m_TagString: Untagged
@@ -694,6 +695,25 @@ MonoBehaviour:
   actionCost: 0
   maxHealDistance: 5
   healAmount: 40
+  obstacleLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+--- !u!114 &-4001908360079618192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8531198773615253123}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7da039c5aa320e94fbb361dc915dd918, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BarrierAction
+  actionCost: 0
+  maxBarrierDistance: 5
+  BarrierAmount: 40
+  BarrierDuration: 3
   obstacleLayerMask:
     serializedVersion: 2
     m_Bits: 128
