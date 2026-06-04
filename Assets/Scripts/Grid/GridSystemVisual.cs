@@ -278,6 +278,8 @@ public class GridSystemVisual : MonoBehaviour
             InteractAction => GridVisualType.Green,
             HealAction => GridVisualType.Green,
             BarrierAction => GridVisualType.Green,
+            TeleportAction => GridVisualType.Green,
+            WindBlastAction => GridVisualType.Green,
             _ => GridVisualType.White,
         };
     }

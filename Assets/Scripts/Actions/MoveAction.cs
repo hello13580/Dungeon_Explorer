@@ -30,6 +30,7 @@ public class MoveAction : BaseAction
     private ShootAction _cachedShootAction;
     private List<GridPosition> cachedValidGridPositionList;
     private bool isCacheDirty = true;
+    private GridPosition cachedFromPosition;
 
     public event EventHandler OnStartMoving;
     public event EventHandler OnStopMoving;
@@ -199,9 +200,9 @@ public class MoveAction : BaseAction
 
     public override List<GridPosition> GetValidActionGridPositionList()
     {
-        if (!isCacheDirty && cachedValidGridPositionList != null) return cachedValidGridPositionList;
-
         GridPosition unitGridPosition = unit.GetGridPosition();
+        if (!isCacheDirty && cachedValidGridPositionList != null && cachedFromPosition == unitGridPosition)
+            return cachedValidGridPositionList;
         int unitSize = unit.GetSize();
         // PathFinding 비용 단위로 변환 (직선 1칸 = 10, 대각선 1칸 = 14)
         int maxCost = Mathf.RoundToInt(leftMoveDistance * 10f);
@@ -249,6 +250,7 @@ public class MoveAction : BaseAction
         }
 
         cachedValidGridPositionList = validGridPositionList;
+        cachedFromPosition = unitGridPosition;
         isCacheDirty = false;
         return validGridPositionList;
     }
