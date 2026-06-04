@@ -20,6 +20,12 @@ public class UnitWorldUI : MonoBehaviour
 	[SerializeField]
 	private BarrierSystem barrierSystem;
 
+	[SerializeField]
+	private ManaSystem manaSystem;
+
+	[SerializeField]
+	private Image manaBarImage;
+
     [SerializeField]
 	private Unit unit;
 
@@ -31,15 +37,22 @@ public class UnitWorldUI : MonoBehaviour
 		if (barrierSystem != null)
 			barrierSystem.OnBarrierChanged += BarrierSystem_OnBarrierChanged;
 
+		if (manaSystem != null)
+			manaSystem.OnManaChanged += ManaSystem_OnManaChanged;
+
 		UpdateActionPointText();
 		UpdateHealthBar();
 		UpdateBarrierBar();
+		UpdateManaBar();
 	}
 
 	private void OnDestroy()
 	{
 		if (barrierSystem != null)
 			barrierSystem.OnBarrierChanged -= BarrierSystem_OnBarrierChanged;
+
+		if (manaSystem != null)
+			manaSystem.OnManaChanged -= ManaSystem_OnManaChanged;
 	}
 
 	private void UpdateActionPointText()
@@ -81,5 +94,21 @@ public class UnitWorldUI : MonoBehaviour
 	private void BarrierSystem_OnBarrierChanged(object sender, EventArgs e)
 	{
 		UpdateBarrierBar();
+	}
+
+	private void UpdateManaBar()
+	{
+		if (manaBarImage == null) return;
+		if (manaSystem == null)
+		{
+			manaBarImage.fillAmount = 0f;
+			return;
+		}
+		manaBarImage.fillAmount = manaSystem.GetManaNormalized();
+	}
+
+	private void ManaSystem_OnManaChanged(object sender, EventArgs e)
+	{
+		UpdateManaBar();
 	}
 }

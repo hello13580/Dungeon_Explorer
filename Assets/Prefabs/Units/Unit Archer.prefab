@@ -293,6 +293,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BowAction
   actionCost: 0
+  manaCost: 10
   maxShootDistance: 7
   shootDamage: 10
   ArrowProjectilePrefab: {fileID: 8288394526744401144, guid: 5227d29478847f44faf93cfb0450f0a2, type: 3}
@@ -314,6 +315,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AOEAction
   actionCost: 0
+  manaCost: 10
   grenadeProjectilePrefab: {fileID: 627709876669706913, guid: e63eaddc83a11894e89299f2b5b19d92, type: 3}
   shootPointTransform: {fileID: 4486312566150377040}
   obstacleLayerMask:

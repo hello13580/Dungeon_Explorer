@@ -176,6 +176,7 @@ public class GridSystemVisual : MonoBehaviour
         }
         ShowGridPositionListInstant(selectedAction.GetActionRangeGridPositionList(), GridVisualType.White);
         ShowGridPositionListInstant(selectedAction.GetValidActionGridPositionList(), GetGridVisualTypeForAction(selectedAction));
+        ShowGridPositionListInstant(selectedAction.GetSecondaryHighlightGridPositionList(), selectedAction.GetSecondaryHighlightColor());
         GridPosition gridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
         if (selectedAction.IsValidActionGridPosition(gridPosition))
         {
@@ -280,6 +281,9 @@ public class GridSystemVisual : MonoBehaviour
             BarrierAction => GridVisualType.Green,
             TeleportAction => GridVisualType.Green,
             WindBlastAction => GridVisualType.Green,
+            TauntAction => GridVisualType.Yellow,
+            PersistentAOEAction => GridVisualType.Green,
+            IceOrbAction => GridVisualType.Green,
             _ => GridVisualType.White,
         };
     }

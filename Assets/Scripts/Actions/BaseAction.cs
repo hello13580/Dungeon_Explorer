@@ -11,6 +11,9 @@ public abstract class BaseAction : MonoBehaviour
 	[SerializeField]
 	protected int actionCost;
 
+	[SerializeField]
+	protected int manaCost = 0;
+
 	public static event EventHandler OnAnyActionStarted;
 
 	public static event EventHandler OnAnyActionEnded;
@@ -49,15 +52,27 @@ public abstract class BaseAction : MonoBehaviour
 		return GetValidActionGridPositionList();
 	}
 
+	/// <summary>
+	/// 두 번째 색상으로 표시할 타일 목록. 기본값은 빈 리스트.
+	/// GridSystemVisual에서 GetSecondaryHighlightColor()로 지정한 색상으로 그려진다.
+	/// </summary>
+	public virtual List<GridPosition> GetSecondaryHighlightGridPositionList()
+	{
+		return new List<GridPosition>();
+	}
+
+	public virtual GridSystemVisual.GridVisualType GetSecondaryHighlightColor()
+	{
+		return GridSystemVisual.GridVisualType.Yellow;
+	}
+
 	public Unit GetUnit()
 	{
 		return unit;
 	}
 
-	public int GetActionPointCost()
-	{
-		return actionCost;
-	}
+	public int GetActionPointCost() => actionCost;
+	public int GetManaCost() => manaCost;
 
 	protected void ActionStart(Action onActionComplete)
 	{
@@ -80,6 +95,15 @@ public abstract class BaseAction : MonoBehaviour
 			EnemyAIAction enemyAIAction = GetEnemyAIAction(validActionGridPosition);
 			if (enemyAIAction != null)
 			{
+				// 도발 중인 유닛이 있으면 그 위치를 타겟으로 하는 액션에 압도적인 보너스
+				if (TauntManager.Instance != null && TauntManager.Instance.HasActiveTaunt())
+				{
+					Unit taunted = TauntManager.Instance.GetTauntedUnit();
+					if (taunted != null && enemyAIAction.gridPosition == taunted.GetGridPosition())
+						enemyAIAction.actionValue += 500;
+					else
+						enemyAIAction.actionValue -= 200;
+				}
 				list.Add(enemyAIAction);
 			}
 		}

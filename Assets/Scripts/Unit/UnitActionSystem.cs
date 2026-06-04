@@ -97,7 +97,8 @@ public class UnitActionSystem : MonoBehaviour
         // ���� ����: �� �����ΰ�? + �� ���ΰ�? + ��Ÿ� ���ΰ�? + ����Ʈ�� ����Ѱ�?
         if (selectedUnit.GetTeamType() == TeamType.Player &&
             IsSelectedUnitTurn() &&
-            selectedAction.IsValidActionGridPosition(targetGridPosition))
+            selectedAction.IsValidActionGridPosition(targetGridPosition) &&
+            selectedUnit.CanTakeAction(selectedAction))
         {
             if (selectedUnit.SpendActionPoint(selectedAction))
             {

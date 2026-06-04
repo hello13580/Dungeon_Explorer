@@ -11,6 +11,7 @@ public class HealthSystem : MonoBehaviour
 
 	private ShootAction shootAction;
 	private BarrierSystem barrierSystem;
+	private StatusEffectSystem statusEffectSystem;
 
 	public event EventHandler OnUnitDeath;
 
@@ -20,11 +21,16 @@ public class HealthSystem : MonoBehaviour
 	{
 		shootAction = GetComponent<ShootAction>();
 		barrierSystem = GetComponent<BarrierSystem>();
+		statusEffectSystem = GetComponent<StatusEffectSystem>();
 		currentHealth = maxHealth;
 	}
 
 	public void Damage(int damageAmount)
 	{
+		// 피해 증폭 디버프 적용
+		if (statusEffectSystem != null)
+			damageAmount = Mathf.RoundToInt(damageAmount * statusEffectSystem.GetIncomingDamageMultiplier());
+
 		if (barrierSystem != null && barrierSystem.HasBarrier())
 			damageAmount = barrierSystem.AbsorbDamage(damageAmount);
 

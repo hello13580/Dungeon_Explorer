@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -64,7 +64,12 @@ public class MoveAction : BaseAction
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs empty)
     {
-        leftMoveDistance = maxMoveDistance;
+        float multiplier = 1f;
+        StatusEffectSystem statusEffectSystem = unit.GetComponent<StatusEffectSystem>();
+        if (statusEffectSystem != null)
+            multiplier = statusEffectSystem.GetMovementMultiplier();
+
+        leftMoveDistance = maxMoveDistance * multiplier;
         MarkCacheDirty();
     }
 
@@ -320,6 +325,20 @@ public class MoveAction : BaseAction
         }
 
         // 2. ������ �Ұ��������� �÷��̾�� �����ؾ� �ϴ°�?
+        // ?꾨컻 以묒씤 ?좊떅???덉쑝硫??대떦 ?좊떅?먭쾶 ?곗꽑 ?묎렐
+        if (TauntManager.Instance != null && TauntManager.Instance.HasActiveTaunt())
+        {
+            Unit taunted = TauntManager.Instance.GetTauntedUnit();
+            if (taunted != null)
+            {
+                int tauntPathLength = PathFinding.Instance.GetPathLength(gridPosition, taunted.GetGridPosition(), unit.GetSize());
+                if (tauntPathLength > 0 && tauntPathLength <= visionRange * 10f)
+                {
+                    int tauntProximity = 40 - (tauntPathLength / 10);
+                    return new EnemyAIAction { gridPosition = gridPosition, actionValue = Mathf.Clamp(tauntProximity + 200, 200, 240) };
+                }
+            }
+        }
         Unit closestPlayer = GetClosestPlayerByPath(gridPosition);
         if (closestPlayer != null)
         {

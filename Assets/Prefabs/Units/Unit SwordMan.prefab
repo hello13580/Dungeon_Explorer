@@ -115,6 +115,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5067843931317994958}
+    - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 376090050427871366}
     - targetCorrespondingSourceObject: {fileID: 7478389241422733539, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4048200313592570681}
@@ -137,10 +140,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeAction
   actionCost: 0
+  manaCost: 0
   maxRange: 1
   damage: 10
   hitForce: 500
   rotateSpeed: 30
+--- !u!114 &376090050427871366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 416177728078544639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6b82363d72ddb54199ea589e571518b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TauntAction
+  actionCost: 1
+  manaCost: 1
+  tauntRange: 10
+  tauntDuration: 2
+  tauntDelay: 0.3
 --- !u!1 &1471256514613463199 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7478389241422733539, guid: 31ff398b13221204abf58d215dd04293, type: 3}

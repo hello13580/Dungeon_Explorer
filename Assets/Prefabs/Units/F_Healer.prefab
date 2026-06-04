@@ -195,6 +195,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: F_Healer
       objectReference: {fileID: 0}
+    - target: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 7478389241422733539, guid: 31ff398b13221204abf58d215dd04293, type: 3}
@@ -218,6 +222,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3547905694337137316}
+    - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3285793247934937874}
   m_SourcePrefab: {fileID: 100100000, guid: 31ff398b13221204abf58d215dd04293, type: 3}
 --- !u!1 &3042818206337043987 stripped
 GameObject:
@@ -237,6 +244,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealAction
   actionCost: 0
+  manaCost: 0
   maxHealDistance: 5
   healAmount: 40
   obstacleLayerMask:
@@ -255,6 +263,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarrierAction
   actionCost: 0
+  manaCost: 0
   maxBarrierDistance: 5
   BarrierAmount: 40
   BarrierDuration: 3
@@ -274,6 +283,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeleportAction
   actionCost: 0
+  manaCost: 0
   teleportRange: 6
   teleportDelay: 0.15
 --- !u!114 &3547905694337137316
@@ -289,6 +299,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WindBlastAction
   actionCost: 0
+  manaCost: 0
   coneRange: 6
   coneAngle: 60
   pushDistance: 5
@@ -301,6 +312,30 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   rotateSpeed: 15
+--- !u!114 &3285793247934937874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3042818206337043987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7140370758363749a78725d3d97eb63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PersistentAOEAction
+  actionCost: 0
+  manaCost: 0
+  maxRange: 7
+  zoneRadius: 1
+  initialDamage: 15
+  tickDamage: 8
+  duration: 3
+  damageZonePrefab: {fileID: 170574552943811040, guid: 5a2bdfdfce731304fb3273064eb3d837, type: 3}
+  obstacleLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  targetingYAxis: 0.5
 --- !u!4 &5514658485211722722 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1213345925212744562, guid: 31ff398b13221204abf58d215dd04293, type: 3}

@@ -10,6 +10,8 @@ public class Unit : MonoBehaviour
 
 	private HealthSystem healthSystem;
 
+	private ManaSystem manaSystem;
+
 	private HitReactionSystem hitReactionSystem;
 
 	private List<BaseAction> baseActionList;
@@ -84,6 +86,7 @@ public class Unit : MonoBehaviour
 	private void Awake()
 	{
 		healthSystem = GetComponent<HealthSystem>();
+		manaSystem = GetComponent<ManaSystem>();
 		hitReactionSystem = GetComponent<HitReactionSystem>();
 		baseActionList = new List<BaseAction>(GetComponents<BaseAction>());
 		currentActionPoint = maxActionPoint;
@@ -165,23 +168,34 @@ public class Unit : MonoBehaviour
 
 	public bool CanSpendActionPointsToTakeAction(BaseAction baseAction)
 	{
-		if (currentActionPoint >= baseAction.GetActionPointCost())
-		{
-			return true;
-		}
-		return false;
+		return currentActionPoint >= baseAction.GetActionPointCost();
+	}
+
+	public bool CanSpendManaToTakeAction(BaseAction baseAction)
+	{
+		if (manaSystem == null) return true;
+		return manaSystem.CanSpendMana(baseAction.GetManaCost());
+	}
+
+	public bool CanTakeAction(BaseAction baseAction)
+	{
+		return CanSpendActionPointsToTakeAction(baseAction) && CanSpendManaToTakeAction(baseAction);
 	}
 
 	public bool SpendActionPoint(BaseAction baseAction)
 	{
-		if (CanSpendActionPointsToTakeAction(baseAction))
-		{
-			currentActionPoint -= baseAction.GetActionPointCost();
-			Unit.OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
-			return true;
-		}
-		return false;
+		if (!CanTakeAction(baseAction)) return false;
+
+		currentActionPoint -= baseAction.GetActionPointCost();
+		Unit.OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
+
+		if (manaSystem != null)
+			manaSystem.SpendMana(baseAction.GetManaCost());
+
+		return true;
 	}
+
+	public ManaSystem GetManaSystem() => manaSystem;
 
 	public int GetCurrentActionPoint()
 	{
@@ -194,6 +208,8 @@ public class Unit : MonoBehaviour
 		{
 			currentActionPoint = maxActionPoint;
 			Unit.OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
+
+			manaSystem?.RegenTurn();
 		}
 	}
 
