@@ -52,6 +52,7 @@ public class MoveAction : BaseAction
 
     private void OnDestroy()
     {
+        TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
         MapObject.OnAnyWalkableChanged -= MapObject_OnAnyWalkableChanged;
     }
 
@@ -64,6 +65,8 @@ public class MoveAction : BaseAction
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs empty)
     {
+        if (unit == null) return;
+
         float multiplier = 1f;
         StatusEffectSystem statusEffectSystem = unit.GetComponent<StatusEffectSystem>();
         if (statusEffectSystem != null)

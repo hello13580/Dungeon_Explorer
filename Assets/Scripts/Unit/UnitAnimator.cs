@@ -45,12 +45,33 @@ public class UnitAnimator : MonoBehaviour
         {
             barrierAction.OnBarrier += BarrierAction_OnBarrier;
         }
+
+        if (TryGetComponent<IceOrbAction>(out var iceOrbAction))
+        {
+            iceOrbAction.OnStartShooting += iceOrbAction_OnStartShooting;
+        }
+    }
+
+    private IceOrbAction iceOrbAction;
+
+    private void iceOrbAction_OnStartShooting(object sender, IceOrbAction.OnShootEventArgs e)
+    {
+        unitAnimator.SetTrigger("isIceOrb");
+    }
+
+    /// <summary>
+    /// 애니메이션 이벤트에서 직접 호출. 이 시점에 얼음 구체가 발사됨.
+    /// </summary>
+    public void FireIceOrb()
+    {
+        if (TryGetComponent<IceOrbAction>(out var action))
+            action.ShootOrb();
     }
 
     private void BarrierAction_OnBarrier(object sender, BarrierAction.OnBarrierEventArgs e)
     {
 		unitAnimator.SetTrigger("isBarriering");
-		Debug.Log("�踮�� ����");
+		Debug.Log("�踮�� ����");
     }
 
     private void healAction_OnHeal(object sender, HealAction.OnHealEventArgs e)

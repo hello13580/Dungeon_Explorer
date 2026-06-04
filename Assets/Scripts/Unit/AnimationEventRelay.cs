@@ -4,11 +4,13 @@ public class AnimationEventRelay : MonoBehaviour
 {
     private BowAction bowAction;
     private AOEAction aoeAction;
+    private IceOrbAction iceOrbAction;
 
     private void Awake()
     {
         bowAction = GetComponentInParent<BowAction>();
         aoeAction = GetComponentInParent<AOEAction>();
+        iceOrbAction = GetComponentInParent<IceOrbAction>();
     }
 
     public void ShootArrow()
@@ -20,5 +22,10 @@ public class AnimationEventRelay : MonoBehaviour
     {
         aoeAction?.ThrowGrenade();
     }
-    
+
+    public void ShootIceOrb()
+    {
+        iceOrbAction.ShootOrb();
+    }
+
 }

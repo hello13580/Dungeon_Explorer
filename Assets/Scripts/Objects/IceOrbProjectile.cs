@@ -1,77 +1,56 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 public class IceOrbProjectile : MonoBehaviour
 {
-    public class OnHitEventArgs : EventArgs
+    public class OnOrbHitEventArgs : EventArgs
     {
         public Vector3 hitPosition;
     }
 
     [SerializeField] private TrailRenderer trailRenderer;
     [SerializeField] private Transform hitVFXPrefab;
-    [SerializeField] private float projectileSpeed = 20f;
 
     private Vector3 targetPosition;
-    private Unit targetUnit;
-    private int damage;
-    private float slowValue;
-    private int slowDuration;
+    private float orbSpeed = 30f;
+    private bool hasHit = false;
+    private bool setupCalled = false;
 
-    public event EventHandler<OnHitEventArgs> OnHit;
+    public event EventHandler<OnOrbHitEventArgs> OnOrbHit;
 
-    public void Setup(Vector3 targetPosition, Unit targetUnit, int damage, float slowValue, int slowDuration)
+    public void Setup(Vector3 targetPosition)
     {
         this.targetPosition = targetPosition;
-        this.targetUnit = targetUnit;
-        this.damage = damage;
-        this.slowValue = slowValue;
-        this.slowDuration = slowDuration;
+        setupCalled = true;
     }
 
     private void Update()
     {
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition, projectileSpeed * Time.deltaTime);
+        if (hasHit) return;
+        if (!setupCalled) return;
+
+        transform.position = Vector3.MoveTowards(transform.position, targetPosition, orbSpeed * Time.deltaTime);
 
         if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
-            Hit();
-    }
-
-    private void Hit()
-    {
-        if (hitVFXPrefab != null)
-            Instantiate(hitVFXPrefab, targetPosition, Quaternion.identity);
-
-        if (targetUnit != null)
         {
-            // 피해
-            Vector3 hitDir = (targetUnit.GetWorldPosition() - transform.position).normalized;
-            targetUnit.GetHitReaction().SetHitDirection(hitDir);
-            targetUnit.GetHitReaction().SetHitForce(300f);
-            targetUnit.Damage(damage);
+            hasHit = true;
 
-            // 둔화 디버프 (ExtendDuration — 중복 적용 시 지속 턴 누적)
-            StatusEffectSystem ses = targetUnit.GetComponent<StatusEffectSystem>();
-            if (ses != null)
+            OnOrbHit?.Invoke(this, new OnOrbHitEventArgs { hitPosition = targetPosition });
+
+            if (hitVFXPrefab != null)
             {
-                ses.AddEffect(new StatusEffect(
-                    StatusEffectType.MovementReduce,
-                    slowValue,
-                    slowDuration,
-                    "둔화",
-                    StackingMode.ExtendDuration
-                ));
+                GameObject vfx = Instantiate(hitVFXPrefab, targetPosition, Quaternion.identity).gameObject;
+                Destroy(vfx, 3f);
             }
+
+            if (trailRenderer != null)
+            {
+                trailRenderer.transform.parent = null;
+                Destroy(trailRenderer.gameObject, trailRenderer.time);
+            }
+
+            Destroy(gameObject);
         }
-
-        OnHit?.Invoke(this, new OnHitEventArgs { hitPosition = targetPosition });
-
-        if (trailRenderer != null)
-        {
-            trailRenderer.transform.parent = null;
-            Destroy(trailRenderer.gameObject, trailRenderer.time);
-        }
-
-        Destroy(gameObject);
     }
 }
+
