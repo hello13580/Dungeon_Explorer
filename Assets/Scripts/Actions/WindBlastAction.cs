@@ -23,6 +23,9 @@ public class WindBlastAction : BaseAction
     [SerializeField] private int collisionDamage = 10;
     [SerializeField] private float hitForce = 800f;
 
+    [Header("Obstacle")]
+    [SerializeField] private LayerMask obstacleLayerMask;
+
     [Header("Timing")]
     [SerializeField] private float rotateSpeed = 15f;
 
@@ -30,6 +33,10 @@ public class WindBlastAction : BaseAction
     public event EventHandler OnWindBlastEnded;
 
     private GridPosition targetGridPosition;
+
+    // 마우스 방향 기준 부채꼴 캐시 — 시각화와 클릭 판정이 동일한 리스트를 참조하도록
+    private List<GridPosition> cachedConeList = new List<GridPosition>();
+    private GridPosition cachedConeMouseGrid = new GridPosition(-999, -999, 0);
 
     protected override void Awake()
     {
@@ -64,6 +71,18 @@ public class WindBlastAction : BaseAction
                 GridPosition pos = new GridPosition(origin.x + x, origin.z + z, origin.floor);
                 if (!LevelGrid.Instance.IsValidGridPosition(pos)) continue;
                 if (!PathFinding.Instance.IsWalkableGridPosition(pos)) continue;
+
+                // 장애물 시야 차단 체크 (ShootAction과 동일하게 유닛 콜라이더 높이 기준)
+                if (obstacleLayerMask != 0)
+                {
+                    float height = unit.GetCollider().bounds.size.y * 0.8f;
+                    Vector3 startPos = unit.GetWorldPosition() + Vector3.up * height;
+                    Vector3 endPos = LevelGrid.Instance.GetWorldPosition(pos) + Vector3.up * height;
+                    Vector3 dir = (endPos - startPos).normalized;
+                    float distance = Vector3.Distance(startPos, endPos);
+                    if (Physics.Raycast(startPos, dir, distance, obstacleLayerMask))
+                        continue;
+                }
 
                 list.Add(pos);
             }
@@ -106,17 +125,47 @@ public class WindBlastAction : BaseAction
         GridPosition unitPos = unit.GetGridPosition();
         GridPosition mouseGrid = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
 
-        // 마우스가 유닛 자신 위치거나 사거리 밖이면 빈 리스트 → 흰색 범위만 표시
-        if (mouseGrid == unitPos) return new List<GridPosition>();
-        if (!LevelGrid.Instance.IsValidGridPosition(mouseGrid)) return new List<GridPosition>();
-        if (!PathFinding.Instance.IsWalkableGridPosition(mouseGrid)) return new List<GridPosition>();
+        // 마우스가 유닛 자신 위치거나 사거리 밖/장애물이면 빈 리스트 → 흰색 범위만 표시
+        if (mouseGrid == unitPos
+            || !LevelGrid.Instance.IsValidGridPosition(mouseGrid)
+            || !PathFinding.Instance.IsWalkableGridPosition(mouseGrid))
+        {
+            cachedConeList = new List<GridPosition>();
+            cachedConeMouseGrid = mouseGrid;
+            return cachedConeList;
+        }
         float dist = Mathf.Sqrt(
             (mouseGrid.x - unitPos.x) * (mouseGrid.x - unitPos.x) +
             (mouseGrid.z - unitPos.z) * (mouseGrid.z - unitPos.z));
-        if (dist > coneRange) return new List<GridPosition>();
+        if (dist > coneRange)
+        {
+            cachedConeList = new List<GridPosition>();
+            cachedConeMouseGrid = mouseGrid;
+            return cachedConeList;
+        }
 
-        Vector2 aimDir = GetMouseAimDir();
-        return GetConeTiles(unitPos, aimDir);
+        // 마우스 그리드가 바뀌었을 때만 재계산
+        if (mouseGrid != cachedConeMouseGrid)
+        {
+            cachedConeList = GetConeTiles(unitPos, GetMouseAimDir());
+            cachedConeMouseGrid = mouseGrid;
+        }
+        return cachedConeList;
+    }
+
+    public override bool IsValidActionGridPosition(GridPosition gridPosition)
+    {
+        // 부채꼴에 효과를 줄 수 있는 타일이 하나라도 있으면,
+        // 사거리 내 어느 타일을 클릭해도 발동 허용
+        if (cachedConeList.Count > 0)
+        {
+            GridPosition unitPos = unit.GetGridPosition();
+            float dist = Mathf.Sqrt(
+                (gridPosition.x - unitPos.x) * (gridPosition.x - unitPos.x) +
+                (gridPosition.z - unitPos.z) * (gridPosition.z - unitPos.z));
+            return dist <= coneRange && LevelGrid.Instance.IsValidGridPosition(gridPosition);
+        }
+        return false;
     }
 
     /// 흰색으로 표시할 전방향 원형 최대 사거리
@@ -142,11 +191,10 @@ public class WindBlastAction : BaseAction
         return rangeList;
     }
 
-    /// 마우스 오버 시 빨간색으로 표시할 부채꼴 (클릭 타일 방향 기준)
+    /// 마우스 오버 시 빨간색으로 표시할 부채꼴 — 현재 녹색 타일과 동일한 캐시 반환
     public override List<GridPosition> GetDamageAffectedGridPosition(GridPosition targetPos)
     {
-        Vector2 aimDir = GetAimDir(unit.GetGridPosition(), targetPos);
-        return GetConeTiles(unit.GetGridPosition(), aimDir);
+        return cachedConeList;
     }
 
     // ─── 액션 실행 ─────────────────────────────────────────────────────

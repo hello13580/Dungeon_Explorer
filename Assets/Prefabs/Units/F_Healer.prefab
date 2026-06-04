@@ -289,15 +289,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WindBlastAction
   actionCost: 0
-  maxRange: 5
-  blastWidth: 4
-  blastHeight: 2
+  coneRange: 6
+  coneAngle: 60
   pushDistance: 5
   pushDuration: 0.35
   arcHeight: 1.2
   blastDamage: 30
   collisionDamage: 10
   hitForce: 800
+  obstacleLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
   rotateSpeed: 15
 --- !u!4 &5514658485211722722 stripped
 Transform:
