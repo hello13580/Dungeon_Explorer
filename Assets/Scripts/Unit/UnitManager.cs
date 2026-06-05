@@ -14,6 +14,11 @@ public class UnitManager : MonoBehaviour
 
 	public static UnitManager Instance { get; private set; }
 
+	/// <summary>적이 전멸하고 아군이 살아있을 때 발생. SkillUnlockManager가 구독한다.</summary>
+	public static event EventHandler OnStageClear;
+
+	private bool enemyEverSpawnedThisStage = false;
+
 	private void Awake()
 	{
 		if (Instance != null && Instance != this)
@@ -50,6 +55,7 @@ public class UnitManager : MonoBehaviour
 		else
 		{
 			enemyUnitList.Add(unit);
+			enemyEverSpawnedThisStage = true;
 		}
 	}
 
@@ -68,6 +74,13 @@ public class UnitManager : MonoBehaviour
 		else
 		{
 			enemyUnitList.Remove(unit);
+		}
+
+		// 적 전멸 + 아군 생존 → 스테이지 클리어
+		if (enemyEverSpawnedThisStage && enemyUnitList.Count == 0 && friendlyUnitList.Count > 0)
+		{
+			enemyEverSpawnedThisStage = false;
+			OnStageClear?.Invoke(this, EventArgs.Empty);
 		}
 	}
 
@@ -102,6 +115,7 @@ public class UnitManager : MonoBehaviour
 	/// </summary>
 	public void ClearAllUnits()
 	{
+		enemyEverSpawnedThisStage = false;
 		// 파괴 대상을 먼저 복사 (Destroy 도중 리스트 변경 방지)
 		List<Unit> unitsToDestroy = new List<Unit>(unitList);
 

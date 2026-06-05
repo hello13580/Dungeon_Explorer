@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class IceOrbProjectile : MonoBehaviour
@@ -49,8 +50,14 @@ public class IceOrbProjectile : MonoBehaviour
                 Destroy(trailRenderer.gameObject, trailRenderer.time);
             }
 
-            Destroy(gameObject);
+            StartCoroutine(DestroyAfterDelay(0.5f));
         }
+    }
+
+    private IEnumerator DestroyAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Destroy(gameObject);
     }
 }
 

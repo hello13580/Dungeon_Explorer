@@ -5,12 +5,14 @@ public class AnimationEventRelay : MonoBehaviour
     private BowAction bowAction;
     private AOEAction aoeAction;
     private IceOrbAction iceOrbAction;
+    private PersistentAOEAction persistentAOEAction;
 
     private void Awake()
     {
         bowAction = GetComponentInParent<BowAction>();
         aoeAction = GetComponentInParent<AOEAction>();
         iceOrbAction = GetComponentInParent<IceOrbAction>();
+        persistentAOEAction = GetComponentInParent<PersistentAOEAction>();
     }
 
     public void ShootArrow()
@@ -26,6 +28,11 @@ public class AnimationEventRelay : MonoBehaviour
     public void ShootIceOrb()
     {
         iceOrbAction.ShootOrb();
+    }
+
+    public void SpawnFireZone()
+    {
+        persistentAOEAction?.SpawnZoneFromAnimation();
     }
 
 }

@@ -50,6 +50,16 @@ public class UnitAnimator : MonoBehaviour
         {
             iceOrbAction.OnStartShooting += iceOrbAction_OnStartShooting;
         }
+
+        if (TryGetComponent<PersistentAOEAction>(out var persistentAOEAction))
+        {
+            persistentAOEAction.OnCastStarted += PersistentAOEAction_OnCastStarted;
+        }
+
+        if (TryGetComponent<TeleportAction>(out var teleportAction))
+        {
+            teleportAction.OnTeleportCompleted += TeleportAction_OnTeleportCompleted;
+        }
     }
 
     private IceOrbAction iceOrbAction;
@@ -66,6 +76,25 @@ public class UnitAnimator : MonoBehaviour
     {
         if (TryGetComponent<IceOrbAction>(out var action))
             action.ShootOrb();
+    }
+
+    private void TeleportAction_OnTeleportCompleted(object sender, GridPosition e)
+    {
+        unitAnimator.SetTrigger("isTeleport");
+    }
+
+    private void PersistentAOEAction_OnCastStarted(object sender, EventArgs e)
+    {
+        unitAnimator.SetTrigger("isFireZone");
+    }
+
+    /// <summary>
+    /// 애니메이션 이벤트에서 직접 호출. 이 시점에 불꽃 장판이 생성됨.
+    /// </summary>
+    public void SpawnFireZone()
+    {
+        if (TryGetComponent<PersistentAOEAction>(out var action))
+            action.SpawnZoneFromAnimation();
     }
 
     private void BarrierAction_OnBarrier(object sender, BarrierAction.OnBarrierEventArgs e)

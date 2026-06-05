@@ -549,7 +549,7 @@ MonoBehaviour:
   actionCost: 0
   manaCost: 0
   teleportRange: 6
-  teleportDelay: 0.15
+  teleportDelay: 0.25
 --- !u!114 &3547905694337137316
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -600,6 +600,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   targetingYAxis: 0.5
+  castVFXPrefab: {fileID: 2515834450128478824, guid: 5f094022207b61046ac906d6265aa177, type: 3}
+  castVFXSpawnPoint: {fileID: 4086070362036521838}
+  castVFXHideDelay: 1.5
 --- !u!114 &1462654360584993284
 MonoBehaviour:
   m_ObjectHideFlags: 0

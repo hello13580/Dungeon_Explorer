@@ -42,6 +42,9 @@ public class Unit : MonoBehaviour
 
 	private bool isStealthed;
 
+	[Header("스킬 설정")]
+	[SerializeField] private UnitSkillConfig skillConfig;
+
 	// Y 스냅: 경사로처럼 높이가 다른 지형 위에 서있을 때 발밑 지면에 시각적으로 붙이기 위한 설정
 	[SerializeField] private LayerMask groundSnapLayerMask;
 	// 스냅 보간 속도 — 값이 클수록 빠르게 붙음
@@ -88,7 +91,15 @@ public class Unit : MonoBehaviour
 		healthSystem = GetComponent<HealthSystem>();
 		manaSystem = GetComponent<ManaSystem>();
 		hitReactionSystem = GetComponent<HitReactionSystem>();
-		baseActionList = new List<BaseAction>(GetComponents<BaseAction>());
+
+		// 활성화된 컴포넌트만 기본 스킬로 등록 — 비활성은 나중에 보상으로 습득
+		baseActionList = new List<BaseAction>();
+		foreach (BaseAction action in GetComponents<BaseAction>())
+		{
+			if (action.enabled)
+				baseActionList.Add(action);
+		}
+
 		currentActionPoint = maxActionPoint;
 		currentSpeed = initialSpeed;
 		actionGauge = 0f;
@@ -104,7 +115,59 @@ public class Unit : MonoBehaviour
 		LevelGrid.Instance.AddUnitAtGridPosition(savedPosition, this);
 		TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
 		healthSystem.OnUnitDeath += HealthSystem_OnUnitDeath;
+		ApplyLearnedSkills();
 		Unit.OnAnyUnitSpawned?.Invoke(this, EventArgs.Empty);
+	}
+
+	public UnitSkillConfig GetSkillConfig() => skillConfig;
+
+	/// <summary>
+	/// actionTypeName에 해당하는 비활성 컴포넌트를 찾아 활성화하고 액션 목록에 등록한다.
+	/// SkillUnlockManager와 ApplyLearnedSkills에서 호출된다.
+	/// </summary>
+	public bool UnlockSkillByTypeName(string actionTypeName)
+	{
+		System.Type type = FindActionType(actionTypeName);
+		if (type == null)
+		{
+			Debug.LogWarning($"[Unit] 타입 '{actionTypeName}'을 찾을 수 없습니다.");
+			return false;
+		}
+
+		BaseAction action = (BaseAction)GetComponent(type);
+		if (action == null)
+		{
+			Debug.LogWarning($"[Unit] {name}에 {actionTypeName} 컴포넌트가 없습니다. 프리팹에 비활성 상태로 부착되어 있어야 합니다.");
+			return false;
+		}
+
+		if (action.enabled) return false; // 이미 활성화됨
+
+		action.enabled = true;
+		baseActionList.Add(action);
+		OnAnySkillsChanged?.Invoke(this, EventArgs.Empty);
+		return true;
+	}
+
+	private void ApplyLearnedSkills()
+	{
+		if (skillConfig == null || PartySkillData.Instance == null) return;
+
+		foreach (SkillDefinition skillDef in skillConfig.learnableSkills)
+		{
+			if (PartySkillData.Instance.IsLearned(skillConfig.unitClassId, skillDef.actionTypeName))
+				UnlockSkillByTypeName(skillDef.actionTypeName);
+		}
+	}
+
+	private static System.Type FindActionType(string typeName)
+	{
+		foreach (System.Reflection.Assembly assembly in System.AppDomain.CurrentDomain.GetAssemblies())
+		{
+			System.Type type = assembly.GetType(typeName);
+			if (type != null) return type;
+		}
+		return null;
 	}
 
 	public T GetAction<T>() where T : BaseAction

@@ -25,11 +25,20 @@ public class PersistentAOEAction : BaseAction
     [SerializeField] private LayerMask obstacleLayerMask;
     [SerializeField] private float targetingYAxis = 0.5f;
 
+    [Header("Cast VFX")]
+    [SerializeField] private Transform castVFXPrefab;
+    [SerializeField] private Transform castVFXSpawnPoint;
+    [SerializeField] private float castVFXHideDelay = 1.5f;
+
     public event EventHandler OnCastStarted;
 
     // 유효 위치 캐시
     private List<GridPosition> cachedValidList;
     private bool isCacheDirty = true;
+
+    private GridPosition pendingTargetPosition;
+    private bool zoneSpawned = false;
+    private GameObject activeCastVFX;
 
     protected override void Awake()
     {
@@ -41,6 +50,48 @@ public class PersistentAOEAction : BaseAction
     {
         TurnSystem.Instance.OnTurnChanged += (s, e) => isCacheDirty = true;
         BaseAction.OnAnyActionEnded += (s, e) => isCacheDirty = true;
+        UnitActionSystem.Instance.OnSelectedActionChanged += OnSelectedActionChanged;
+    }
+
+    private void OnDestroy()
+    {
+        if (UnitActionSystem.Instance != null)
+            UnitActionSystem.Instance.OnSelectedActionChanged -= OnSelectedActionChanged;
+        HideCastVFX();
+    }
+
+    private void OnSelectedActionChanged(object sender, BaseAction selectedAction)
+    {
+        if (selectedAction == this)
+            ShowCastVFX();
+        else
+            HideCastVFX();
+    }
+
+    private void ShowCastVFX()
+    {
+        if (castVFXPrefab == null || activeCastVFX != null) return;
+        Transform spawnPoint = castVFXSpawnPoint != null ? castVFXSpawnPoint : unit.transform;
+        activeCastVFX = Instantiate(castVFXPrefab, spawnPoint.position, spawnPoint.rotation, spawnPoint).gameObject;
+    }
+
+    private void HideCastVFX()
+    {
+        if (activeCastVFX == null) return;
+        Destroy(activeCastVFX);
+        activeCastVFX = null;
+    }
+
+    private void HideCastVFXDelayed()
+    {
+        if (activeCastVFX == null) return;
+        StartCoroutine(HideCastVFXRoutine());
+    }
+
+    private IEnumerator HideCastVFXRoutine()
+    {
+        yield return new WaitForSeconds(castVFXHideDelay);
+        HideCastVFX();
     }
 
     public override string GetActionName() => "Zone";
@@ -120,8 +171,18 @@ public class PersistentAOEAction : BaseAction
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
+        pendingTargetPosition = gridPosition;
+        zoneSpawned = false;
+        HideCastVFXDelayed();
         ActionStart(onActionComplete);
         StartCoroutine(CastRoutine(gridPosition));
+    }
+
+    /// <summary>애니메이션 이벤트에서 AnimationEventRelay.SpawnFireZone()을 통해 호출됨.</summary>
+    public void SpawnZoneFromAnimation()
+    {
+        SpawnZone(pendingTargetPosition);
+        zoneSpawned = true;
     }
 
     private IEnumerator CastRoutine(GridPosition targetGridPosition)
@@ -148,8 +209,10 @@ public class PersistentAOEAction : BaseAction
 
         OnCastStarted?.Invoke(this, EventArgs.Empty);
 
-        SpawnZone(targetGridPosition);
+        // 애니메이션 이벤트(SpawnFireZone)가 SpawnZoneFromAnimation()을 호출할 때까지 대기
+        yield return new WaitUntil(() => zoneSpawned);
 
+        yield return new WaitForSeconds(0.3f);
         ActionComplete();
     }
 
