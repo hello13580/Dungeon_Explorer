@@ -17,18 +17,20 @@ public class SkillCardUI : MonoBehaviour
     {
         this.option = option;
 
-        skillNameText.text = option.skillDef.skillName;
-        descriptionText.text = option.skillDef.description;
-        unitClassText.text = option.unitClassId;
+        if (skillNameText != null)  skillNameText.text  = option.skillDef.skillName;
+        if (descriptionText != null) descriptionText.text = option.skillDef.description;
+        if (unitClassText != null)  unitClassText.text  = option.unitClassId;
 
-        if (iconImage != null)
+        if (iconImage != null && option.skillDef.icon != null)
         {
             iconImage.sprite = option.skillDef.icon;
-            iconImage.enabled = option.skillDef.icon != null;
         }
 
-        selectButton.onClick.RemoveAllListeners();
-        selectButton.onClick.AddListener(OnSelectClicked);
+        if (selectButton != null)
+        {
+            selectButton.onClick.RemoveAllListeners();
+            selectButton.onClick.AddListener(OnSelectClicked);
+        }
     }
 
     private void OnSelectClicked()

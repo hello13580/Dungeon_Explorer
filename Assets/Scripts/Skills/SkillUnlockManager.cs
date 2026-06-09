@@ -10,8 +10,6 @@ public class SkillUnlockManager : MonoBehaviour
 {
     public static SkillUnlockManager Instance { get; private set; }
 
-    [Tooltip("한 번의 보상에서 제시할 최대 선택지 수")]
-    [SerializeField] private int offerCount = 3;
 
     /// <summary>스킬 선택 UI에 넘겨줄 선택지 하나.</summary>
     public class SkillUnlockOption
@@ -65,31 +63,34 @@ public class SkillUnlockManager : MonoBehaviour
 
     private List<SkillUnlockOption> BuildOptions()
     {
-        // 아군 유닛들의 미습득 스킬을 모두 수집
-        List<SkillUnlockOption> pool = new List<SkillUnlockOption>();
+        List<SkillUnlockOption> options = new List<SkillUnlockOption>();
 
         foreach (Unit unit in UnitManager.Instance.GetFriendlyUnitList())
         {
             UnitSkillConfig config = unit.GetSkillConfig();
             if (config == null) continue;
 
+            // 이 유닛 클래스의 미습득 스킬 목록
+            List<SkillDefinition> unlearnedSkills = new List<SkillDefinition>();
             foreach (SkillDefinition skillDef in config.learnableSkills)
             {
-                if (PartySkillData.Instance.IsLearned(config.unitClassId, skillDef.actionTypeName)) continue;
-
-                pool.Add(new SkillUnlockOption
-                {
-                    skillDef = skillDef,
-                    unitClassId = config.unitClassId,
-                    targetUnit = unit
-                });
+                if (!PartySkillData.Instance.IsLearned(config.unitClassId, skillDef.actionTypeName))
+                    unlearnedSkills.Add(skillDef);
             }
+
+            if (unlearnedSkills.Count == 0) continue;
+
+            // 미습득 스킬 중 랜덤으로 1개 선택
+            SkillDefinition picked = unlearnedSkills[UnityEngine.Random.Range(0, unlearnedSkills.Count)];
+            options.Add(new SkillUnlockOption
+            {
+                skillDef = picked,
+                unitClassId = config.unitClassId,
+                targetUnit = unit
+            });
         }
 
-        // 랜덤 셔플 후 offerCount만큼 반환
-        Shuffle(pool);
-        int count = Mathf.Min(offerCount, pool.Count);
-        return pool.GetRange(0, count);
+        return options;
     }
 
     /// <summary>UI에서 플레이어가 스킬을 선택했을 때 호출.</summary>

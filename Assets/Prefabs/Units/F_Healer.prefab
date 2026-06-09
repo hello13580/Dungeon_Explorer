@@ -430,6 +430,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: skillConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 6cb803e8af4a5d24d9fbbc3415f3ba5e, type: 2}
+    - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: ShootPointTransform
       value: 
       objectReference: {fileID: 4086070362036521838}
@@ -521,7 +525,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3042818206337043987}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7da039c5aa320e94fbb361dc915dd918, type: 3}
   m_Name: 
@@ -569,7 +573,7 @@ MonoBehaviour:
   pushDistance: 5
   pushDuration: 0.35
   arcHeight: 1.2
-  blastDamage: 30
+  blastDamage: 100
   collisionDamage: 10
   hitForce: 800
   obstacleLayerMask:
@@ -610,7 +614,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3042818206337043987}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c8fad9ae961c424ebbcb23c5b2b5323, type: 3}
   m_Name: 
