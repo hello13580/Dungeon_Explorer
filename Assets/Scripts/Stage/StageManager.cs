@@ -81,9 +81,12 @@ public class StageManager : MonoBehaviour
         Debug.Log($"[StageManager] 스테이지 로드 시작: {stageData.stageName}");
 
         // ── 1. 기존 유닛 제거
-        // 리스트를 먼저 비운 뒤 Destroy — TurnSystem 등이 빈 리스트를 참조하므로
-        // 이벤트 체인(사망 처리 등)을 타지 않도록 직접 Destroy함
-        UnitManager.Instance.ClearAllUnits();
+        // 파티원(아군)은 유지하고 적·중립만 파괴한다.
+        // PartyManager가 없으면 (테스트 등) 전체 삭제.
+        if (PartyManager.Instance != null && PartyManager.Instance.HasParty())
+            UnitManager.Instance.ClearEnemyUnits();
+        else
+            UnitManager.Instance.ClearAllUnits();
 
         // ── 2. 기존 맵 제거
         // 맵 프리팹을 Destroy하면 그 안의 MapObject·계단 등도 함께 제거됨
@@ -160,8 +163,13 @@ public class StageManager : MonoBehaviour
         GridSystemVisual.Instance.Initialize();
 
         // ── 10. 유닛 스폰
-        // MapSetup의 스폰 포인트 위치에 StageData의 유닛 프리팹을 인스턴시에이트
-        SpawnUnits(mapSetup, stageData);
+        // 적은 항상 새로 스폰. 아군은 PartyManager가 있으면 기존 유닛 재배치, 없으면 프리팹 스폰.
+        SpawnEnemyUnits(mapSetup, stageData);
+
+        if (PartyManager.Instance != null && PartyManager.Instance.HasParty())
+            PartyManager.Instance.PositionPartyAtSpawnPoints(mapSetup.playerSpawnPoints);
+        else
+            SpawnPlayerUnits(mapSetup, stageData);
 
         // Unit.Start()가 실행돼야 유닛들이 LevelGrid·UnitManager에 자신을 등록함
         yield return null;
@@ -174,9 +182,8 @@ public class StageManager : MonoBehaviour
         Debug.Log($"[StageManager] 스테이지 로드 완료: {stageData.stageName}");
     }
 
-    private void SpawnUnits(MapSetup mapSetup, StageData stageData)
+    private void SpawnEnemyUnits(MapSetup mapSetup, StageData stageData)
     {
-        // 적 유닛 스폰 — spawnPointIndex로 MapSetup.enemySpawnPoints 배열의 위치를 참조
         foreach (EnemySpawnInfo spawnInfo in stageData.enemySpawnInfos)
         {
             if (spawnInfo.unitPrefab == null)
@@ -192,8 +199,13 @@ public class StageManager : MonoBehaviour
             Transform spawnPoint = mapSetup.enemySpawnPoints[spawnInfo.spawnPointIndex];
             Instantiate(spawnInfo.unitPrefab, spawnPoint.position, spawnPoint.rotation);
         }
+    }
 
-        // 아군 유닛 스폰 — spawnPointIndex로 MapSetup.playerSpawnPoints 배열의 위치를 참조
+    /// <summary>
+    /// PartyManager가 없을 때(테스트 등) StageData의 playerSpawnInfos로 아군을 직접 스폰한다.
+    /// </summary>
+    private void SpawnPlayerUnits(MapSetup mapSetup, StageData stageData)
+    {
         foreach (PlayerSpawnInfo spawnInfo in stageData.playerSpawnInfos)
         {
             if (spawnInfo.unitPrefab == null)

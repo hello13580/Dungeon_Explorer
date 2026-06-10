@@ -119,6 +119,37 @@ public class Unit : MonoBehaviour
 		Unit.OnAnyUnitSpawned?.Invoke(this, EventArgs.Empty);
 	}
 
+	/// <summary>
+	/// 새 스테이지 로드 시 PartyManager가 호출.
+	/// 위치를 스폰 포인트로 이동하고 LevelGrid / TurnSystem에 재등록한다.
+	/// </summary>
+	public void RegisterForNewStage(Vector3 spawnPosition)
+	{
+		// 그리드 위치 계산 및 스냅
+		GridPosition newGridPos = LevelGrid.Instance.GetGridPosition(spawnPosition);
+		float cellSize = LevelGrid.Instance.GetCellSize();
+		float offset = (float)(size - 1) * cellSize * 0.5f;
+		Vector3 worldPos = LevelGrid.Instance.GetWorldPosition(newGridPos);
+		transform.position = new Vector3(worldPos.x + offset, spawnPosition.y, worldPos.z + offset);
+		savedPosition = newGridPos;
+
+		// LevelGrid에 등록
+		LevelGrid.Instance.AddUnitAtGridPosition(savedPosition, this);
+
+		// TurnSystem 이벤트 중복 구독 방지 후 재구독
+		TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+		TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+
+		// 마나 초기량으로 초기화
+		manaSystem?.ResetToInitialMana();
+
+		// 액션 포인트 초기화
+		currentActionPoint = maxActionPoint;
+
+		// UnitManager에 재등록
+		Unit.OnAnyUnitSpawned?.Invoke(this, EventArgs.Empty);
+	}
+
 	public UnitSkillConfig GetSkillConfig() => skillConfig;
 
 	/// <summary>

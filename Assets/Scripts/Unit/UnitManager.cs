@@ -43,6 +43,11 @@ public class UnitManager : MonoBehaviour
 	private void Unit_OnAnyUnitSpawned(object sender, EventArgs empty)
 	{
 		Unit unit = sender as Unit;
+		// PartyManager 유닛은 SetActive(true) 시 Unit.Start()와
+		// RegisterForNewStage() 양쪽에서 OnAnyUnitSpawned가 발생할 수 있어
+		// 이미 등록된 유닛이면 무시한다.
+		if (unitList.Contains(unit)) return;
+
 		unitList.Add(unit);
 		if (unit.GetTeamType() == TeamType.Player)
 		{
@@ -113,6 +118,28 @@ public class UnitManager : MonoBehaviour
 	/// 스테이지 전환 시 호출. 모든 유닛 GameObject를 파괴하고 리스트를 비운다.
 	/// 리스트 객체 자체는 재할당하지 않는다 — TurnSystem이 같은 리스트 참조를 유지해야 하기 때문.
 	/// </summary>
+	/// <summary>
+	/// 스테이지 전환 시 호출. 적·중립 유닛만 파괴하고 아군은 유지한다.
+	/// 아군은 PartyManager.PositionPartyAtSpawnPoints() 호출 시 OnAnyUnitSpawned로 재등록된다.
+	/// </summary>
+	public void ClearEnemyUnits()
+	{
+		enemyEverSpawnedThisStage = false;
+
+		List<Unit> enemiesToDestroy = new List<Unit>(enemyUnitList);
+		List<Unit> neutralsToDestroy = new List<Unit>(neutralUnitList);
+
+		unitList.Clear();
+		friendlyUnitList.Clear();
+		enemyUnitList.Clear();
+		neutralUnitList.Clear();
+
+		foreach (Unit unit in enemiesToDestroy)
+			if (unit != null) Destroy(unit.gameObject);
+		foreach (Unit unit in neutralsToDestroy)
+			if (unit != null) Destroy(unit.gameObject);
+	}
+
 	public void ClearAllUnits()
 	{
 		enemyEverSpawnedThisStage = false;

@@ -4,6 +4,7 @@ using UnityEngine;
 public class ManaSystem : MonoBehaviour
 {
     [SerializeField] private int maxMana = 100;
+    [SerializeField] private int initialMana = 10;  // 전투 시작 시 초기화되는 마나량
     [SerializeField] private int currentMana;
     [SerializeField] [Range(0f, 1f)] private float regenPercentPerTurn = 0.1f;
 
@@ -31,6 +32,13 @@ public class ManaSystem : MonoBehaviour
     {
         int regenAmount = Mathf.Max(1, Mathf.RoundToInt(maxMana * regenPercentPerTurn));
         currentMana = Mathf.Min(currentMana + regenAmount, maxMana);
+        OnManaChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>전투 시작 시 호출. 마나를 initialMana로 초기화한다.</summary>
+    public void ResetToInitialMana()
+    {
+        currentMana = initialMana;
         OnManaChanged?.Invoke(this, EventArgs.Empty);
     }
 
