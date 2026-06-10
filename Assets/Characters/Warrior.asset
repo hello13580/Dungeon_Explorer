@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0504b627e71e3a04bb53100f95d703b1, type: 3}
   m_Name: Warrior
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
-  className: 
-  description: 
-  portrait: {fileID: 0}
-  unitPrefab: {fileID: 0}
+  className: Warrior
+  description: Warriors are melee attack specialist
+  portrait: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  unitPrefab: {fileID: 416177728078544639, guid: 16d0a1ab146d0c24a96167ef85649268, type: 3}

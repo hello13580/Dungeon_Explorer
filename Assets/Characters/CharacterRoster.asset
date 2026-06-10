@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f7a628f2fbe1fc46b797db7dc3d74c3, type: 3}
   m_Name: CharacterRoster
   m_EditorClassIdentifier: Assembly-CSharp::CharacterRoster
-  characters: []
+  characters:
+  - {fileID: 11400000, guid: 4161d3a7bd9e8c14a943efae134a8dac, type: 2}
+  - {fileID: 11400000, guid: d527435daf45d8e459403e083bc46220, type: 2}
+  - {fileID: 11400000, guid: 6d676985521d06641b841f34e6a78969, type: 2}

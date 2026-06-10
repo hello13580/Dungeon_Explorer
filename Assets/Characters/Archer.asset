@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0504b627e71e3a04bb53100f95d703b1, type: 3}
   m_Name: Archer
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
-  className: 
-  description: 
-  portrait: {fileID: 0}
-  unitPrefab: {fileID: 0}
+  className: Archer
+  description: Archer can attack enemies with long range
+  portrait: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  unitPrefab: {fileID: 6482590293035414360, guid: d62549445a4e15641b42d1b09bcc8666, type: 3}

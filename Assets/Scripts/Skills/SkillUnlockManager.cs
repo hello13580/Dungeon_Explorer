@@ -50,21 +50,20 @@ public class SkillUnlockManager : MonoBehaviour
 
     private void TriggerSkillUnlock()
     {
+        // 선택지가 없어도 보상 패널은 항상 표시한다 (골드 확인 등 용도)
         List<SkillUnlockOption> options = BuildOptions();
-        if (options.Count == 0)
-        {
-            // 습득할 스킬이 없으면 바로 완료
-            OnSkillUnlockCompleted?.Invoke(this, EventArgs.Empty);
-            return;
-        }
-
         OnSkillUnlockStarted?.Invoke(this, options);
+    }
+
+    /// <summary>스킬을 선택하지 않고 보상 패널을 닫을 때 호출.</summary>
+    public void SkipUnlock()
+    {
+        OnSkillUnlockCompleted?.Invoke(this, EventArgs.Empty);
     }
 
     private List<SkillUnlockOption> BuildOptions()
     {
         List<SkillUnlockOption> options = new List<SkillUnlockOption>();
-
         foreach (Unit unit in UnitManager.Instance.GetFriendlyUnitList())
         {
             UnitSkillConfig config = unit.GetSkillConfig();

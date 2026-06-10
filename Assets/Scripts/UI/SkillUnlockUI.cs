@@ -10,6 +10,8 @@ public class SkillUnlockUI : MonoBehaviour
     [SerializeField] private GameObject panel;
     [SerializeField] private Transform cardContainer;
     [SerializeField] private GameObject skillCardPrefab;
+    [SerializeField] private GameObject noSkillsMessage;  // 습득 가능한 스킬이 없을 때 표시
+    [SerializeField] private UnityEngine.UI.Button continueButton; // 스킬 없을 때 닫기 버튼
 
     private void Start()
     {
@@ -30,14 +32,29 @@ public class SkillUnlockUI : MonoBehaviour
         foreach (Transform child in cardContainer)
             Destroy(child.gameObject);
 
+        bool hasOptions = options != null && options.Count > 0;
+
         // 선택지 카드 생성
-        foreach (var option in options)
+        if (hasOptions)
         {
-            GameObject cardObj = Instantiate(skillCardPrefab, cardContainer);
-            cardObj.GetComponent<SkillCardUI>().Setup(option);
+            foreach (var option in options)
+            {
+                GameObject cardObj = Instantiate(skillCardPrefab, cardContainer);
+                cardObj.GetComponent<SkillCardUI>().Setup(option);
+            }
         }
 
+        // 스킬이 없을 때 안내 메시지 및 계속하기 버튼 표시
+        if (noSkillsMessage != null) noSkillsMessage.SetActive(!hasOptions);
+        if (continueButton != null) continueButton.gameObject.SetActive(!hasOptions);
+
         panel.SetActive(true);
+    }
+
+    /// <summary>계속하기 버튼 클릭 시 호출.</summary>
+    public void OnContinueButtonClicked()
+    {
+        SkillUnlockManager.Instance.SkipUnlock();
     }
 
     private void OnSkillUnlockCompleted(object sender, System.EventArgs e)

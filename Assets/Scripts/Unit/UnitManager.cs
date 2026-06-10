@@ -82,6 +82,7 @@ public class UnitManager : MonoBehaviour
 		}
 
 		// 적 전멸 + 아군 생존 → 스테이지 클리어
+		// 적 전멸 + 아군 생존 → 스테이지 클리어
 		if (enemyEverSpawnedThisStage && enemyUnitList.Count == 0 && friendlyUnitList.Count > 0)
 		{
 			enemyEverSpawnedThisStage = false;

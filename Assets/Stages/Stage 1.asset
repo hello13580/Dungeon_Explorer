@@ -26,10 +26,4 @@ MonoBehaviour:
     spawnPointIndex: 0
   - unitPrefab: {fileID: 979890781461446910, guid: 30ee87877c5b0d24bb480b20a440bf83, type: 3}
     spawnPointIndex: 1
-  playerSpawnInfos:
-  - unitPrefab: {fileID: 6482590293035414360, guid: d62549445a4e15641b42d1b09bcc8666, type: 3}
-    spawnPointIndex: 0
-  - unitPrefab: {fileID: 416177728078544639, guid: 16d0a1ab146d0c24a96167ef85649268, type: 3}
-    spawnPointIndex: 1
-  - unitPrefab: {fileID: 3042818206337043987, guid: bdb21dc30bc624a4c8ea01f0fd01b79f, type: 3}
-    spawnPointIndex: 2
+  playerSpawnInfos: []

@@ -41,8 +41,10 @@ public class StageManager : MonoBehaviour
 
     private void Start()
     {
-        // initialStage가 설정돼 있으면 게임 시작과 동시에 첫 스테이지를 자동 로드
-        if (initialStage != null)
+        // CharacterSelectManager가 씬에 있으면 캐릭터 선택 완료 후 StartGame()에서 로드하므로
+        // 여기서 자동 로드하면 캐릭터 선택 전에 적만 스폰되어 턴 시스템이 꼬이는 문제가 생긴다.
+        // CharacterSelectManager가 없을 때(테스트 등)만 initialStage를 자동 로드한다.
+        if (initialStage != null && CharacterSelectManager.Instance == null)
         {
             LoadStage(initialStage);
         }
