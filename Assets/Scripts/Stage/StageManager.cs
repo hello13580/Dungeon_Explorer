@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -9,6 +10,9 @@ using UnityEngine.Rendering;
 public class StageManager : MonoBehaviour
 {
     public static StageManager Instance { get; private set; }
+
+    /// <summary>스테이지 로드가 완전히 완료되고 첫 턴이 시작되기 직전에 발생.</summary>
+    public static event EventHandler OnStageLoaded;
 
     [Header("초기 스테이지 (설정 시 게임 시작과 함께 자동 로드)")]
     [SerializeField] private StageData initialStage;
@@ -89,6 +93,10 @@ public class StageManager : MonoBehaviour
             UnitManager.Instance.ClearEnemyUnits();
         else
             UnitManager.Instance.ClearAllUnits();
+
+        // 래그돌은 UnitManager 밖에서 독립적으로 스폰되므로 별도로 제거한다
+        foreach (UnitRagdoll ragdoll in FindObjectsByType<UnitRagdoll>(FindObjectsSortMode.None))
+            Destroy(ragdoll.gameObject);
 
         // ── 2. 기존 맵 제거
         // 맵 프리팹을 Destroy하면 그 안의 MapObject·계단 등도 함께 제거됨
@@ -176,7 +184,11 @@ public class StageManager : MonoBehaviour
         // Unit.Start()가 실행돼야 유닛들이 LevelGrid·UnitManager에 자신을 등록함
         yield return null;
 
-        // ── 11. 턴 시작
+        // ── 11. 스테이지 로드 완료 알림
+        // ActionBusyUI 등이 isStageClear 플래그를 여기서 리셋한다
+        OnStageLoaded?.Invoke(this, EventArgs.Empty);
+
+        // ── 12. 턴 시작
         // 유닛 등록이 완료된 시점에 속도 기준으로 정렬 후 첫 턴 진행
         TurnSystem.Instance.StartStage();
 

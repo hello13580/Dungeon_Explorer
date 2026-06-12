@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0940bd7b1c4471e46a1d4ce3aa703a49, type: 3}
+  m_Name: Stage 2
+  m_EditorClassIdentifier: Assembly-CSharp::StageData
+  stageName: stage 2
+  mapPrefab: {fileID: 2928425958798730269, guid: ad60a7e73d861c94ba64ad5d28d1cee7, type: 3}
+  floorAmount: 1
+  mapSpawnPosition: {x: 60, y: 0, z: 60}
+  cameraStartPosition: {x: 70, y: 3, z: 50}
+  cameraStartRotation: {x: 0, y: -40, z: 0}
+  cameraBoundsMin: {x: 30, y: 35}
+  cameraBoundsMax: {x: 75, y: 80}
+  directionalLightIntensity: 0.25
+  enemySpawnInfos:
+  - unitPrefab: {fileID: 979890781461446910, guid: 30ee87877c5b0d24bb480b20a440bf83, type: 3}
+    spawnPointIndex: 0
+  - unitPrefab: {fileID: 979890781461446910, guid: 30ee87877c5b0d24bb480b20a440bf83, type: 3}
+    spawnPointIndex: 1
+  playerSpawnInfos: []

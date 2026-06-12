@@ -34,8 +34,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.0012272, y: 0}
-  m_SizeDelta: {x: 181.4312, y: 333.4436}
+  m_AnchoredPosition: {x: -0.7601, y: 0.7589}
+  m_SizeDelta: {x: 249.7289, y: 453.3441}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3085637987356432701
 CanvasRenderer:
@@ -115,8 +115,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -228.10635, y: 0.6782}
-  m_SizeDelta: {x: 162.4324, y: 313.0846}
+  m_AnchoredPosition: {x: -257.04254, y: 56.451973}
+  m_SizeDelta: {x: 220.3048, y: 424.6322}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7107964391954055616
 CanvasRenderer:
@@ -177,7 +177,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.001214, y: -134.94}
+  m_AnchoredPosition: {x: -0.001214, y: -176}
   m_SizeDelta: {x: 162.43, y: 43.2139}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6341322312406079186
@@ -314,8 +314,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.00077724, y: 0.6772}
-  m_SizeDelta: {x: 162.43, y: 209.936}
+  m_AnchoredPosition: {x: -0.00096035, y: 2.1949}
+  m_SizeDelta: {x: 181.43, y: 291.8933}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4390228387572504227
 CanvasRenderer:
@@ -390,8 +390,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.00051116943}
-  m_SizeDelta: {x: 160, y: 313.09}
+  m_AnchoredPosition: {x: -0.0028048, y: 0.0009594}
+  m_SizeDelta: {x: 220.31, y: 424.63}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5237233399988925513
 CanvasRenderer:
@@ -441,7 +441,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 4777767042519400995}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -509,8 +509,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.00077724, y: -0.0006485}
-  m_SizeDelta: {x: 162.43, y: 313.08}
+  m_AnchoredPosition: {x: -0.00079918, y: 0.00094604}
+  m_SizeDelta: {x: 220.31, y: 424.63}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2279461834300106881
 CanvasRenderer:
@@ -584,7 +584,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.0011969, y: 134.94}
+  m_AnchoredPosition: {x: 0.0011969, y: 185}
   m_SizeDelta: {x: 162.43, y: 43.2139}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8565131022215620191

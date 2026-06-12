@@ -107,21 +107,19 @@ public class PathFinding : MonoBehaviour
 			}
 		}
 		pathFindingLinkList = new List<PathFindingLink>();
-		foreach (Transform child in PathfindingLinkContainer)
-		{
-			if (child.TryGetComponent<PathfindingLinkMonoBehaviour>(out var link))
-			{
-				pathFindingLinkList.Add(link.GetPathfindingLink());
-			}
-		}
-
 		staircaseExclusiveTiles = new HashSet<GridPosition>();
 		staircaseConnections = new Dictionary<GridPosition, List<GridPosition>>();
-		foreach (Transform child in PathfindingLinkContainer)
+		if (PathfindingLinkContainer != null)
 		{
-			if (child.TryGetComponent<StaircaseMonoBehaviour>(out var staircase))
+			foreach (Transform child in PathfindingLinkContainer)
 			{
-				staircase.Initialize();
+				if (child.TryGetComponent<PathfindingLinkMonoBehaviour>(out var link))
+					pathFindingLinkList.Add(link.GetPathfindingLink());
+			}
+			foreach (Transform child in PathfindingLinkContainer)
+			{
+				if (child.TryGetComponent<StaircaseMonoBehaviour>(out var staircase))
+					staircase.Initialize();
 			}
 		}
 	}

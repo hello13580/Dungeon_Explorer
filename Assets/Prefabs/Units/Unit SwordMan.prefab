@@ -56,6 +56,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: skillConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 5e774e89a2872f245a12b6f7c666f4c3, type: 2}
     - target: {fileID: 2452699894393773731, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -142,7 +146,7 @@ MonoBehaviour:
   actionCost: 0
   manaCost: 0
   maxRange: 1
-  damage: 10
+  damage: 100
   hitForce: 500
   rotateSpeed: 30
 --- !u!114 &376090050427871366
@@ -152,7 +156,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 416177728078544639}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d6b82363d72ddb54199ea589e571518b, type: 3}
   m_Name: 

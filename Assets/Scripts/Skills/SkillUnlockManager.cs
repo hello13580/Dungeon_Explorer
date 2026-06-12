@@ -92,7 +92,10 @@ public class SkillUnlockManager : MonoBehaviour
         return options;
     }
 
-    /// <summary>UI에서 플레이어가 스킬을 선택했을 때 호출.</summary>
+    /// <summary>
+    /// 확정 버튼 클릭 시 호출. 스킬을 습득하지만 패널은 닫지 않는다.
+    /// 패널은 컨티뉴 버튼(SkipUnlock)으로만 닫힌다.
+    /// </summary>
     public void ConfirmUnlock(SkillUnlockOption option)
     {
         if (option == null || option.skillDef == null) return;
@@ -103,8 +106,6 @@ public class SkillUnlockManager : MonoBehaviour
         // 2. 현재 살아있는 유닛에 즉시 적용
         if (option.targetUnit != null)
             option.targetUnit.UnlockSkillByTypeName(option.skillDef.actionTypeName);
-
-        OnSkillUnlockCompleted?.Invoke(this, EventArgs.Empty);
     }
 
     private static void Shuffle<T>(List<T> list)

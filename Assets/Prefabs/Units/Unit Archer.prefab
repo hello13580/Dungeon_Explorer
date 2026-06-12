@@ -239,6 +239,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: skillConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 36d6278d257a4e04f9d1258162b834bd, type: 2}
     - target: {fileID: 1869861767572440488, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_LocalPosition.y
       value: 1.098
@@ -294,7 +298,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BowAction
   actionCost: 0
   manaCost: 10
-  maxShootDistance: 7
+  maxShootDistance: 15
   shootDamage: 100
   ArrowProjectilePrefab: {fileID: 8288394526744401144, guid: 5227d29478847f44faf93cfb0450f0a2, type: 3}
   shootPointTransform: {fileID: 4486312566150377040}
