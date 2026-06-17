@@ -23,18 +23,19 @@ public class DamageZone : MonoBehaviour
     // 이전 프레임에 장판 안에 있던 유닛 집합 — 새 진입 감지용
     private HashSet<Unit> unitsInZoneLastFrame = new HashSet<Unit>();
 
-    public void Setup(List<GridPosition> positions, int initialDamage, int tickDamage, int duration, TeamType ownerTeamType)
+    public void Setup(List<GridPosition> positions, int initialDamage, int tickDamage, int duration, TeamType ownerTeamType, int attackPower = 0)
     {
         this.affectedPositions = positions;
-        this.enterDamage = initialDamage;
-        this.tickDamage = tickDamage;
+        // 시전자 공격력을 진입/배치/틱 피해 모두에 더함
+        this.enterDamage = initialDamage + attackPower;
+        this.tickDamage = tickDamage + attackPower;
         this.turnsRemaining = duration;
         this.ownerTeamType = ownerTeamType;
 
-        // 배치 즉시 피해 + 현재 안에 있는 유닛 초기 등록
+        // 배치 즉시 피해 + 현재 안에 있는 유닛 초기 등록 (enterDamage에 공격력이 이미 포함됨)
         HashSet<Unit> initial = GetUnitsInZone();
         foreach (Unit u in initial)
-            u.Damage(initialDamage);
+            u.Damage(enterDamage);
         unitsInZoneLastFrame = initial;
 
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;

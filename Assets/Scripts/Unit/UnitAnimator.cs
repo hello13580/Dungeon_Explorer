@@ -60,6 +60,13 @@ public class UnitAnimator : MonoBehaviour
         {
             teleportAction.OnTeleportCompleted += TeleportAction_OnTeleportCompleted;
         }
+
+        if (TryGetComponent<DashAttackAction>(out var dashAttackAction))
+        {
+            dashAttackAction.OnDashMoveStarted  += DashAttackAction_OnDashMoveStarted;
+            dashAttackAction.OnDashMoveEnded    += DashAttackAction_OnDashMoveEnded;
+            dashAttackAction.OnDashAttackStarted += DashAttackAction_OnDashAttackStarted;
+        }
     }
 
     private IceOrbAction iceOrbAction;
@@ -149,6 +156,23 @@ public class UnitAnimator : MonoBehaviour
 	private void MoveAction_OnStopMoving(object sender, EventArgs empty)
 	{
 		unitAnimator.SetBool("IsWalking", false);
+	}
+
+	// 돌진 이동 중 달리기 애니메이션 — IsWalking bool 재활용 (별도 파라미터 원하면 변경)
+	private void DashAttackAction_OnDashMoveStarted(object sender, EventArgs e)
+	{
+		unitAnimator.SetBool("IsWalking", true);
+	}
+
+	private void DashAttackAction_OnDashMoveEnded(object sender, EventArgs e)
+	{
+		unitAnimator.SetBool("IsWalking", false);
+	}
+
+	// 돌진 공격 시점 — SwordSlash 트리거 재활용 (별도 파라미터 원하면 변경)
+	private void DashAttackAction_OnDashAttackStarted(object sender, EventArgs e)
+	{
+		unitAnimator.SetTrigger("SwordSlash");
 	}
 
 	private void ShootAction_OnStartShooting(object sender, ShootAction.OnShootEventArgs shootEventArgs)

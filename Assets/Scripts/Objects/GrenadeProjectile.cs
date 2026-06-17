@@ -98,11 +98,13 @@ public class GrenadeProjectile : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void Setup(GridPosition targetGridPosition, int damageRadius, AOEAction aoeAction, Action onGrenadeBehaviourComplete)
+    public void Setup(GridPosition targetGridPosition, int damageRadius, AOEAction aoeAction, Action onGrenadeBehaviourComplete, int attackPower = 0)
     {
         this.damageRadius = damageRadius;
         this.aoeAction = aoeAction;
         this.onGrenadeBehaviourComplete = onGrenadeBehaviourComplete;
+        // 시전자 공격력을 고정 피해에 더함
+        damage += attackPower;
 
         targetPosition = LevelGrid.Instance.GetWorldPosition(targetGridPosition);
         positionXZ = transform.position;

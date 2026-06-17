@@ -243,7 +243,8 @@ public class ShootAction : BaseAction
         Vector3 hitDir = (e.hitPosition - transform.position).normalized;
         targetUnit.GetHitReaction().SetHitDirection(hitDir);
         targetUnit.GetHitReaction().SetHitForce(e.hitForce);
-        targetUnit.Damage(shootDamage);
+        // 고정 피해 + 시전자 공격력
+        targetUnit.Damage(shootDamage + unit.GetAttackPower());
     }
 
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)

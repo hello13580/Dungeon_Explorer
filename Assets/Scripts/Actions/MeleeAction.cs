@@ -108,7 +108,8 @@ public class MeleeAction : BaseAction
 
 		targetUnit.GetHitReaction().SetHitDirection(hitDir);
 		targetUnit.GetHitReaction().SetHitForce(hitForce);
-		targetUnit.Damage(damage);
+		// 고정 피해 + 시전자 공격력
+		targetUnit.Damage(damage + unit.GetAttackPower());
 	}
 
 	public override List<GridPosition> GetActionRangeGridPositionList()

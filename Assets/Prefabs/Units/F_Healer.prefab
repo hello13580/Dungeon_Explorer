@@ -389,6 +389,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 278515026146484350, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: jobClass
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 1213345925212744562, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_LocalPosition.x
       value: -16.05093
@@ -661,6 +665,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5514658485211722722}
     m_Modifications:
+    - target: {fileID: -8916110479721306975, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -701,9 +709,41 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5348461685545500735, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4003448787998224329, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -697637196175794007, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -576025258046060829, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -202863617042719437, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -118750159865472661, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 67220969264692902, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
       propertyPath: m_Name
       value: F_Sorcerer
+      objectReference: {fileID: 0}
+    - target: {fileID: 3184531942169020462, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

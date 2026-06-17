@@ -1,14 +1,16 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
 /// 스킬 습득 선택 UI 패널.
 /// SkillUnlockManager 이벤트를 구독해 스테이지 클리어 후 자동으로 표시된다.
+/// 직업마다 순서대로 한 번씩 보상 화면이 열린다.
 /// - 카드 클릭 → 확정 패널(confirmPanel) 표시 + 선택 비주얼
 /// - 확정 버튼 → 스킬 습득 후 확정 패널 숨김 (메인 패널 유지)
 /// - 취소 버튼 → 선택 해제, 확정 패널 숨김
-/// - 컨티뉴 버튼 → 메인 패널 닫기 (스킬 선택 여부 무관)
+/// - 컨티뉴 버튼 → 현재 직업 보상 종료 후 다음 직업 보상으로 이동 (또는 패널 닫기)
 /// </summary>
 public class SkillUnlockUI : MonoBehaviour
 {
@@ -16,6 +18,9 @@ public class SkillUnlockUI : MonoBehaviour
     [SerializeField] private Transform cardContainer;
     [SerializeField] private GameObject skillCardPrefab;
     [SerializeField] private GameObject noSkillsMessage;  // 습득 가능한 스킬이 없을 때 표시
+
+    [Header("현재 직업 표시 텍스트")]
+    [SerializeField] private TextMeshProUGUI classNameText; // "전사의 보상" 처럼 현재 직업명을 표시
 
     [Header("확정 패널 (카드 선택 시에만 표시)")]
     [SerializeField] private GameObject confirmPanel;     // 확정·취소 버튼을 묶은 부모 오브젝트
@@ -48,10 +53,15 @@ public class SkillUnlockUI : MonoBehaviour
         spawnedCards.Clear();
         selectedOption = null;
 
-        bool hasOptions = options != null && options.Count > 0;
+        // 현재 직업명 텍스트 갱신 — 큐에서 꺼낸 단일 옵션의 unitClassId를 표시한다
+        if (classNameText != null && options != null && options.Count > 0)
+            classNameText.text = $"{options[0].unitClassId}의 보상";
 
-        // 선택지 카드 생성
-        if (hasOptions)
+        // options[0].skillDef가 null이면 이 직업은 배울 스킬이 없다
+        bool hasSkill = options != null && options.Count > 0 && options[0].skillDef != null;
+
+        // 선택지 카드 생성 (스킬이 있을 때만)
+        if (hasSkill)
         {
             foreach (var option in options)
             {
@@ -65,7 +75,7 @@ public class SkillUnlockUI : MonoBehaviour
 
         // 스킬이 없을 때 안내 메시지 표시
         if (noSkillsMessage != null)
-            noSkillsMessage.SetActive(!hasOptions);
+            noSkillsMessage.SetActive(!hasSkill);
 
         // 확정 패널은 카드를 선택했을 때만 표시 — 패널 열릴 때는 항상 숨김
         if (confirmPanel != null)

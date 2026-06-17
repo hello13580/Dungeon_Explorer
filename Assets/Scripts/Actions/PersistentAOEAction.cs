@@ -236,7 +236,8 @@ public class PersistentAOEAction : BaseAction
             zone = tempObj.AddComponent<DamageZone>();
         }
 
-        zone.Setup(zonePositions, initialDamage, tickDamage, duration, unit.GetTeamType());
+        // 시전자 공격력을 Setup에 넘겨 장판 피해에 반영
+        zone.Setup(zonePositions, initialDamage, tickDamage, duration, unit.GetTeamType(), unit.GetAttackPower());
     }
 
     // ─── AI ──────────────────────────────────────────────────────────

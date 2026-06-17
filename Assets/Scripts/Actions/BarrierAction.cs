@@ -159,7 +159,8 @@ public class BarrierAction : BaseAction
 
         BarrierSystem barrierSystem = targetUnit.GetComponent<BarrierSystem>();
         if (barrierSystem != null)
-            barrierSystem.ApplyBarrier(BarrierAmount, BarrierDuration);
+            // 고정 방어막 수치 + 시전자 방어력 스탯
+            barrierSystem.ApplyBarrier(BarrierAmount + unit.GetDefensePower(), BarrierDuration);
 
         OnBarrier?.Invoke(this, new OnBarrierEventArgs { targetUnit = targetUnit, BarrierUsingUnit = unit });
         OnAnyBarrier?.Invoke(this, new OnBarrierEventArgs { targetUnit = targetUnit, BarrierUsingUnit = unit });

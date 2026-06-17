@@ -25,6 +25,12 @@ public class Unit : MonoBehaviour
 	private int maxActionPoint;
 
 	[SerializeField]
+	private int attackPower = 0; // 고정 피해에 더해지는 공격력 스탯
+
+	[SerializeField]
+	private int defensePower = 0; // 방어막 스킬의 고정 수치에 더해지는 방어력 스탯
+
+	[SerializeField]
 	private TeamType teamType;
 
 	[SerializeField]
@@ -313,6 +319,10 @@ public class Unit : MonoBehaviour
 
 	public int GetCurrentActionPoint() => currentActionPoint;
 	public int GetMaxActionPoint() => maxActionPoint;
+	/// <summary>공격 스킬의 고정 피해에 더해지는 공격력 스탯.</summary>
+	public int GetAttackPower() => attackPower;
+	/// <summary>방어막 스킬의 고정 수치에 더해지는 방어력 스탯.</summary>
+	public int GetDefensePower() => defensePower;
 
 	private void TurnSystem_OnTurnChanged(object sender, EventArgs empty)
 	{

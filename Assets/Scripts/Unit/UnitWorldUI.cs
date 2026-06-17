@@ -27,12 +27,6 @@ public class UnitWorldUI : MonoBehaviour
 	private Image manaBarImage;
 
 	[SerializeField]
-	private JobPointSystem jobPointSystem; // 직업 포인트 시스템 (없는 유닛은 null)
-
-	[SerializeField]
-	private Image jobPointBarImage; // JP 바 이미지 (없으면 표시 생략)
-
-    [SerializeField]
 	private Unit unit;
 
 	private void Start()
@@ -46,15 +40,10 @@ public class UnitWorldUI : MonoBehaviour
 		if (manaSystem != null)
 			manaSystem.OnManaChanged += ManaSystem_OnManaChanged;
 
-		// JP 변경 이벤트 구독 — JobPointSystem이 없는 유닛은 구독하지 않는다
-		if (jobPointSystem != null)
-			jobPointSystem.OnJobPointsChanged += JobPointSystem_OnJobPointsChanged;
-
 		UpdateActionPointText();
 		UpdateHealthBar();
 		UpdateBarrierBar();
 		UpdateManaBar();
-		UpdateJobPointBar();
 	}
 
 	private void OnDestroy()
@@ -64,9 +53,6 @@ public class UnitWorldUI : MonoBehaviour
 
 		if (manaSystem != null)
 			manaSystem.OnManaChanged -= ManaSystem_OnManaChanged;
-
-		if (jobPointSystem != null)
-			jobPointSystem.OnJobPointsChanged -= JobPointSystem_OnJobPointsChanged;
 	}
 
 	private void UpdateActionPointText()
@@ -124,22 +110,5 @@ public class UnitWorldUI : MonoBehaviour
 	private void ManaSystem_OnManaChanged(object sender, EventArgs e)
 	{
 		UpdateManaBar();
-	}
-
-	private void UpdateJobPointBar()
-	{
-		if (jobPointBarImage == null) return;
-		if (jobPointSystem == null)
-		{
-			jobPointBarImage.fillAmount = 0f;
-			return;
-		}
-		// JP는 최대치 대비 현재 비율로 표시
-		jobPointBarImage.fillAmount = (float)jobPointSystem.GetCurrentJobPoints() / jobPointSystem.GetMaxJobPoints();
-	}
-
-	private void JobPointSystem_OnJobPointsChanged(object sender, EventArgs e)
-	{
-		UpdateJobPointBar();
 	}
 }

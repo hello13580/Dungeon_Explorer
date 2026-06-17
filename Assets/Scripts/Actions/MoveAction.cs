@@ -70,7 +70,13 @@ public class MoveAction : BaseAction
         float multiplier = 1f;
         StatusEffectSystem statusEffectSystem = unit.GetComponent<StatusEffectSystem>();
         if (statusEffectSystem != null)
-            multiplier = statusEffectSystem.GetMovementMultiplier();
+        {
+            // 속박 상태이면 이동 거리 0 (이동 불가)
+            if (statusEffectSystem.IsRooted())
+                multiplier = 0f;
+            else
+                multiplier = statusEffectSystem.GetMovementMultiplier();
+        }
 
         leftMoveDistance = maxMoveDistance * multiplier;
         MarkCacheDirty();

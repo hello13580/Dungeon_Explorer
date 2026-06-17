@@ -193,7 +193,8 @@ public class IceOrbAction : BaseAction
         Vector3 hitDir = (e.hitPosition - unit.GetWorldPosition()).normalized;
         targetUnit.GetHitReaction().SetHitDirection(hitDir);
         targetUnit.GetHitReaction().SetHitForce(400f);
-        targetUnit.Damage(damage);
+        // 고정 피해 + 시전자 공격력
+        targetUnit.Damage(damage + unit.GetAttackPower());
 
         StatusEffectSystem ses = targetUnit.GetComponent<StatusEffectSystem>();
         if (ses != null)

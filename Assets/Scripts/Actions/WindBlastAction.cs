@@ -285,14 +285,19 @@ public class WindBlastAction : BaseAction
         target.GetHitReaction().SetHitDirection(blastDir);
         target.GetHitReaction().SetHitForce(hitForce);
 
+        // 고정 피해 + 시전자 공격력
+        int ap = unit.GetAttackPower();
+        int finalBlast = blastDamage + ap;
+        int finalCollision = collisionDamage + ap;
+
         // 치사량이면 넉백 없이 즉시 피해 → 래그돌이 히트 리액션 방향으로 날아감
-        int totalDamage = blastDamage + (collided ? collisionDamage : 0);
+        int totalDamage = finalBlast + (collided ? finalCollision : 0);
         BarrierSystem barrierSystem = target.GetComponent<BarrierSystem>();
         int effectiveHP = (int)target.GetCurrentHealth()
                         + (barrierSystem != null ? barrierSystem.GetTotalBarrierAmount() : 0);
         if (effectiveHP <= totalDamage)
         {
-            target.Damage(blastDamage);
+            target.Damage(finalBlast);
             yield break;
         }
 
@@ -337,15 +342,15 @@ public class WindBlastAction : BaseAction
         target.SetGridPosition(landPos);
         target.transform.rotation = flyRotation;
 
-        // 착지 후 피해 적용
-        target.Damage(blastDamage);
+        // 착지 후 피해 적용 (finalBlast / finalCollision은 위에서 계산됨)
+        target.Damage(finalBlast);
 
         if (target == null) yield break;
 
         if (collided)
         {
-            target.Damage(collisionDamage);
-            if (collidedUnit != null) collidedUnit.Damage(collisionDamage);
+            target.Damage(finalCollision);
+            if (collidedUnit != null) collidedUnit.Damage(finalCollision);
         }
     }
 

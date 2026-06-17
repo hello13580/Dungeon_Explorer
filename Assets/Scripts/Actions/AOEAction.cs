@@ -87,7 +87,8 @@ public class AOEAction : BaseAction
         GrenadeProjectile grenadeProjectile = grenadeTransform.GetComponent<GrenadeProjectile>();
 
         // ����ź ��ô �� �Ϸ� �� ActionComplete ȣ��ǵ��� ����
-        grenadeProjectile.Setup(targetGridPosition, damageRadius, this, ActionComplete);
+        // 시전자 공격력을 Setup에 넘겨 폭발 피해에 반영
+        grenadeProjectile.Setup(targetGridPosition, damageRadius, this, ActionComplete, unit.GetAttackPower());
     }
 
     public override List<GridPosition> GetActionRangeGridPositionList()
