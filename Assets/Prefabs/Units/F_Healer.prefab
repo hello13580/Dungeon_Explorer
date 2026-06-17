@@ -434,6 +434,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 6cb803e8af4a5d24d9fbbc3415f3ba5e, type: 2}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: maxActionPoint
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: ShootPointTransform
       value: 
       objectReference: {fileID: 4086070362036521838}
@@ -513,6 +517,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HealAction
   actionCost: 0
   manaCost: 0
+  jobPointCost: 0
+  requiredJobClass: 0
   maxHealDistance: 5
   healAmount: 40
   obstacleLayerMask:
@@ -532,6 +538,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BarrierAction
   actionCost: 0
   manaCost: 0
+  jobPointCost: 0
+  requiredJobClass: 0
   maxBarrierDistance: 5
   BarrierAmount: 40
   BarrierDuration: 3
@@ -552,6 +560,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeleportAction
   actionCost: 0
   manaCost: 0
+  jobPointCost: 0
+  requiredJobClass: 0
   teleportRange: 6
   teleportDelay: 0.25
 --- !u!114 &3547905694337137316
@@ -568,6 +578,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WindBlastAction
   actionCost: 0
   manaCost: 0
+  jobPointCost: 0
+  requiredJobClass: 0
   coneRange: 6
   coneAngle: 60
   pushDistance: 5
@@ -594,6 +606,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PersistentAOEAction
   actionCost: 0
   manaCost: 0
+  jobPointCost: 0
+  requiredJobClass: 0
   maxRange: 7
   zoneRadius: 1
   initialDamage: 15
@@ -621,6 +635,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::IceOrbAction
   actionCost: 0
   manaCost: 0
+  jobPointCost: 0
+  requiredJobClass: 0
   maxRange: 7
   obstacleLayerMask:
     serializedVersion: 2

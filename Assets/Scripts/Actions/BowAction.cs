@@ -41,7 +41,7 @@ public class BowAction : BaseAction
     protected override void Awake()
     {
         base.Awake();
-        actionCost = 2;
+        actionCost = 1;
     }
 
     private void Start()

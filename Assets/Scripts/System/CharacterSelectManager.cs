@@ -4,7 +4,7 @@ using UnityEngine;
 
 /// <summary>
 /// 캐릭터 선택 흐름을 관리한다.
-/// 선택 완료 후 PartyManager에 파티원을 등록하고 맵을 열어 첫 노드 선택을 유도한다.
+/// 선택 완료 후 PartyManager에 등록하고 첫 스테이지를 로드한다.
 /// </summary>
 public class CharacterSelectManager : MonoBehaviour
 {
@@ -12,10 +12,8 @@ public class CharacterSelectManager : MonoBehaviour
 
     [Header("설정")]
     [SerializeField] private int requiredSelectCount = 4;
-
-    [Header("맵 연결")]
-    [SerializeField] private MapData mapData; // 게임 시작 시 초기화할 맵 데이터
-    [SerializeField] private MapUI mapUI;     // 맵 패널. 캐릭터 선택 완료 후 직접 열어준다.
+    [SerializeField] private MapData mapData;   // 캐릭터 선택 완료 후 열 맵
+    [SerializeField] private MapUI mapUI;        // 맵 패널 직접 참조
 
     private List<CharacterData> selectedCharacters = new List<CharacterData>();
 
@@ -64,8 +62,7 @@ public class CharacterSelectManager : MonoBehaviour
     {
         if (!CanStart()) return;
 
-        // 파티 초기화 후 선택한 캐릭터를 PartyManager에 등록
-        // 이후 스테이지 로드 시 PartyManager.PositionPartyAtSpawnPoints()가 유닛을 배치한다
+        // 파티 초기화 후 선택한 캐릭터 등록
         PartyManager.Instance.ClearParty();
         foreach (CharacterData characterData in selectedCharacters)
         {
@@ -77,15 +74,12 @@ public class CharacterSelectManager : MonoBehaviour
             PartyManager.Instance.AddToParty(characterData.unitPrefab);
         }
 
+        // 스테이지를 직접 로드하지 않고 맵을 열어서 플레이어가 첫 노드를 선택하게 한다
         if (mapUI == null)
         {
-            Debug.LogError("[CharacterSelectManager] MapUI가 설정되지 않았습니다. 인스펙터에서 연결해 주세요.");
+            Debug.LogError("[CharacterSelectManager] MapUI가 설정되지 않았습니다.");
             return;
         }
-
-        // 스테이지를 직접 로드하지 않고 맵을 먼저 열어 플레이어가 첫 노드를 선택하게 한다.
-        // 이전에는 firstStage를 바로 로드했는데, 그러면 맵이 나중에 열릴 때
-        // startNode(Combat1)가 다시 선택 가능해져서 스테이지 1이 반복되는 버그가 있었다.
         MapManager.Instance.InitializeMap(mapData);
         mapUI.OpenMapFromExternal();
     }

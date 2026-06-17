@@ -60,6 +60,10 @@ PrefabInstance:
       propertyPath: skillConfig
       value: 
       objectReference: {fileID: 11400000, guid: 5e774e89a2872f245a12b6f7c666f4c3, type: 2}
+    - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: maxActionPoint
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 2452699894393773731, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -145,6 +149,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MeleeAction
   actionCost: 0
   manaCost: 0
+  jobPointCost: 0
+  requiredJobClass: 0
   maxRange: 1
   damage: 100
   hitForce: 500
@@ -163,6 +169,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TauntAction
   actionCost: 1
   manaCost: 1
+  jobPointCost: 0
+  requiredJobClass: 0
   tauntRange: 10
   tauntDuration: 2
   tauntDelay: 0.3

@@ -640,6 +640,7 @@ GameObject:
   - component: {fileID: -5454886897658924754}
   - component: {fileID: 4920894320528578325}
   - component: {fileID: 3205401662026989563}
+  - component: {fileID: 278515026146484350}
   m_Layer: 3
   m_Name: Unit
   m_TagString: Untagged
@@ -685,6 +686,7 @@ MonoBehaviour:
   actionGauge: 0
   ShootPointTransform: {fileID: 0}
   size: 1
+  skillConfig: {fileID: 0}
   groundSnapLayerMask:
     serializedVersion: 2
     m_Bits: 64
@@ -703,6 +705,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MoveAction
   actionCost: 0
   manaCost: 0
+  jobPointCost: 0
   maxMoveDistance: 5
   moveSpeed: 4
   rotateSpeed: 20
@@ -796,6 +799,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InteractAction
   actionCost: 0
   manaCost: 0
+  jobPointCost: 0
   maxRange: 0
   obstacleLayerMask:
     serializedVersion: 2
@@ -825,8 +829,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ManaSystem
   maxMana: 100
+  initialMana: 10
   currentMana: 0
   regenPercentPerTurn: 0.1
+--- !u!114 &278515026146484350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8531198773615253123}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20d5029a0596bd34c9e9f3cbd35ac29c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::JobPointSystem
+  maxJobPoints: 1
 --- !u!1 &8639382682928058527
 GameObject:
   m_ObjectHideFlags: 0

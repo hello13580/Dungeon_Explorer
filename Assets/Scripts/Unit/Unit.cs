@@ -12,6 +12,8 @@ public class Unit : MonoBehaviour
 
 	private ManaSystem manaSystem;
 
+	private JobPointSystem jobPointSystem;
+
 	private HitReactionSystem hitReactionSystem;
 
 	private List<BaseAction> baseActionList;
@@ -90,6 +92,7 @@ public class Unit : MonoBehaviour
 	{
 		healthSystem = GetComponent<HealthSystem>();
 		manaSystem = GetComponent<ManaSystem>();
+		jobPointSystem = GetComponent<JobPointSystem>();
 		hitReactionSystem = GetComponent<HitReactionSystem>();
 
 		// 활성화된 컴포넌트만 기본 스킬로 등록 — 비활성은 나중에 보상으로 습득
@@ -271,9 +274,18 @@ public class Unit : MonoBehaviour
 		return manaSystem.CanSpendMana(baseAction.GetManaCost());
 	}
 
+	/// <summary>직업 포인트가 충분한지 확인. JobPointSystem이 없으면 항상 true.</summary>
+	public bool CanSpendJobPointsToTakeAction(BaseAction baseAction)
+	{
+		return baseAction.HasEnoughJobPoints();
+	}
+
+	/// <summary>AP·마나·JP 세 자원을 모두 충족할 때만 액션을 실행할 수 있다.</summary>
 	public bool CanTakeAction(BaseAction baseAction)
 	{
-		return CanSpendActionPointsToTakeAction(baseAction) && CanSpendManaToTakeAction(baseAction);
+		return CanSpendActionPointsToTakeAction(baseAction)
+			&& CanSpendManaToTakeAction(baseAction)
+			&& CanSpendJobPointsToTakeAction(baseAction);
 	}
 
 	public bool SpendActionPoint(BaseAction baseAction)
@@ -286,15 +298,21 @@ public class Unit : MonoBehaviour
 		if (manaSystem != null)
 			manaSystem.SpendMana(baseAction.GetManaCost());
 
+		// JP 소모 — jobPointCost가 0이면 아무 일도 일어나지 않는다
+		if (jobPointSystem != null)
+			jobPointSystem.SpendJobPoints(baseAction.GetRequiredJobClass(), baseAction.GetJobPointCost());
+
+
 		return true;
 	}
 
 	public ManaSystem GetManaSystem() => manaSystem;
 
-	public int GetCurrentActionPoint()
-	{
-		return currentActionPoint;
-	}
+	/// <summary>직업 포인트 시스템 참조. JobPointSystem 컴포넌트가 없으면 null.</summary>
+	public JobPointSystem GetJobPointSystem() => jobPointSystem;
+
+	public int GetCurrentActionPoint() => currentActionPoint;
+	public int GetMaxActionPoint() => maxActionPoint;
 
 	private void TurnSystem_OnTurnChanged(object sender, EventArgs empty)
 	{

@@ -243,6 +243,10 @@ PrefabInstance:
       propertyPath: skillConfig
       value: 
       objectReference: {fileID: 11400000, guid: 36d6278d257a4e04f9d1258162b834bd, type: 2}
+    - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: maxActionPoint
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 1869861767572440488, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_LocalPosition.y
       value: 1.098
@@ -296,8 +300,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 659678ae845819c4e933d064126c14ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BowAction
-  actionCost: 0
+  actionCost: 1
   manaCost: 10
+  jobPointCost: 0
+  requiredJobClass: 0
   maxShootDistance: 15
   shootDamage: 100
   ArrowProjectilePrefab: {fileID: 8288394526744401144, guid: 5227d29478847f44faf93cfb0450f0a2, type: 3}
@@ -320,6 +326,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AOEAction
   actionCost: 0
   manaCost: 10
+  jobPointCost: 0
+  requiredJobClass: 0
   grenadeProjectilePrefab: {fileID: 627709876669706913, guid: e63eaddc83a11894e89299f2b5b19d92, type: 3}
   shootPointTransform: {fileID: 4486312566150377040}
   obstacleLayerMask:

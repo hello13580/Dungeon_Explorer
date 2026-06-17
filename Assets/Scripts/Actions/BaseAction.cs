@@ -14,6 +14,22 @@ public abstract class BaseAction : MonoBehaviour
 	[SerializeField]
 	protected int manaCost = 0;
 
+	/// <summary>
+	/// 이 액션을 사용할 때 소모하는 직업 포인트(JP).
+	/// 0이면 JP를 소모하지 않는 일반 액션이다.
+	/// </summary>
+	[SerializeField]
+	protected int jobPointCost = 0;
+
+	/// <summary>
+	/// 이 액션이 요구하는 직업.
+	/// None이면 JP를 소모하지 않는 일반 액션이다.
+	/// Common이면 어떤 직업이든 JP만 있으면 사용 가능하다.
+	/// 특정 직업(Warrior 등)으로 설정하면 해당 직업 유닛만 사용 가능하다.
+	/// </summary>
+	[SerializeField]
+	protected JobClass requiredJobClass = JobClass.None;
+
 	public static event EventHandler OnAnyActionStarted;
 
 	public static event EventHandler OnAnyActionEnded;
@@ -73,6 +89,33 @@ public abstract class BaseAction : MonoBehaviour
 
 	public int GetActionPointCost() => actionCost;
 	public int GetManaCost() => manaCost;
+	public int GetJobPointCost() => jobPointCost;
+	public JobClass GetRequiredJobClass() => requiredJobClass;
+
+	/// <summary>
+	/// 유닛의 직업이 일치하고 JP가 충분한지 확인한다.
+	/// requiredJobClass가 None이면 체크를 건너뛴다.
+	/// </summary>
+	public bool HasEnoughJobPoints()
+	{
+		if (requiredJobClass == JobClass.None) return true;
+		JobPointSystem jps = unit.GetJobPointSystem();
+		// JobPointSystem이 없으면 JP를 요구하는 스킬은 사용 불가
+		if (jps == null) return false;
+		return jps.CanSpend(requiredJobClass, jobPointCost);
+	}
+
+	/// <summary>
+	/// JP를 실제로 소모한다. SpendActionPoint() 내부에서 호출된다.
+	/// 직업 불일치 또는 JP 부족이면 false를 반환한다.
+	/// </summary>
+	protected bool SpendJobPoints()
+	{
+		if (requiredJobClass == JobClass.None) return true;
+		JobPointSystem jps = unit.GetJobPointSystem();
+		if (jps == null) return false;
+		return jps.SpendJobPoints(requiredJobClass, jobPointCost);
+	}
 
 	protected void ActionStart(Action onActionComplete)
 	{
