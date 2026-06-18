@@ -625,7 +625,7 @@ MonoBehaviour:
   zoneRadius: 1
   initialDamage: 15
   tickDamage: 8
-  duration: 3
+  duration: 5
   damageZonePrefab: {fileID: 170574552943811040, guid: 5a2bdfdfce731304fb3273064eb3d837, type: 3}
   obstacleLayerMask:
     serializedVersion: 2

@@ -4,8 +4,8 @@ using UnityEngine;
 
 /// <summary>
 /// 장판형 지속 피해 구역.
-/// - 배치 즉시: 이미 안에 있는 유닛에게 initialDamage
-/// - 진입 시:   액션이 끝날 때마다 새로 들어온 유닛에게 즉시 enterDamage
+/// - 배치 즉시: 이미 안에 있는 유닛에게 enterDamage
+/// - 진입 시:   액션이 끝날 때 새로 들어온 유닛에게 enterDamage (외부 → 내부 이동만 감지)
 /// - 자기 턴:   해당 유닛의 턴이 시작될 때 장판 안에 있으면 tickDamage
 /// - 지속 턴:   시전자 팀 턴마다 카운트다운, 소진되면 제거
 /// </summary>
@@ -20,8 +20,10 @@ public class DamageZone : MonoBehaviour
     private int turnsRemaining;
     private TeamType ownerTeamType;
 
-    // 이전 프레임에 장판 안에 있던 유닛 집합 — 새 진입 감지용
+    // 이전 액션 종료 시 장판 안에 있던 유닛 집합 — 이 안에 있으면 "원래부터 장판 안"으로 간주
     private HashSet<Unit> unitsInZoneLastFrame = new HashSet<Unit>();
+    // 이번 액션 중 이동 이벤트로 이미 대미지를 받은 유닛 — BaseAction_OnAnyActionEnded 중복 방지용
+    private HashSet<Unit> unitsDamagedOnEntry = new HashSet<Unit>();
 
     public void Setup(List<GridPosition> positions, int initialDamage, int tickDamage, int duration, TeamType ownerTeamType, int attackPower = 0)
     {
@@ -32,7 +34,7 @@ public class DamageZone : MonoBehaviour
         this.turnsRemaining = duration;
         this.ownerTeamType = ownerTeamType;
 
-        // 배치 즉시 피해 + 현재 안에 있는 유닛 초기 등록 (enterDamage에 공격력이 이미 포함됨)
+        // 배치 즉시 피해 + 현재 안에 있는 유닛 초기 등록
         HashSet<Unit> initial = GetUnitsInZone();
         foreach (Unit u in initial)
             u.Damage(enterDamage);
@@ -40,6 +42,7 @@ public class DamageZone : MonoBehaviour
 
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
         BaseAction.OnAnyActionEnded += BaseAction_OnAnyActionEnded;
+        MoveAction.OnAnyUnitSteppedOnTile += MoveAction_OnAnyUnitSteppedOnTile;
         OnAnyDamageZoneCreated?.Invoke(this, EventArgs.Empty);
     }
 
@@ -48,21 +51,47 @@ public class DamageZone : MonoBehaviour
         if (TurnSystem.Instance != null)
             TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
         BaseAction.OnAnyActionEnded -= BaseAction_OnAnyActionEnded;
+        MoveAction.OnAnyUnitSteppedOnTile -= MoveAction_OnAnyUnitSteppedOnTile;
     }
 
     // ─── 진입 감지 ─────────────────────────────────────────────────────
 
+    /// <summary>
+    /// 이동 중 장판 타일을 밟는 즉시 호출된다.
+    /// 액션 시작 전 장판 밖에 있던 유닛에게만 즉시 enterDamage를 입힌다.
+    /// </summary>
+    private void MoveAction_OnAnyUnitSteppedOnTile(object sender, GridPosition steppedPos)
+    {
+        if (!affectedPositions.Contains(steppedPos)) return;
+        if (sender is not MoveAction moveAction) return;
+        Unit u = moveAction.GetUnit();
+        if (!TeamHelper.IsHostile(ownerTeamType, u.GetTeamType())) return;
+        // 원래부터 장판 안에 있던 유닛이거나 이미 이번 액션에서 대미지를 받았으면 스킵
+        if (unitsInZoneLastFrame.Contains(u)) return;
+        if (unitsDamagedOnEntry.Contains(u)) return;
+
+        u.Damage(enterDamage);
+        unitsDamagedOnEntry.Add(u);
+    }
+
+    /// <summary>
+    /// 액션 종료 시 이동 이벤트를 통하지 않고 장판에 진입한 유닛을 처리한다.
+    /// (이동 외 액션으로 순간이동하듯 장판 안에 들어온 경우 등)
+    /// </summary>
     private void BaseAction_OnAnyActionEnded(object sender, EventArgs e)
     {
         HashSet<Unit> current = GetUnitsInZone();
 
         foreach (Unit u in current)
         {
-            // 이전에 없었던 유닛 = 새로 진입한 유닛
-            if (!unitsInZoneLastFrame.Contains(u))
-                u.Damage(enterDamage);
+            // 이미 이동 이벤트로 대미지를 받았거나 원래부터 장판 안에 있던 유닛은 스킵
+            if (unitsInZoneLastFrame.Contains(u)) continue;
+            if (unitsDamagedOnEntry.Contains(u)) continue;
+
+            u.Damage(enterDamage);
         }
 
+        unitsDamagedOnEntry.Clear();
         unitsInZoneLastFrame = current;
     }
 

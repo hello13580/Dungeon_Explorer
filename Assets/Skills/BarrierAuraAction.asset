@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84018ed38b0955f4fab742da497ba0f5, type: 3}
   m_Name: BarrierAuraAction
   m_EditorClassIdentifier: Assembly-CSharp::SkillDefinition
-  skillName: 
-  description: 
-  icon: {fileID: 0}
-  actionTypeName: 
+  skillName: BarrierAura
+  description: get BarrierAura
+  icon: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  actionTypeName: BarrierAuraAction

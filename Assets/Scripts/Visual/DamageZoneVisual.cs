@@ -26,13 +26,22 @@ public class DamageZoneVisual : MonoBehaviour
         GridOutlineUtil.SetupLineRenderer(lineRenderer, lineWidth, lineColor, lineMaterial);
         lineRenderer.enabled = false;
 
-        // Setup() 내부에서 발생하는 이벤트를 구독 — 이 시점에 affectedPositions가 확실히 설정됨
+        // Setup() 완료 직후 이벤트로 윤곽선 생성
         DamageZone.OnAnyDamageZoneCreated += OnAnyDamageZoneCreated;
+        // 장판 만료 즉시 윤곽선 제거 — 이펙트는 천천히 사라져도 범위 표시는 바로 끔
+        DamageZone.OnAnyDamageZoneDestroyed += OnAnyDamageZoneDestroyed;
     }
 
     private void OnDestroy()
     {
         DamageZone.OnAnyDamageZoneCreated -= OnAnyDamageZoneCreated;
+        DamageZone.OnAnyDamageZoneDestroyed -= OnAnyDamageZoneDestroyed;
+    }
+
+    private void OnAnyDamageZoneDestroyed(object sender, EventArgs e)
+    {
+        if (sender is not DamageZone zone || zone.gameObject != gameObject) return;
+        lineRenderer.enabled = false;
     }
 
     private void OnAnyDamageZoneCreated(object sender, EventArgs e)

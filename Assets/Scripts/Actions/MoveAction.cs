@@ -36,6 +36,10 @@ public class MoveAction : BaseAction
     public event EventHandler OnStopMoving;
     public event EventHandler<OnChangeFloorStartedEventArgs> OnChangeFloorsStarted;
 
+    // 이동 중 유닛이 새 그리드 타일에 도달할 때마다 발생 — 경유 타일 감지용
+    public static event EventHandler<GridPosition> OnAnyUnitSteppedOnTile;
+
+
     protected override void Awake()
     {
         base.Awake();
@@ -228,6 +232,8 @@ public class MoveAction : BaseAction
             }
 
             transform.position = targetPos;
+            // 경유 타일 도달 알림 — 장판 등 지형 효과가 경유 여부를 기록할 수 있도록
+            OnAnyUnitSteppedOnTile?.Invoke(this, LevelGrid.Instance.GetGridPosition(targetPos));
             currentPositionIndex++;
         }
 
