@@ -11,21 +11,24 @@ public class SkillUnlockManager : MonoBehaviour
 {
     public static SkillUnlockManager Instance { get; private set; }
 
+    [SerializeField] private int optionsPerClass = 3; // 직업당 보여줄 선택지 수
+
     /// <summary>스킬 선택 UI에 넘겨줄 선택지 하나.</summary>
     public class SkillUnlockOption
     {
         public SkillDefinition skillDef;
         public string unitClassId;
-        public Unit targetUnit; // 현재 살아있는 유닛 인스턴스
+        public Unit targetUnit;
     }
 
-    /// <summary>직업 보상 차례가 시작될 때 발생. 해당 직업의 선택지(없으면 빈 리스트)를 전달한다.</summary>
+    /// <summary>직업 보상 차례가 시작될 때 발생. 해당 직업의 선택지 목록을 전달한다.</summary>
     public static event EventHandler<List<SkillUnlockOption>> OnSkillUnlockStarted;
     /// <summary>모든 직업의 보상이 끝났을 때 발생.</summary>
     public static event EventHandler OnSkillUnlockCompleted;
 
-    // 직업별 보상을 순서대로 처리하기 위한 큐
-    private Queue<SkillUnlockOption> optionQueue = new Queue<SkillUnlockOption>();
+    // 직업별 선택지 묶음을 순서대로 처리하기 위한 큐
+    // 각 항목은 한 직업의 선택지 목록 (최대 optionsPerClass개)
+    private Queue<List<SkillUnlockOption>> optionQueue = new Queue<List<SkillUnlockOption>>();
 
     private void Awake()
     {
@@ -55,64 +58,53 @@ public class SkillUnlockManager : MonoBehaviour
 
     private void TriggerSkillUnlock()
     {
-        // 아군 직업마다 보상 선택지를 큐에 쌓은 뒤 첫 번째 직업부터 순서대로 표시한다
         optionQueue.Clear();
-        foreach (SkillUnlockOption option in BuildOptions())
-            optionQueue.Enqueue(option);
+        foreach (List<SkillUnlockOption> classOptions in BuildOptions())
+            optionQueue.Enqueue(classOptions);
 
         ShowNextOption();
     }
 
     /// <summary>
-    /// 큐에서 다음 직업 보상을 꺼내 OnSkillUnlockStarted를 발생시킨다.
+    /// 큐에서 다음 직업 보상 묶음을 꺼내 OnSkillUnlockStarted를 발생시킨다.
     /// 큐가 비면 모든 보상이 끝난 것이므로 OnSkillUnlockCompleted를 발생시킨다.
-    /// SkipUnlock()에서 호출해 다음 직업으로 넘어간다.
     /// </summary>
     private void ShowNextOption()
     {
         if (optionQueue.Count == 0)
         {
-            // 모든 직업 보상 완료
             OnSkillUnlockCompleted?.Invoke(this, EventArgs.Empty);
             return;
         }
 
-        SkillUnlockOption next = optionQueue.Dequeue();
-        // 단일 선택지를 리스트로 감싸서 기존 UI 이벤트 시그니처를 유지한다
-        OnSkillUnlockStarted?.Invoke(this, new List<SkillUnlockOption> { next });
+        List<SkillUnlockOption> next = optionQueue.Dequeue();
+        OnSkillUnlockStarted?.Invoke(this, next);
     }
 
-    /// <summary>
-    /// 컨티뉴 버튼 클릭 시 호출.
-    /// 현재 직업 보상을 넘기고 다음 직업 보상으로 이동한다.
-    /// 마지막 직업이면 패널을 닫는다.
-    /// </summary>
+    /// <summary>컨티뉴 버튼 클릭 시 호출. 다음 직업 보상으로 이동한다.</summary>
     public void SkipUnlock()
     {
         ShowNextOption();
     }
 
-    /// <summary>
-    /// 확정 버튼 클릭 시 호출. 스킬을 습득하지만 패널은 닫지 않는다.
-    /// 패널은 컨티뉴 버튼(SkipUnlock)으로만 다음 단계로 넘어간다.
-    /// </summary>
+    /// <summary>확정 버튼 클릭 시 호출. 스킬을 습득하지만 패널은 닫지 않는다.</summary>
     public void ConfirmUnlock(SkillUnlockOption option)
     {
         if (option == null || option.skillDef == null) return;
 
-        // 1. PartySkillData에 영구 저장
         PartySkillData.Instance.LearnSkill(option.unitClassId, option.skillDef.actionTypeName);
 
-        // 2. 현재 살아있는 유닛에 즉시 적용
         if (option.targetUnit != null)
             option.targetUnit.UnlockSkillByTypeName(option.skillDef.actionTypeName);
     }
 
-    private List<SkillUnlockOption> BuildOptions()
+    /// <summary>
+    /// 직업별 선택지 묶음 목록을 만든다.
+    /// 각 직업마다 미습득 스킬 중 최대 optionsPerClass개를 랜덤으로 골라 묶음으로 반환한다.
+    /// </summary>
+    private List<List<SkillUnlockOption>> BuildOptions()
     {
-        List<SkillUnlockOption> options = new List<SkillUnlockOption>();
-
-        // 이미 처리한 직업 ID는 건너뛴다 (같은 직업 유닛이 여러 명일 때 중복 방지)
+        List<List<SkillUnlockOption>> result = new List<List<SkillUnlockOption>>();
         HashSet<string> processedClasses = new HashSet<string>();
 
         foreach (Unit unit in UnitManager.Instance.GetFriendlyUnitList())
@@ -123,35 +115,72 @@ public class SkillUnlockManager : MonoBehaviour
             processedClasses.Add(config.unitClassId);
 
             // 이 직업의 미습득 스킬 목록
+            // PartySkillData에 없는 것 + 유닛에 이미 활성화된 컴포넌트가 아닌 것만 포함
             List<SkillDefinition> unlearnedSkills = new List<SkillDefinition>();
             foreach (SkillDefinition skillDef in config.learnableSkills)
             {
-                if (!PartySkillData.Instance.IsLearned(config.unitClassId, skillDef.actionTypeName))
-                    unlearnedSkills.Add(skillDef);
+                // 보상으로 이미 습득한 스킬 제외
+                if (PartySkillData.Instance.IsLearned(config.unitClassId, skillDef.actionTypeName))
+                    continue;
+
+                // 처음부터 활성화된 스킬(기본 스킬) 제외
+                System.Type actionType = FindActionType(skillDef.actionTypeName);
+                if (actionType != null)
+                {
+                    BaseAction existing = unit.GetComponent(actionType) as BaseAction;
+                    if (existing != null && existing.enabled) continue;
+                }
+
+                unlearnedSkills.Add(skillDef);
             }
 
-            // 배울 스킬이 없는 직업도 큐에 넣어 "습득 가능한 스킬 없음" 화면을 보여준다
+            // 배울 스킬이 없으면 빈 화면(스킬 없음 안내)을 보여주기 위해 빈 리스트 1개 추가
             if (unlearnedSkills.Count == 0)
             {
-                options.Add(new SkillUnlockOption
+                result.Add(new List<SkillUnlockOption>
                 {
-                    skillDef = null,
-                    unitClassId = config.unitClassId,
-                    targetUnit = unit
+                    new SkillUnlockOption { skillDef = null, unitClassId = config.unitClassId, targetUnit = unit }
                 });
                 continue;
             }
 
-            // 미습득 스킬 중 랜덤으로 1개 선택
-            SkillDefinition picked = unlearnedSkills[UnityEngine.Random.Range(0, unlearnedSkills.Count)];
-            options.Add(new SkillUnlockOption
+            // 미습득 스킬을 섞어서 최대 optionsPerClass개 선택
+            Shuffle(unlearnedSkills);
+            List<SkillUnlockOption> classOptions = new List<SkillUnlockOption>();
+            int count = Mathf.Min(optionsPerClass, unlearnedSkills.Count);
+            for (int i = 0; i < count; i++)
             {
-                skillDef = picked,
-                unitClassId = config.unitClassId,
-                targetUnit = unit
-            });
+                classOptions.Add(new SkillUnlockOption
+                {
+                    skillDef    = unlearnedSkills[i],
+                    unitClassId = config.unitClassId,
+                    targetUnit  = unit
+                });
+            }
+            result.Add(classOptions);
         }
 
-        return options;
+        return result;
+    }
+
+    /// <summary>어셈블리 전체에서 typeName에 해당하는 Type을 찾는다.</summary>
+    private static System.Type FindActionType(string typeName)
+    {
+        foreach (System.Reflection.Assembly assembly in System.AppDomain.CurrentDomain.GetAssemblies())
+        {
+            System.Type type = assembly.GetType(typeName);
+            if (type != null) return type;
+        }
+        return null;
+    }
+
+    /// <summary>Fisher-Yates 셔플로 리스트를 무작위로 섞는다.</summary>
+    private void Shuffle<T>(List<T> list)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int j = UnityEngine.Random.Range(0, i + 1);
+            (list[i], list[j]) = (list[j], list[i]);
+        }
     }
 }

@@ -230,14 +230,21 @@ public class DashAttackAction : BaseAction
 
     public override List<GridPosition> GetActionRangeGridPositionList()
     {
-        // 범위 시각화용 — dashRange 내 전체 타일 반환
+        // MoveAction처럼 원형 범위로 시각화
         List<GridPosition> rangeList = new List<GridPosition>();
         GridPosition unitGridPos = unit.GetGridPosition();
+        int unitSize = unit.GetSize();
 
         for (int x = -dashRange; x <= dashRange; x++)
         {
             for (int z = -dashRange; z <= dashRange; z++)
             {
+                // 크기가 1보다 큰 유닛은 중심점을 기준으로 원형 판정
+                float sizeOffset = (unitSize - 1) * 0.5f;
+                float distX = x - sizeOffset;
+                float distZ = z - sizeOffset;
+                if (Mathf.Sqrt(distX * distX + distZ * distZ) > dashRange) continue;
+
                 GridPosition testPos = unitGridPos + new GridPosition(x, z, 0);
                 if (LevelGrid.Instance.IsValidGridPosition(testPos))
                     rangeList.Add(testPos);

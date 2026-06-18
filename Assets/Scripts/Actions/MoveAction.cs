@@ -88,6 +88,30 @@ public class MoveAction : BaseAction
         cachedValidGridPositionList = null;
     }
 
+    /// <summary>
+    /// 이동 거리를 회복한다. 둔화 등 상태이상이 있으면 multiplier가 낮아져 회복량이 줄어든다.
+    /// SprintAction에서 호출.
+    /// </summary>
+    public void RestoreMoveDistance()
+    {
+        float multiplier = 1f;
+        StatusEffectSystem ses = unit.GetComponent<StatusEffectSystem>();
+        if (ses != null)
+        {
+            // 속박 상태면 이동 거리 0 — 전력질주도 효과 없음
+            if (ses.IsRooted())
+                multiplier = 0f;
+            else
+                multiplier = ses.GetMovementMultiplier();
+        }
+
+        leftMoveDistance = maxMoveDistance * multiplier;
+        MarkCacheDirty();
+    }
+
+    public float GetLeftMoveDistance() => leftMoveDistance;
+    public float GetMaxMoveDistance() => maxMoveDistance;
+
     public override string GetActionName() => "Move";
 
     public override void TakeAction(GridPosition gridPosition, Action onMovingComplete)

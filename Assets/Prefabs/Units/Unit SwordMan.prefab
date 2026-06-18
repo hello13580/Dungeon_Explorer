@@ -129,6 +129,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6446122214556097310}
+    - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5390978927517487483}
     - targetCorrespondingSourceObject: {fileID: 7478389241422733539, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4048200313592570681}
@@ -195,6 +198,26 @@ MonoBehaviour:
   requiredJobClass: 0
   barrierAmount: 30
   barrierDuration: 5
+--- !u!114 &5390978927517487483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 416177728078544639}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d76c3416fee1f26439a746dd6708fed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DashAttackAction
+  actionCost: 0
+  manaCost: 0
+  jobPointCost: 0
+  requiredJobClass: 0
+  dashRange: 6
+  damage: 15
+  hitForce: 600
+  moveSpeed: 12
 --- !u!1 &1471256514613463199 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7478389241422733539, guid: 31ff398b13221204abf58d215dd04293, type: 3}
