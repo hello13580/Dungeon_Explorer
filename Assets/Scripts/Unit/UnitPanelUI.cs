@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,10 +17,19 @@ public class UnitPanelUI : MonoBehaviour
     [SerializeField] private Image barrierBarImage;
     [SerializeField] private Image manaBarImage;
 
+    [Header("수치 텍스트")]
+    [SerializeField] private TextMeshProUGUI healthText;      // "현재/최대" 형식
+    [SerializeField] private TextMeshProUGUI manaText;        // "현재/최대" 형식
+    [SerializeField] private TextMeshProUGUI barrierText;     // 방어막 있을 때만 표시
+    [SerializeField] private TextMeshProUGUI unitNameText;    // 유닛 이름
+    [SerializeField] private TextMeshProUGUI attackPowerText; // 공격력 수치
+    [SerializeField] private TextMeshProUGUI defPowerText;    // 방어력 수치
+
     [SerializeField] private HealthSystem healthSystem;
     [SerializeField] private BarrierSystem barrierSystem;
     [SerializeField] private ManaSystem manaSystem;
     [SerializeField] private JobPointSystem jobPointSystem;
+    private AttackBuffSystem attackBuffSystem;
 
     [SerializeField] private Unit unit;
 
@@ -27,10 +37,11 @@ public class UnitPanelUI : MonoBehaviour
     {
         if (unit != null)
         {
-            healthSystem   = unit.GetComponent<HealthSystem>();
-            barrierSystem  = unit.GetComponent<BarrierSystem>();
-            manaSystem     = unit.GetComponent<ManaSystem>();
-            jobPointSystem = unit.GetComponent<JobPointSystem>();
+            healthSystem     = unit.GetComponent<HealthSystem>();
+            barrierSystem    = unit.GetComponent<BarrierSystem>();
+            manaSystem       = unit.GetComponent<ManaSystem>();
+            jobPointSystem   = unit.GetComponent<JobPointSystem>();
+            attackBuffSystem = unit.GetComponent<AttackBuffSystem>();
         }
 
         // 전투 중에만 패널 표시 — 스테이지 로드 완료 시 표시, 클리어 시 숨김
@@ -49,40 +60,46 @@ public class UnitPanelUI : MonoBehaviour
         if (healthSystem != null)
             healthSystem.OnUnitDamaged += HealthSystem_OnUnitDamaged;
 
-        if (barrierSystem != null)  barrierSystem.OnBarrierChanged      += BarrierSystem_OnBarrierChanged;
-        if (manaSystem != null)     manaSystem.OnManaChanged            += ManaSystem_OnManaChanged;
-        if (jobPointSystem != null) jobPointSystem.OnJobPointsChanged   += JobPointSystem_OnJobPointsChanged;
+        if (barrierSystem != null)    barrierSystem.OnBarrierChanged       += BarrierSystem_OnBarrierChanged;
+        if (manaSystem != null)       manaSystem.OnManaChanged             += ManaSystem_OnManaChanged;
+        if (jobPointSystem != null)   jobPointSystem.OnJobPointsChanged    += JobPointSystem_OnJobPointsChanged;
+        if (attackBuffSystem != null) attackBuffSystem.OnBuffChanged        += AttackBuffSystem_OnBuffChanged;
 
         UpdateActionPointIcons();
         UpdateJobPointIcons();
         UpdateHealthBar();
         UpdateBarrierBar();
         UpdateManaBar();
+        UpdateUnitInfo();
     }
 
     private void UnitActionSystem_OnSelectedUnitChanged(object sender, Unit e)
     {
-        if (barrierSystem != null) barrierSystem.OnBarrierChanged -= BarrierSystem_OnBarrierChanged;
-        if (manaSystem != null)    manaSystem.OnManaChanged       -= ManaSystem_OnManaChanged;
-        if (jobPointSystem != null) jobPointSystem.OnJobPointsChanged -= JobPointSystem_OnJobPointsChanged;
+        if (barrierSystem != null)    barrierSystem.OnBarrierChanged      -= BarrierSystem_OnBarrierChanged;
+        if (manaSystem != null)       manaSystem.OnManaChanged            -= ManaSystem_OnManaChanged;
+        if (jobPointSystem != null)   jobPointSystem.OnJobPointsChanged   -= JobPointSystem_OnJobPointsChanged;
+        if (attackBuffSystem != null) attackBuffSystem.OnBuffChanged       -= AttackBuffSystem_OnBuffChanged;
 
         unit = UnitActionSystem.Instance.GetSelectedUnit();
         if (unit == null) return;
 
-        healthSystem   = unit.GetComponent<HealthSystem>();
-        barrierSystem  = unit.GetComponent<BarrierSystem>();
-        manaSystem     = unit.GetComponent<ManaSystem>();
-        jobPointSystem = unit.GetComponent<JobPointSystem>();
+        healthSystem     = unit.GetComponent<HealthSystem>();
+        barrierSystem    = unit.GetComponent<BarrierSystem>();
+        manaSystem       = unit.GetComponent<ManaSystem>();
+        jobPointSystem   = unit.GetComponent<JobPointSystem>();
+        attackBuffSystem = unit.GetComponent<AttackBuffSystem>();
 
-        if (barrierSystem != null) barrierSystem.OnBarrierChanged += BarrierSystem_OnBarrierChanged;
-        if (manaSystem != null)    manaSystem.OnManaChanged       += ManaSystem_OnManaChanged;
-        if (jobPointSystem != null) jobPointSystem.OnJobPointsChanged += JobPointSystem_OnJobPointsChanged;
+        if (barrierSystem != null)    barrierSystem.OnBarrierChanged      += BarrierSystem_OnBarrierChanged;
+        if (manaSystem != null)       manaSystem.OnManaChanged            += ManaSystem_OnManaChanged;
+        if (jobPointSystem != null)   jobPointSystem.OnJobPointsChanged   += JobPointSystem_OnJobPointsChanged;
+        if (attackBuffSystem != null) attackBuffSystem.OnBuffChanged       += AttackBuffSystem_OnBuffChanged;
 
         UpdateActionPointIcons();
         UpdateJobPointIcons();
         UpdateHealthBar();
         UpdateBarrierBar();
         UpdateManaBar();
+        UpdateUnitInfo();
     }
 
     private void OnDestroy()
@@ -93,9 +110,10 @@ public class UnitPanelUI : MonoBehaviour
         if (UnitActionSystem.Instance != null)
             UnitActionSystem.Instance.OnSelectedUnitChanged -= UnitActionSystem_OnSelectedUnitChanged;
 
-        if (barrierSystem != null)  barrierSystem.OnBarrierChanged      -= BarrierSystem_OnBarrierChanged;
-        if (manaSystem != null)     manaSystem.OnManaChanged            -= ManaSystem_OnManaChanged;
-        if (jobPointSystem != null) jobPointSystem.OnJobPointsChanged   -= JobPointSystem_OnJobPointsChanged;
+        if (barrierSystem != null)    barrierSystem.OnBarrierChanged      -= BarrierSystem_OnBarrierChanged;
+        if (manaSystem != null)       manaSystem.OnManaChanged            -= ManaSystem_OnManaChanged;
+        if (jobPointSystem != null)   jobPointSystem.OnJobPointsChanged   -= JobPointSystem_OnJobPointsChanged;
+        if (attackBuffSystem != null) attackBuffSystem.OnBuffChanged       -= AttackBuffSystem_OnBuffChanged;
     }
 
     private void OnStageLoaded(object sender, EventArgs e)
@@ -152,8 +170,12 @@ public class UnitPanelUI : MonoBehaviour
 
     private void UpdateHealthBar()
     {
-        if (healthBarImage == null || healthSystem == null) return;
-        healthBarImage.fillAmount = healthSystem.GetHealthNormalized();
+        if (healthSystem == null) return;
+        if (healthBarImage != null)
+            healthBarImage.fillAmount = healthSystem.GetHealthNormalized();
+        // "현재/최대" 수치 텍스트 갱신
+        if (healthText != null)
+            healthText.text = $"{healthSystem.GetCurrentHealth()}/{healthSystem.GetMaxHealth()}";
     }
 
     private void HealthSystem_OnUnitDamaged(object sender, EventArgs e)
@@ -164,19 +186,41 @@ public class UnitPanelUI : MonoBehaviour
 
     private void UpdateBarrierBar()
     {
-        if (barrierBarImage == null) return;
-        barrierBarImage.fillAmount = (barrierSystem != null && barrierSystem.HasBarrier())
-            ? Mathf.Clamp01(barrierSystem.GetBarrierNormalized())
-            : 0f;
+        bool hasBarrier = barrierSystem != null && barrierSystem.HasBarrier();
+        if (barrierBarImage != null)
+            barrierBarImage.fillAmount = hasBarrier ? Mathf.Clamp01(barrierSystem.GetBarrierNormalized()) : 0f;
+        // 방어막이 있을 때만 수치 표시, 없으면 빈 문자열로 숨김
+        if (barrierText != null)
+            barrierText.text = hasBarrier ? barrierSystem.GetTotalBarrierAmount().ToString() : "";
     }
 
     private void BarrierSystem_OnBarrierChanged(object sender, EventArgs e) => UpdateBarrierBar();
 
     private void UpdateManaBar()
     {
-        if (manaBarImage == null) return;
-        manaBarImage.fillAmount = manaSystem != null ? manaSystem.GetManaNormalized() : 0f;
+        if (manaSystem == null) return;
+        if (manaBarImage != null)
+            manaBarImage.fillAmount = manaSystem.GetManaNormalized();
+        // "현재/최대" 수치 텍스트 갱신
+        if (manaText != null)
+            manaText.text = $"{manaSystem.GetCurrentMana()}/{manaSystem.GetMaxMana()}";
     }
 
     private void ManaSystem_OnManaChanged(object sender, EventArgs e) => UpdateManaBar();
+
+    // ── 이름 / 공격력 ────────────────────────────────────────────────
+
+    // 버프가 추가·제거될 때 공격력 수치를 즉시 갱신한다
+    private void AttackBuffSystem_OnBuffChanged(object sender, EventArgs e) => UpdateUnitInfo();
+
+    private void UpdateUnitInfo()
+    {
+        if (unit == null) return;
+        if (unitNameText != null)
+            unitNameText.text = unit.GetUnitName();
+        if (attackPowerText != null)
+            attackPowerText.text = $"ATK : {unit.GetAttackPower()}";
+        if (defPowerText != null)
+            defPowerText.text = $"DEF : {unit.GetDefensePower()}";
+    }
 }

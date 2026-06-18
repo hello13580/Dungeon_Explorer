@@ -81,6 +81,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: unitName
+      value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: initialSpeed
       value: 9
       objectReference: {fileID: 0}
@@ -249,6 +253,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MeleeAction
   actionCost: 5
   manaCost: 0
+  jobPointCost: 0
+  requiredJobClass: 0
   maxRange: 1
   damage: 10
   hitForce: 500

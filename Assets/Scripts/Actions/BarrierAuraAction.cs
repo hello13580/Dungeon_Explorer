@@ -8,7 +8,7 @@ using UnityEngine;
 /// 오라가 활성화된 동안 이 유닛의 턴이 끝날 때마다 범위 내 아군에게 방어막을 부여한다.
 /// 지정한 지속 턴이 지나면 오라가 해제된다.
 /// </summary>
-public class BarrierAuraAction : BaseAction
+public class BarrierAuraAction : BaseAction, IAuraAction
 {
     [Header("Aura")]
     [SerializeField] private int auraRange = 2;           // 방어막을 부여할 아군 탐색 범위 (칸)

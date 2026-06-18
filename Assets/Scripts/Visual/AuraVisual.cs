@@ -1,11 +1,12 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// BarrierAuraAction이 활성화된 동안 실제 범위 타일 경계에 맞는 윤곽선을 그린다.
+/// IAuraAction을 구현한 오라 액션이 활성화된 동안 범위 타일 경계에 맞는 윤곽선을 그린다.
+/// BarrierAuraAction, AttackAuraAction 등 어떤 오라 계열 액션이든 하나의 컴포넌트로 처리한다.
 ///
-/// cachedPath는 그리드 절대 좌표 기반이므로 유닛이 이동하면 새 위치 기준으로 재계산한다.
-/// LateUpdate에서는 이동 중 transform.position 오프셋만 적용해 부드럽게 따라오게 한다.
+/// 같은 유닛에 오라 액션이 여러 개 있을 경우 각각 AuraVisual을 추가하면 된다.
 /// </summary>
 [RequireComponent(typeof(LineRenderer))]
 public class AuraVisual : MonoBehaviour
@@ -17,16 +18,16 @@ public class AuraVisual : MonoBehaviour
     [SerializeField] private float heightOffset = 0.1f;
 
     private LineRenderer lineRenderer;
-    private BarrierAuraAction auraAction;
+    private IAuraAction auraAction;
 
-    // 현재 path가 어느 그리드 위치 기준인지 기억
     private List<Vector2Int> cachedPath;
     private GridPosition cachedCenter;
 
     private void Awake()
     {
         lineRenderer = GetComponent<LineRenderer>();
-        auraAction = GetComponent<BarrierAuraAction>();
+        // 같은 GameObject의 IAuraAction 구현체를 자동으로 찾는다
+        auraAction = GetComponent<IAuraAction>();
         GridOutlineUtil.SetupLineRenderer(lineRenderer, lineWidth, lineColor, lineMaterial);
         lineRenderer.enabled = false;
     }
@@ -38,12 +39,17 @@ public class AuraVisual : MonoBehaviour
         auraAction.OnAuraDeactivated += (s, e) => { lineRenderer.enabled = false; cachedPath = null; };
 
         // 이동 등 액션이 끝나면 그리드 위치가 바뀌었을 수 있으므로 path 재계산
-        BaseAction.OnAnyActionEnded += (s, e) => { if (lineRenderer.enabled) RebuildPath(); };
+        BaseAction.OnAnyActionEnded += OnAnyActionEnded;
     }
 
     private void OnDestroy()
     {
-        BaseAction.OnAnyActionEnded -= (s, e) => { if (lineRenderer.enabled) RebuildPath(); };
+        BaseAction.OnAnyActionEnded -= OnAnyActionEnded;
+    }
+
+    private void OnAnyActionEnded(object sender, EventArgs e)
+    {
+        if (lineRenderer.enabled) RebuildPath();
     }
 
     private void LateUpdate()
@@ -76,6 +82,6 @@ public class AuraVisual : MonoBehaviour
         }
 
         cachedPath = GridOutlineUtil.BuildOutlinePath(tileSet);
-        cachedCenter = center; // 이 path가 어느 위치 기준인지 저장
+        cachedCenter = center;
     }
 }

@@ -19,6 +19,9 @@ public class Unit : MonoBehaviour
 	private List<BaseAction> baseActionList;
 
 	[SerializeField]
+	private string unitName = ""; // UI에 표시할 유닛 이름
+
+	[SerializeField]
 	private int currentActionPoint;
 
 	[SerializeField]
@@ -319,6 +322,8 @@ public class Unit : MonoBehaviour
 
 	public int GetCurrentActionPoint() => currentActionPoint;
 	public int GetMaxActionPoint() => maxActionPoint;
+	public string GetUnitName() => unitName;
+
 	/// <summary>공격 스킬의 고정 피해에 더해지는 공격력 스탯. 일시적 버프를 포함한다.</summary>
 	public int GetAttackPower()
 	{

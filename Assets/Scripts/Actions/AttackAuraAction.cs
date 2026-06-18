@@ -5,24 +5,25 @@ using UnityEngine;
 
 /// <summary>
 /// 자신 주변에 공격력 강화 오라를 생성하는 액션.
-/// 오라가 활성화된 동안 이 유닛의 턴이 끝날 때마다 범위 내 아군에게 공격력 버프를 부여한다.
-/// BarrierAuraAction과 동일한 턴 종료 감지 패턴을 사용한다.
+/// 범위 안에 있는 아군은 즉시 고정 공격력 버프를 받고, 범위 밖으로 나가거나 오라가 꺼지면 버프가 사라진다.
 /// </summary>
-public class AttackAuraAction : BaseAction
+public class AttackAuraAction : BaseAction, IAuraAction
 {
     [Header("Aura")]
     [SerializeField] private int auraRange = 2;
-    [SerializeField] private int auraDuration = 3;      // 오라 지속 턴 수
+    [SerializeField] private int auraDuration = 3;   // 오라 지속 턴 수
 
     [Header("Buff")]
-    [SerializeField] private int attackBonus = 10;      // 매 턴 종료 시 부여할 공격력 버프 수치
-    [SerializeField] private int buffDuration = 1;      // 부여된 버프의 지속 턴
+    [SerializeField] private int attackBonus = 10;   // 범위 안에 있는 동안 유지되는 공격력 보너스
 
     private bool isAuraActive = false;
     private int turnsRemaining = 0;
 
-    // 이 유닛의 턴이 시작되면 true, 다음 OnTurnChanged가 왔을 때 true이면 턴이 끝난 것
+    // 턴 종료 감지용 플래그
     private bool isTurnActive = false;
+
+    // 현재 오라 버프를 받고 있는 유닛 목록 — 범위 이탈 감지에 사용
+    private HashSet<Unit> buffedUnits = new HashSet<Unit>();
 
     public event EventHandler OnAuraActivated;
     public event EventHandler OnAuraDeactivated;
@@ -37,24 +38,31 @@ public class AttackAuraAction : BaseAction
     private void Start()
     {
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+        // 이동 등 액션이 끝날 때마다 범위 진입/이탈을 갱신
+        BaseAction.OnAnyActionEnded += BaseAction_OnAnyActionEnded;
     }
 
     private void OnDestroy()
     {
         if (TurnSystem.Instance != null)
             TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+        BaseAction.OnAnyActionEnded -= BaseAction_OnAnyActionEnded;
+    }
+
+    private void BaseAction_OnAnyActionEnded(object sender, EventArgs e)
+    {
+        if (!isAuraActive) return;
+        RefreshAuraBuffs();
     }
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
     {
         if (!isAuraActive) return;
 
-        // 이 유닛의 턴이 끝난 시점 감지
+        // 이 유닛의 턴이 끝난 시점 감지 — 오라 지속 턴 차감
         if (isTurnActive && TurnSystem.Instance.GetTurnUnit() != unit)
         {
             isTurnActive = false;
-            ApplyAuraTick();
-
             turnsRemaining--;
             if (turnsRemaining <= 0)
                 DeactivateAura();
@@ -64,29 +72,49 @@ public class AttackAuraAction : BaseAction
             isTurnActive = true;
     }
 
-    /// <summary>범위 내 아군에게 공격력 버프를 부여한다.</summary>
-    private void ApplyAuraTick()
+    /// <summary>범위 안의 아군에게 버프를 유지하고, 범위 밖으로 나간 아군의 버프를 제거한다.</summary>
+    private void RefreshAuraBuffs()
     {
         GridPosition unitPos = unit.GetGridPosition();
+        HashSet<Unit> currentInRange = new HashSet<Unit>();
 
         foreach (Unit ally in UnitManager.Instance.GetFriendlyUnitList())
         {
             if (ally == null) continue;
-
             GridPosition allyPos = ally.GetGridPosition();
             int dist = Mathf.Abs(allyPos.x - unitPos.x) + Mathf.Abs(allyPos.z - unitPos.z);
             if (dist > auraRange) continue;
 
             AttackBuffSystem abs = ally.GetComponent<AttackBuffSystem>();
             if (abs != null)
-                abs.ApplyBuff(attackBonus, buffDuration);
+            {
+                abs.SetAuraBuff(attackBonus); // 이미 같은 값이면 이벤트 미발생
+                currentInRange.Add(ally);
+            }
         }
 
+        // 범위를 벗어난 유닛의 버프 제거
+        foreach (Unit prev in buffedUnits)
+        {
+            if (prev == null) continue;
+            if (!currentInRange.Contains(prev))
+                prev.GetComponent<AttackBuffSystem>()?.ClearAuraBuff();
+        }
+
+        buffedUnits = currentInRange;
         OnAuraTick?.Invoke(this, EventArgs.Empty);
     }
 
+    /// <summary>오라 해제 시 모든 버프 즉시 제거.</summary>
     private void DeactivateAura()
     {
+        foreach (Unit u in buffedUnits)
+        {
+            if (u == null) continue;
+            u.GetComponent<AttackBuffSystem>()?.ClearAuraBuff();
+        }
+        buffedUnits.Clear();
+
         isAuraActive = false;
         isTurnActive = false;
         OnAuraDeactivated?.Invoke(this, EventArgs.Empty);
@@ -107,6 +135,8 @@ public class AttackAuraAction : BaseAction
         isTurnActive = true;
 
         OnAuraActivated?.Invoke(this, EventArgs.Empty);
+        // 활성화 즉시 범위 내 아군에게 버프 적용
+        RefreshAuraBuffs();
 
         yield return new WaitForSeconds(0.3f);
 

@@ -17,6 +17,10 @@ public class AttackBuffSystem : MonoBehaviour
     }
 
     private List<AttackBuff> activeBuffs = new List<AttackBuff>();
+
+    // 오라처럼 "범위 안에 있는 동안만" 유지되는 고정 버프 — 스택되지 않고 켜고 끄는 방식
+    private int auraBuff = 0;
+
     private Unit unit;
 
     private void Awake()
@@ -42,10 +46,26 @@ public class AttackBuffSystem : MonoBehaviour
         OnBuffChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    /// <summary>오라 범위 안에 있는 동안만 유지되는 고정 버프를 설정한다.</summary>
+    public void SetAuraBuff(int amount)
+    {
+        if (auraBuff == amount) return;
+        auraBuff = amount;
+        OnBuffChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>오라 고정 버프를 제거한다. 범위 이탈 또는 오라 해제 시 호출.</summary>
+    public void ClearAuraBuff()
+    {
+        if (auraBuff == 0) return;
+        auraBuff = 0;
+        OnBuffChanged?.Invoke(this, EventArgs.Empty);
+    }
+
     /// <summary>현재 유효한 모든 공격력 버프의 합계를 반환한다.</summary>
     public int GetTotalBonus()
     {
-        int total = 0;
+        int total = auraBuff;
         foreach (AttackBuff buff in activeBuffs)
             total += buff.amount;
         return total;
