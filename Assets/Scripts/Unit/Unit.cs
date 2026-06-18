@@ -319,8 +319,12 @@ public class Unit : MonoBehaviour
 
 	public int GetCurrentActionPoint() => currentActionPoint;
 	public int GetMaxActionPoint() => maxActionPoint;
-	/// <summary>공격 스킬의 고정 피해에 더해지는 공격력 스탯.</summary>
-	public int GetAttackPower() => attackPower;
+	/// <summary>공격 스킬의 고정 피해에 더해지는 공격력 스탯. 일시적 버프를 포함한다.</summary>
+	public int GetAttackPower()
+	{
+		AttackBuffSystem abs = GetComponent<AttackBuffSystem>();
+		return attackPower + (abs != null ? abs.GetTotalBonus() : 0);
+	}
 	/// <summary>방어막 스킬의 고정 수치에 더해지는 방어력 스탯.</summary>
 	public int GetDefensePower() => defensePower;
 

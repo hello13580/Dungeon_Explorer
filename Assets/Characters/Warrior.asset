@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Warrior
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
   className: Warrior
-  description: Warriors are melee attack specialist
+  description: "\uAC15\uB825\uD55C \uADFC\uC811\uC804 \uB2A5\uB825\uC744 \n\uBCF4\uC720\uD55C
+    \uC804\uC0AC \uD074\uB798\uC2A4"
   portrait: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
   unitPrefab: {fileID: 416177728078544639, guid: 16d0a1ab146d0c24a96167ef85649268, type: 3}

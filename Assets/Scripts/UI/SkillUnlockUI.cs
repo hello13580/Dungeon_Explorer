@@ -27,31 +27,53 @@ public class SkillUnlockUI : MonoBehaviour
     [SerializeField] private Button confirmButton;        // 선택한 스킬 확정 버튼
     [SerializeField] private Button cancelButton;         // 선택 취소 버튼
 
-    [SerializeField] private Button continueButton;       // 패널 닫기 버튼 (항상 표시)
+    [SerializeField] private Button continueButton;       // 현재 직업 건너뛰기 / 모두 완료 후 닫기 버튼
+
+    [Header("모든 보상 완료 시 표시할 오브젝트")]
+    [SerializeField] private GameObject completedMessage; // "보상 선택 완료" 안내 텍스트 등
 
     private SkillUnlockManager.SkillUnlockOption selectedOption;
     private List<SkillCardUI> spawnedCards = new List<SkillCardUI>();
+    private bool isAllCompleted = false;  // 모든 직업 보상이 끝났는지 여부
+    private bool isSessionActive = false; // 현재 보상 세션이 진행 중인지 — 완료 이벤트 중복 처리 방지
 
     private void Start()
     {
         panel.SetActive(false);
         SkillUnlockManager.OnSkillUnlockStarted += OnSkillUnlockStarted;
         SkillUnlockManager.OnSkillUnlockCompleted += OnSkillUnlockCompleted;
+        // 새 스테이지 로드가 시작되면 보상 화면을 즉시 닫는다
+        StageManager.OnStageLoadingStarted += StageManager_OnStageLoaded;
     }
 
     private void OnDestroy()
     {
         SkillUnlockManager.OnSkillUnlockStarted -= OnSkillUnlockStarted;
         SkillUnlockManager.OnSkillUnlockCompleted -= OnSkillUnlockCompleted;
+        StageManager.OnStageLoadingStarted -= StageManager_OnStageLoaded;
+    }
+
+    /// <summary>새 스테이지 로드 완료 시 보상 패널을 강제로 닫는다. 이전 스테이지 보상 화면이 남아있는 경우를 처리.</summary>
+    private void StageManager_OnStageLoaded(object sender, System.EventArgs e)
+    {
+        isSessionActive = false;
+        isAllCompleted = false;
+        panel.SetActive(false);
     }
 
     private void OnSkillUnlockStarted(object sender, List<SkillUnlockManager.SkillUnlockOption> options)
     {
+        isAllCompleted = false;
+        isSessionActive = true;
+
         // 기존 카드 및 상태 초기화
         foreach (Transform child in cardContainer)
             Destroy(child.gameObject);
         spawnedCards.Clear();
         selectedOption = null;
+
+        // 완료 메시지 숨기기
+        if (completedMessage != null) completedMessage.SetActive(false);
 
         // 현재 직업명 텍스트 갱신 — 큐에서 꺼낸 단일 옵션의 unitClassId를 표시한다
         if (classNameText != null && options != null && options.Count > 0)
@@ -101,15 +123,14 @@ public class SkillUnlockUI : MonoBehaviour
 
     // ─── 버튼 이벤트 ──────────────────────────────────────────────
 
-    /// <summary>확정 버튼 클릭 시 호출. 선택한 스킬을 습득하지만 패널은 유지.</summary>
+    /// <summary>확정 버튼 클릭 시 호출. 스킬을 습득하고 즉시 다음 직업 보상으로 이동한다.</summary>
     public void OnConfirmButtonClicked()
     {
         if (selectedOption == null) return;
 
         SkillUnlockManager.Instance.ConfirmUnlock(selectedOption);
-
-        // 확정 후 선택 상태 초기화 (중복 습득 방지)
-        ClearSelection();
+        // 확정 즉시 다음 직업으로 — OnSkillUnlockStarted 또는 OnSkillUnlockCompleted가 이어서 호출됨
+        SkillUnlockManager.Instance.SkipUnlock();
     }
 
     /// <summary>취소 버튼 클릭 시 호출. 카드 선택을 해제하고 다시 고를 수 있는 상태로 돌아간다.</summary>
@@ -132,14 +153,40 @@ public class SkillUnlockUI : MonoBehaviour
             confirmPanel.SetActive(false);
     }
 
-    /// <summary>컨티뉴 버튼 클릭 시 호출. 스킬 선택 여부 무관하게 패널 닫기.</summary>
+    /// <summary>
+    /// 컨티뉴 버튼 클릭 시 호출.
+    /// 보상 진행 중: 현재 직업 건너뛰고 다음 직업으로 이동.
+    /// 모두 완료 후: 패널을 닫는다.
+    /// </summary>
     public void OnContinueButtonClicked()
     {
-        SkillUnlockManager.Instance.SkipUnlock();
+        if (isAllCompleted)
+        {
+            isSessionActive = false;
+            panel.SetActive(false);
+        }
+        else
+        {
+            SkillUnlockManager.Instance.SkipUnlock();
+        }
     }
 
     private void OnSkillUnlockCompleted(object sender, System.EventArgs e)
     {
-        panel.SetActive(false);
+        // 이 UI가 보상 세션을 진행 중일 때만 처리 — 이전 세션 잔재나 spurious 이벤트 무시
+        if (!isSessionActive) return;
+        isSessionActive = false;
+
+        isAllCompleted = true;
+
+        // 카드와 직업명, 확정 패널을 모두 숨기고 컨티뉴 버튼만 남긴다
+        foreach (Transform child in cardContainer)
+            Destroy(child.gameObject);
+        spawnedCards.Clear();
+
+        if (classNameText != null) classNameText.text = "";
+        if (noSkillsMessage != null) noSkillsMessage.SetActive(false);
+        if (confirmPanel != null) confirmPanel.SetActive(false);
+        if (completedMessage != null) completedMessage.SetActive(true);
     }
 }

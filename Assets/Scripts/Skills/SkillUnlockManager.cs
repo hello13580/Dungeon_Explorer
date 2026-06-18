@@ -53,6 +53,10 @@ public class SkillUnlockManager : MonoBehaviour
 
     private void UnitManager_OnStageClear(object sender, EventArgs e)
     {
+        // 스테이지 로딩 중 발생하는 OnStageClear는 무시한다.
+        // 유닛 리스트 재구성 과정에서 조건이 잠깐 맞아 spurious하게 발생할 수 있다.
+        if (StageManager.Instance != null && StageManager.Instance.IsLoading) return;
+
         TriggerSkillUnlock();
     }
 
@@ -61,6 +65,9 @@ public class SkillUnlockManager : MonoBehaviour
         optionQueue.Clear();
         foreach (List<SkillUnlockOption> classOptions in BuildOptions())
             optionQueue.Enqueue(classOptions);
+
+        // 배울 스킬이 하나도 없으면 보상 화면 자체를 열지 않는다
+        if (optionQueue.Count == 0) return;
 
         ShowNextOption();
     }
@@ -134,15 +141,8 @@ public class SkillUnlockManager : MonoBehaviour
                 unlearnedSkills.Add(skillDef);
             }
 
-            // 배울 스킬이 없으면 빈 화면(스킬 없음 안내)을 보여주기 위해 빈 리스트 1개 추가
-            if (unlearnedSkills.Count == 0)
-            {
-                result.Add(new List<SkillUnlockOption>
-                {
-                    new SkillUnlockOption { skillDef = null, unitClassId = config.unitClassId, targetUnit = unit }
-                });
-                continue;
-            }
+            // 배울 스킬이 없으면 이 직업은 보상 큐에 넣지 않는다
+            if (unlearnedSkills.Count == 0) continue;
 
             // 미습득 스킬을 섞어서 최대 optionsPerClass개 선택
             Shuffle(unlearnedSkills);

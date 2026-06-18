@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Cleric
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
   className: Cleric
-  description: Cleric can help team with various abilties
+  description: "\uC544\uAD70\uC744 \uBCF4\uD638\uD558\uACE0 \uC9C0\uC6D0\uD558\uB294
+    \uC11C\uD3EC\uD130 \uD074\uB798\uC2A4"
   portrait: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
   unitPrefab: {fileID: 3042818206337043987, guid: bdb21dc30bc624a4c8ea01f0fd01b79f, type: 3}

@@ -286,6 +286,7 @@ public class GridSystemVisual : MonoBehaviour
             IceOrbAction => GridVisualType.Green,
             DashAttackAction => GridVisualType.Green,
             BarrierAuraAction => GridVisualType.Blue,
+            AttackAuraAction => GridVisualType.Red,
             _ => GridVisualType.White,
         };
     }

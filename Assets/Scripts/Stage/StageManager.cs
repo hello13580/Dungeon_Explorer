@@ -11,6 +11,8 @@ public class StageManager : MonoBehaviour
 {
     public static StageManager Instance { get; private set; }
 
+    /// <summary>스테이지 로드가 시작될 때 발생 — UI 패널 즉시 닫기 등에 사용.</summary>
+    public static event EventHandler OnStageLoadingStarted;
     /// <summary>스테이지 로드가 완전히 완료되고 첫 턴이 시작되기 직전에 발생.</summary>
     public static event EventHandler OnStageLoaded;
 
@@ -84,6 +86,8 @@ public class StageManager : MonoBehaviour
     {
         IsLoading = true;
         CurrentStageData = stageData;
+        // 로딩 시작을 즉시 알림 — 열려 있는 UI 패널(보상 화면 등)이 바로 닫힐 수 있도록
+        OnStageLoadingStarted?.Invoke(this, EventArgs.Empty);
         Debug.Log($"[StageManager] 스테이지 로드 시작: {stageData.stageName}");
 
         // ── 1. 기존 유닛 제거
