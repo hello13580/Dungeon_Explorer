@@ -23,7 +23,9 @@ public class ActionButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 		button.onClick.AddListener(delegate
 		{
 			UnitActionSystem.Instance.SetSelectedUnit(TurnSystem.Instance.GetTurnUnit());
-			UnitActionSystem.Instance.SetSelectedAction(baseAction);
+			// 이미 선택된 액션을 다시 누르면 선택 취소
+			BaseAction current = UnitActionSystem.Instance.GetSelectedAction();
+			UnitActionSystem.Instance.SetSelectedAction(current == baseAction ? null : baseAction);
 		});
 	}
 

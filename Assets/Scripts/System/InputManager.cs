@@ -122,4 +122,13 @@ float zoomAmount = 0f;
         return Input.GetKeyDown(KeyCode.Backspace);
 #endif
     }
+
+    /// <summary>디버그 콘솔 등에서 게임 입력을 일시적으로 막을 때 사용.</summary>
+    public void SetInputEnabled(bool enabled)
+    {
+        if (enabled)
+            playerInputActions.Player.Enable();
+        else
+            playerInputActions.Player.Disable();
+    }
 }
