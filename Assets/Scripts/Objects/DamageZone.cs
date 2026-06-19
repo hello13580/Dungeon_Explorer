@@ -79,6 +79,9 @@ public class DamageZone : MonoBehaviour
         if (unitsInZoneLastFrame.Contains(u)) return;
         if (unitsDamagedOnEntry.Contains(u)) return;
 
+        // 화염장판은 방향/힘이 없으므로 이전 피격 데이터를 초기화해 래그돌이 날아가지 않게 한다
+        HitReactionSystem hrs = u.GetComponent<HitReactionSystem>();
+        if (hrs != null) { hrs.SetHitForce(0f); hrs.SetHitDirection(Vector3.zero); }
         u.Damage(enterDamage);
         unitsDamagedOnEntry.Add(u);
     }
@@ -97,6 +100,8 @@ public class DamageZone : MonoBehaviour
             if (unitsInZoneLastFrame.Contains(u)) continue;
             if (unitsDamagedOnEntry.Contains(u)) continue;
 
+            HitReactionSystem hrs = u.GetComponent<HitReactionSystem>();
+            if (hrs != null) { hrs.SetHitForce(0f); hrs.SetHitDirection(Vector3.zero); }
             u.Damage(enterDamage);
         }
 
@@ -114,6 +119,8 @@ public class DamageZone : MonoBehaviour
         if (turnUnit != null && IsUnitInZone(turnUnit)
             && TeamHelper.IsHostile(ownerTeamType, turnUnit.GetTeamType()))
         {
+            HitReactionSystem hrs = turnUnit.GetComponent<HitReactionSystem>();
+            if (hrs != null) { hrs.SetHitForce(0f); hrs.SetHitDirection(Vector3.zero); }
             turnUnit.Damage(tickDamage);
         }
 

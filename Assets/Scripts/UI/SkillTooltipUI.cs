@@ -95,7 +95,7 @@ public class SkillTooltipUI : MonoBehaviour
         if (manaCostText != null)
         {
             int mana = action.GetManaCost();
-            manaCostText.text = mana > 0 ? $"마나: {mana}" : "";
+            manaCostText.text = $"마나: {mana}";
         }
     }
 

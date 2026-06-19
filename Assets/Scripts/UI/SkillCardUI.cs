@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,6 +16,15 @@ public class SkillCardUI : MonoBehaviour
     [SerializeField] private Image iconImage;
     [SerializeField] private Button selectButton;
     [SerializeField] private GameObject selectedOverlay; // 선택됐을 때 표시할 비주얼
+
+    [Header("코스트")]
+    [SerializeField] private Transform actionPointContainer;
+    [SerializeField] private GameObject actionPointIconPrefab;
+    [SerializeField] private Transform jobPointContainer;
+    [SerializeField] private GameObject jobPointIconPrefab;
+    [SerializeField] private TextMeshProUGUI manaCostText;
+
+    private readonly List<GameObject> spawnedCostIcons = new List<GameObject>();
 
     private SkillUnlockManager.SkillUnlockOption option;
     private Action<SkillUnlockManager.SkillUnlockOption> onSelected;
@@ -54,6 +64,9 @@ public class SkillCardUI : MonoBehaviour
         if (iconImage != null && option.skillDef.icon != null)
             iconImage.sprite = option.skillDef.icon;
 
+        // 코스트 아이콘 — 액션 컴포넌트가 있을 때만 표시
+        RefreshCostIcons(option);
+
         if (selectButton != null)
         {
             selectButton.onClick.RemoveAllListeners();
@@ -61,6 +74,32 @@ public class SkillCardUI : MonoBehaviour
         }
 
         SetSelected(false);
+    }
+
+    private void RefreshCostIcons(SkillUnlockManager.SkillUnlockOption option)
+    {
+        foreach (GameObject icon in spawnedCostIcons)
+            Destroy(icon);
+        spawnedCostIcons.Clear();
+
+        if (option.targetUnit == null) return;
+
+        System.Type actionType = FindActionType(option.skillDef.actionTypeName);
+        if (actionType == null) return;
+
+        BaseAction action = option.targetUnit.GetComponent(actionType) as BaseAction;
+        if (action == null) return;
+
+        if (actionPointContainer != null && actionPointIconPrefab != null)
+            for (int i = 0; i < action.GetActionPointCost(); i++)
+                spawnedCostIcons.Add(Instantiate(actionPointIconPrefab, actionPointContainer));
+
+        if (jobPointContainer != null && jobPointIconPrefab != null)
+            for (int i = 0; i < action.GetJobPointCost(); i++)
+                spawnedCostIcons.Add(Instantiate(jobPointIconPrefab, jobPointContainer));
+
+        if (manaCostText != null)
+            manaCostText.text = $"마나: {action.GetManaCost()}";
     }
 
     private void OnCardClicked()
