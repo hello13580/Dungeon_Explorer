@@ -642,6 +642,7 @@ GameObject:
   - component: {fileID: 3205401662026989563}
   - component: {fileID: 278515026146484350}
   - component: {fileID: -5489734422250259857}
+  - component: {fileID: 2006016121126772408}
   m_Layer: 3
   m_Name: Unit
   m_TagString: Untagged
@@ -864,6 +865,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 156f7d28cf865f14d8980a10eaed90e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackBuffSystem
+--- !u!114 &2006016121126772408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8531198773615253123}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68eef0a13717ccd48b007a8310a514b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffectSystem
 --- !u!1 &8639382682928058527
 GameObject:
   m_ObjectHideFlags: 0

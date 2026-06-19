@@ -1,8 +1,9 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class ActionButtonUI : MonoBehaviour
+public class ActionButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
 	[SerializeField]
 	private TextMeshProUGUI textMeshPro;
@@ -30,5 +31,17 @@ public class ActionButtonUI : MonoBehaviour
 	{
 		BaseAction selectedAction = UnitActionSystem.Instance.GetSelectedAction();
 		selectedImage.SetActive(selectedAction == baseAction);
+	}
+
+	public void OnPointerEnter(PointerEventData eventData)
+	{
+		if (SkillTooltipUI.Instance != null)
+			SkillTooltipUI.Instance.Show(baseAction);
+	}
+
+	public void OnPointerExit(PointerEventData eventData)
+	{
+		if (SkillTooltipUI.Instance != null)
+			SkillTooltipUI.Instance.Hide();
 	}
 }

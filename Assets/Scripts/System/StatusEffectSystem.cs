@@ -23,12 +23,21 @@ public class StatusEffectSystem : MonoBehaviour
     private void Start()
     {
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+        StageManager.OnStageLoadingStarted += StageManager_OnStageLoadingStarted;
     }
 
     private void OnDestroy()
     {
         if (TurnSystem.Instance != null)
             TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+        StageManager.OnStageLoadingStarted -= StageManager_OnStageLoadingStarted;
+    }
+
+    // 스테이지 전환 시 모든 상태이상을 즉시 해제한다
+    private void StageManager_OnStageLoadingStarted(object sender, EventArgs e)
+    {
+        ClearAllEffects();
+        isTurnActive = false;
     }
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)

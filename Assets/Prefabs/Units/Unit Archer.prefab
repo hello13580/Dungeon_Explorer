@@ -312,7 +312,7 @@ MonoBehaviour:
   jobPointCost: 0
   requiredJobClass: 0
   maxShootDistance: 15
-  shootDamage: 100
+  shootDamage: 50
   ArrowProjectilePrefab: {fileID: 8288394526744401144, guid: 5227d29478847f44faf93cfb0450f0a2, type: 3}
   shootPointTransform: {fileID: 4486312566150377040}
   obstacleLayerMask:

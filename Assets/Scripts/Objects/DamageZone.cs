@@ -43,6 +43,7 @@ public class DamageZone : MonoBehaviour
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
         BaseAction.OnAnyActionEnded += BaseAction_OnAnyActionEnded;
         MoveAction.OnAnyUnitSteppedOnTile += MoveAction_OnAnyUnitSteppedOnTile;
+        StageManager.OnStageLoadingStarted += StageManager_OnStageLoadingStarted;
         OnAnyDamageZoneCreated?.Invoke(this, EventArgs.Empty);
     }
 
@@ -52,6 +53,14 @@ public class DamageZone : MonoBehaviour
             TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
         BaseAction.OnAnyActionEnded -= BaseAction_OnAnyActionEnded;
         MoveAction.OnAnyUnitSteppedOnTile -= MoveAction_OnAnyUnitSteppedOnTile;
+        StageManager.OnStageLoadingStarted -= StageManager_OnStageLoadingStarted;
+    }
+
+    // 스테이지 전환 시 남아있는 장판을 즉시 제거한다
+    private void StageManager_OnStageLoadingStarted(object sender, EventArgs e)
+    {
+        OnAnyDamageZoneDestroyed?.Invoke(this, EventArgs.Empty);
+        Destroy(gameObject);
     }
 
     // ─── 진입 감지 ─────────────────────────────────────────────────────

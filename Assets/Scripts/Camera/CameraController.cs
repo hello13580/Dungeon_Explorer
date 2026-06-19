@@ -142,6 +142,11 @@ public class CameraController : MonoBehaviour
         transform.position    = position;
         transform.eulerAngles = rotation;
         initialAngle          = rotation; // 리셋키 기준 각도도 이 스테이지 시작 각도로 교체
+
+        // 스테이지 시작 전 휠 조작으로 변경된 줌도 초기값으로 리셋
+        targetZoom = initialZoom;
+        if (follow != null)
+            follow.FollowOffset = new Vector3(follow.FollowOffset.x, initialZoom, follow.FollowOffset.z);
     }
 
     /// <summary>
