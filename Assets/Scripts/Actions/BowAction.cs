@@ -83,6 +83,9 @@ public class BowAction : BaseAction
     }
 
     public override string GetActionName() => "Shoot";
+    public override string GetDescription() =>
+        $"사거리 {maxShootDistance} 내 적에게 {shootDamage + unit.GetAttackPower()} 피해를 입힌다.";
+
 
     public override List<GridPosition> GetValidActionGridPositionList()
     {
@@ -242,8 +245,12 @@ public class BowAction : BaseAction
         Vector3 hitDir = (e.hitPosition - transform.position).normalized;
         targetUnit.GetHitReaction().SetHitDirection(hitDir);
         targetUnit.GetHitReaction().SetHitForce(e.hitForce);
-        // 고정 피해 + 시전자 공격력
-        targetUnit.Damage(shootDamage + unit.GetAttackPower());
+        targetUnit.Damage(unit.CalculateDamage(shootDamage));
+
+        // 장착된 화살 효과가 있으면 적용하고 소진한다
+        ArrowEffectAction arrowEffect = unit.GetAction<ArrowEffectAction>();
+        if (arrowEffect != null && arrowEffect.HasPendingEffect())
+            arrowEffect.ApplyEffectToTarget(targetUnit);
     }
 
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)

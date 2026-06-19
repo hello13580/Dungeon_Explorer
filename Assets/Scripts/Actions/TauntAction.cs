@@ -23,6 +23,9 @@ public class TauntAction : BaseAction
     }
 
     public override string GetActionName() => "Taunt";
+    public override string GetDescription() =>
+        $"반경 {tauntRange}칸 내 모든 적을 도발해 {tauntDuration}턴 동안 자신만 공격하도록 강제한다.";
+
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {

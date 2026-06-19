@@ -281,6 +281,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6900218557934376640}
+    - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5475714709096467997}
   m_SourcePrefab: {fileID: 100100000, guid: 31ff398b13221204abf58d215dd04293, type: 3}
 --- !u!4 &4558920607288889001 stripped
 Transform:
@@ -341,3 +344,24 @@ MonoBehaviour:
   damageRadius: 1
   targetingYAxis: 0.5
   rotateSpeed: 15
+--- !u!114 &5475714709096467997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6482590293035414360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5ef11a7b069ecc498cfbfef7d53852d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArrowEffectAction
+  actionCost: 0
+  manaCost: 0
+  jobPointCost: 0
+  requiredJobClass: 0
+  poisonStacks: 3
+  vulnerableValue: 0.25
+  vulnerableDuration: 2
+  blindValue: 0.25
+  blindDuration: 2

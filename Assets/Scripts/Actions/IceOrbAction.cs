@@ -107,6 +107,9 @@ public class IceOrbAction : BaseAction
     private void OnCacheInvalidated(object sender, EventArgs e) => isCacheDirty = true;
 
     public override string GetActionName() => "Ice Orb";
+    public override string GetDescription() =>
+        $"사거리 {maxRange} 내 적에게 {damage + unit.GetAttackPower()} 피해를 입히고 이동속도를 {Mathf.RoundToInt(slowValue * 100)}% 감소시킨다. ({slowDuration}턴)";
+
 
     // ─── 액션 실행 ─────────────────────────────────────────────────────
 
@@ -193,8 +196,7 @@ public class IceOrbAction : BaseAction
         Vector3 hitDir = (e.hitPosition - unit.GetWorldPosition()).normalized;
         targetUnit.GetHitReaction().SetHitDirection(hitDir);
         targetUnit.GetHitReaction().SetHitForce(400f);
-        // 고정 피해 + 시전자 공격력
-        targetUnit.Damage(damage + unit.GetAttackPower());
+        targetUnit.Damage(unit.CalculateDamage(damage));
 
         StatusEffectSystem ses = targetUnit.GetComponent<StatusEffectSystem>();
         if (ses != null)

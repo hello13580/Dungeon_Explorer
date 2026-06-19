@@ -19,6 +19,9 @@ public class DefenseAction : BaseAction
     }
 
     public override string GetActionName() => "Defense";
+    public override string GetDescription() =>
+        $"자신에게 {barrierAmount + unit.GetDefensePower()} 방어막을 부여한다. ({barrierDuration}턴 지속)";
+
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {

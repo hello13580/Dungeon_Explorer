@@ -46,6 +46,9 @@ public class BarrierAction : BaseAction
     private void OnCacheInvalidated(object sender, EventArgs e) => isCacheDirty = true;
 
     public override string GetActionName() => "Barrier";
+    public override string GetDescription() =>
+        $"사거리 {maxBarrierDistance} 내 아군에게 {BarrierAmount + unit.GetDefensePower()} 방어막을 부여한다. ({BarrierDuration}턴 지속)";
+
 
     public override List<GridPosition> GetValidActionGridPositionList()
     {
@@ -159,7 +162,6 @@ public class BarrierAction : BaseAction
 
         BarrierSystem barrierSystem = targetUnit.GetComponent<BarrierSystem>();
         if (barrierSystem != null)
-            // 고정 방어막 수치 + 시전자 방어력 스탯
             barrierSystem.ApplyBarrier(BarrierAmount + unit.GetDefensePower(), BarrierDuration);
 
         OnBarrier?.Invoke(this, new OnBarrierEventArgs { targetUnit = targetUnit, BarrierUsingUnit = unit });

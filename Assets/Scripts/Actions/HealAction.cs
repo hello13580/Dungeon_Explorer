@@ -45,6 +45,9 @@ public class HealAction : BaseAction
     private void OnCacheInvalidated(object sender, EventArgs e) => isCacheDirty = true;
 
     public override string GetActionName() => "Heal";
+    public override string GetDescription() =>
+        $"사거리 {maxHealDistance} 내 아군의 체력을 {healAmount} 회복시킨다.";
+
 
     public override List<GridPosition> GetValidActionGridPositionList()
     {

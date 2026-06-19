@@ -19,6 +19,9 @@ public class TeleportAction : BaseAction
     }
 
     public override string GetActionName() => "Teleport";
+    public override string GetDescription() =>
+        $"반경 {teleportRange}칸 내 원하는 위치로 즉시 이동한다.";
+
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {

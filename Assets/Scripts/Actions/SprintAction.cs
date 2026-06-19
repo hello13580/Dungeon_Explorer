@@ -17,6 +17,13 @@ public class SprintAction : BaseAction
     }
 
     public override string GetActionName() => "Sprint";
+    public override string GetDescription()
+    {
+        MoveAction move = unit.GetAction<MoveAction>();
+        float max = move != null ? move.GetMaxMoveDistance() : 0f;
+        return $"이번 턴의 이동 거리를 최대치({max}칸)로 회복한다.";
+    }
+
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {

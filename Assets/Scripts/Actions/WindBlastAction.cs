@@ -45,6 +45,12 @@ public class WindBlastAction : BaseAction
     }
 
     public override string GetActionName() => "Wind Blast";
+    public override string GetDescription()
+    {
+        int atk = unit.GetAttackPower();
+        return $"전방 부채꼴 범위 내 적에게 {blastDamage + atk} 피해를 입히고 {pushDistance}칸 밀쳐낸다. 장애물 충돌 시 {collisionDamage + atk} 추가 피해.";
+    }
+
 
     // ─── 부채꼴 계산 ───────────────────────────────────────────────────
 
@@ -285,10 +291,8 @@ public class WindBlastAction : BaseAction
         target.GetHitReaction().SetHitDirection(blastDir);
         target.GetHitReaction().SetHitForce(hitForce);
 
-        // 고정 피해 + 시전자 공격력
-        int ap = unit.GetAttackPower();
-        int finalBlast = blastDamage + ap;
-        int finalCollision = collisionDamage + ap;
+        int finalBlast = unit.CalculateDamage(blastDamage);
+        int finalCollision = unit.CalculateDamage(collisionDamage);
 
         // 치사량이면 넉백 없이 즉시 피해 → 래그돌이 히트 리액션 방향으로 날아감
         int totalDamage = finalBlast + (collided ? finalCollision : 0);

@@ -50,6 +50,9 @@ public class MeleeAction : BaseAction
 	private void OnCacheInvalidated(object sender, EventArgs e) => isCacheDirty = true;
 
 	public override string GetActionName() => "Melee";
+	public override string GetDescription() =>
+		$"인접한 적에게 {damage + unit.GetAttackPower()} 피해를 입힌다.";
+
 
 	public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
 	{
@@ -108,8 +111,7 @@ public class MeleeAction : BaseAction
 
 		targetUnit.GetHitReaction().SetHitDirection(hitDir);
 		targetUnit.GetHitReaction().SetHitForce(hitForce);
-		// 고정 피해 + 시전자 공격력
-		targetUnit.Damage(damage + unit.GetAttackPower());
+		targetUnit.Damage(unit.CalculateDamage(damage));
 	}
 
 	public override List<GridPosition> GetActionRangeGridPositionList()

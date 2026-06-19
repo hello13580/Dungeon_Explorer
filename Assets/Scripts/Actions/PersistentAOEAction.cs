@@ -95,6 +95,12 @@ public class PersistentAOEAction : BaseAction
     }
 
     public override string GetActionName() => "Zone";
+    public override string GetDescription()
+    {
+        int atk = unit.GetAttackPower();
+        return $"지정한 위치에 화염 장판을 설치한다. 설치 시 {initialDamage + atk} 피해, 매 턴 시작 시 {tickDamage + atk} 피해. ({duration}턴 지속, 반경 {zoneRadius}칸)";
+    }
+
 
     // ─── 범위 타일 ────────────────────────────────────────────────────
 

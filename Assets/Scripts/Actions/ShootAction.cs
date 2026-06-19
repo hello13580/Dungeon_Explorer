@@ -83,6 +83,9 @@ public class ShootAction : BaseAction
     }
 
     public override string GetActionName() => "Shoot";
+    public override string GetDescription() =>
+        $"사거리 {maxShootDistance} 내 적에게 {shootDamage + unit.GetAttackPower()} 피해를 입힌다.";
+
 
     public override List<GridPosition> GetValidActionGridPositionList()
     {
@@ -243,8 +246,7 @@ public class ShootAction : BaseAction
         Vector3 hitDir = (e.hitPosition - transform.position).normalized;
         targetUnit.GetHitReaction().SetHitDirection(hitDir);
         targetUnit.GetHitReaction().SetHitForce(e.hitForce);
-        // 고정 피해 + 시전자 공격력
-        targetUnit.Damage(shootDamage + unit.GetAttackPower());
+        targetUnit.Damage(unit.CalculateDamage(shootDamage));
     }
 
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)

@@ -34,6 +34,13 @@ public abstract class BaseAction : MonoBehaviour
 
 	public static event EventHandler OnAnyActionEnded;
 
+	/// <summary>
+	/// 스킬 보상 UI에 표시할 설명 문자열을 반환한다.
+	/// 수치가 있는 스킬은 override해서 unit의 실제 스탯을 반영한 문자열을 반환한다.
+	/// 빈 문자열을 반환하면 SkillDefinition.description을 fallback으로 사용한다.
+	/// </summary>
+	public virtual string GetDescription() => "";
+
 	protected virtual void Awake()
 	{
 		unit = GetComponent<Unit>();

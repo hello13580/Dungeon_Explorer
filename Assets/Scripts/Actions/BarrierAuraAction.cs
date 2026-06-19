@@ -99,6 +99,9 @@ public class BarrierAuraAction : BaseAction, IAuraAction
     }
 
     public override string GetActionName() => "Aura";
+    public override string GetDescription() =>
+        $"반경 {auraRange}칸 내 아군에게 매 턴 {barrierAmount + unit.GetDefensePower()} 방어막을 부여하는 오라를 생성한다. ({auraDuration}턴 지속)";
+
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {

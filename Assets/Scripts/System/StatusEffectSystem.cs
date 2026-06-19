@@ -153,6 +153,10 @@ public class StatusEffectSystem : MonoBehaviour
     public float GetIncomingDamageMultiplier()
         => 1f + GetTotalValue(StatusEffectType.DamageAmplify);
 
+    /// <summary>주는 피해 배수. 기본 1.0, DamageReduce(약화)가 있으면 1.0 - 합산값 (최소 0).</summary>
+    public float GetOutgoingDamageMultiplier()
+        => Mathf.Max(0f, 1f - GetTotalValue(StatusEffectType.DamageReduce));
+
     /// <summary>이동 거리 배수. 기본 1.0, MovementReduce가 있으면 1.0 - 합산값 (최소 0).</summary>
     public float GetMovementMultiplier()
         => Mathf.Max(0f, 1f - GetTotalValue(StatusEffectType.MovementReduce));

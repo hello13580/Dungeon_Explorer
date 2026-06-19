@@ -28,9 +28,28 @@ public class SkillCardUI : MonoBehaviour
         this.option = option;
         this.onSelected = onSelected;
 
-        if (skillNameText != null)   skillNameText.text  = option.skillDef.skillName;
-        if (descriptionText != null) descriptionText.text = option.skillDef.description;
-        if (unitClassText != null)   unitClassText.text  = option.unitClassId;
+        if (skillNameText != null) skillNameText.text = option.skillDef.skillName;
+        if (unitClassText != null)  unitClassText.text = option.unitClassId;
+
+        if (descriptionText != null)
+        {
+            // 유닛에 이미 붙어있는 액션 컴포넌트에서 실제 스탯 반영 설명을 가져온다.
+            // GetDescription()이 빈 문자열을 반환하면 ScriptableObject의 정적 설명을 사용한다.
+            string dynamicDesc = "";
+            if (option.targetUnit != null)
+            {
+                System.Type actionType = FindActionType(option.skillDef.actionTypeName);
+                if (actionType != null)
+                {
+                    BaseAction action = option.targetUnit.GetComponent(actionType) as BaseAction;
+                    if (action != null)
+                        dynamicDesc = action.GetDescription();
+                }
+            }
+            descriptionText.text = string.IsNullOrEmpty(dynamicDesc)
+                ? option.skillDef.description
+                : dynamicDesc;
+        }
 
         if (iconImage != null && option.skillDef.icon != null)
             iconImage.sprite = option.skillDef.icon;
@@ -58,4 +77,14 @@ public class SkillCardUI : MonoBehaviour
     }
 
     public SkillUnlockManager.SkillUnlockOption GetOption() => option;
+
+    private static System.Type FindActionType(string typeName)
+    {
+        foreach (System.Reflection.Assembly assembly in System.AppDomain.CurrentDomain.GetAssemblies())
+        {
+            System.Type type = assembly.GetType(typeName);
+            if (type != null) return type;
+        }
+        return null;
+    }
 }

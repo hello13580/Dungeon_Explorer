@@ -324,11 +324,37 @@ public class Unit : MonoBehaviour
 	public int GetMaxActionPoint() => maxActionPoint;
 	public string GetUnitName() => unitName;
 
+	/// <summary>액션 포인트를 최대치까지 회복한다.</summary>
+	public void RestoreActionPoints()
+	{
+		currentActionPoint = maxActionPoint;
+		OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
+	}
+
+	/// <summary>액션 포인트를 지정한 양만큼 회복한다. 최대치를 초과하지 않는다.</summary>
+	public void RestoreActionPoints(int amount)
+	{
+		currentActionPoint = Mathf.Min(currentActionPoint + amount, maxActionPoint);
+		OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
+	}
+
 	/// <summary>공격 스킬의 고정 피해에 더해지는 공격력 스탯. 일시적 버프를 포함한다.</summary>
 	public int GetAttackPower()
 	{
 		AttackBuffSystem abs = GetComponent<AttackBuffSystem>();
 		return attackPower + (abs != null ? abs.GetTotalBonus() : 0);
+	}
+
+	/// <summary>
+	/// 최종 피해를 계산한다. 고정 피해 + 공격력 + 약화 등 디버프 배율을 한 번에 적용.
+	/// 모든 공격 액션은 (damage + unit.GetAttackPower()) 대신 이 메서드를 사용한다.
+	/// </summary>
+	public int CalculateDamage(int baseDamage)
+	{
+		float multiplier = 1f;
+		StatusEffectSystem ses = GetComponent<StatusEffectSystem>();
+		if (ses != null) multiplier = ses.GetOutgoingDamageMultiplier();
+		return Mathf.RoundToInt((baseDamage + GetAttackPower()) * multiplier);
 	}
 	/// <summary>방어막 스킬의 고정 수치에 더해지는 방어력 스탯.</summary>
 	public int GetDefensePower() => defensePower;

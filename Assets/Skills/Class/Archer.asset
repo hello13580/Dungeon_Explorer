@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: Archer
   m_EditorClassIdentifier: Assembly-CSharp::UnitSkillConfig
   unitClassId: Archer
-  learnableSkills: []
+  learnableSkills:
+  - {fileID: 11400000, guid: 05668e50c1053e946b92b411d9a821aa, type: 2}

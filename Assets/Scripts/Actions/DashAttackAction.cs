@@ -51,6 +51,9 @@ public class DashAttackAction : BaseAction
     private void OnCacheInvalidated(object sender, EventArgs e) => isCacheDirty = true;
 
     public override string GetActionName() => "DashAttack";
+    public override string GetDescription() =>
+        $"사거리 {dashRange} 내 적에게 돌진해 {damage + unit.GetAttackPower()} 피해를 입힌다.";
+
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
@@ -145,8 +148,7 @@ public class DashAttackAction : BaseAction
             Vector3 hitDir = (targetWorldPos - unit.GetWorldPosition()).normalized;
             targetUnit.GetHitReaction().SetHitDirection(hitDir);
             targetUnit.GetHitReaction().SetHitForce(hitForce);
-            // 고정 피해 + 시전자 공격력
-            targetUnit.Damage(damage + unit.GetAttackPower());
+            targetUnit.Damage(unit.CalculateDamage(damage));
         }
 
         yield return new WaitForSeconds(0.4f);

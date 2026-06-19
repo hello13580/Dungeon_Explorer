@@ -121,6 +121,9 @@ public class AttackAuraAction : BaseAction, IAuraAction
     }
 
     public override string GetActionName() => "AttackAura";
+    public override string GetDescription() =>
+        $"반경 {auraRange}칸 내 아군의 공격력을 {attackBonus} 증가시키는 오라를 생성한다. 범위 밖으로 나가면 즉시 해제. ({auraDuration}턴 지속)";
+
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {

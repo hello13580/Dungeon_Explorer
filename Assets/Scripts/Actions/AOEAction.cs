@@ -46,6 +46,9 @@ public class AOEAction : BaseAction
     private void OnCacheInvalidated(object sender, EventArgs e) => isCacheDirty = true;
 
     public override string GetActionName() => "Grenade";
+    public override string GetDescription() =>
+        $"사거리 {maxRange} 내 지점에 수류탄을 투척해 반경 {damageRadius}칸 내 모든 유닛에게 {20 + unit.GetAttackPower()} 피해를 입힌다.";
+
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
