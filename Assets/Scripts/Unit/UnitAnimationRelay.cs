@@ -5,15 +5,23 @@ public class UnitAnimationRelay : MonoBehaviour
 	[SerializeField]
 	private MeleeAction meleeAction;
 
+	[SerializeField]
+	private LeapAction leapAction;
+
 	public void Melee()
 	{
 		if (meleeAction != null)
-		{
-            meleeAction.Melee();
-		}
+			meleeAction.Melee();
 		else
-		{
 			Debug.LogWarning("MeleeAction이 연결되지 않았습니다!");
-		}
+	}
+
+	// JumpStart 애니메이션 이벤트에서 호출 — 이 시점부터 실제 점프 이동 시작
+	public void StartLeapMovement()
+	{
+		if (leapAction != null)
+			leapAction.StartLeapMovement();
+		else
+			Debug.LogWarning("LeapAction이 연결되지 않았습니다!");
 	}
 }

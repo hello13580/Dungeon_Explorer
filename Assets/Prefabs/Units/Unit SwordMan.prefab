@@ -450,6 +450,7 @@ MonoBehaviour:
   maxRange: 5
   jumpDuration: 0.6
   jumpArcHeight: 3
+  landingAnimLeadTime: 0.3
 --- !u!114 &7876850637185599193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -485,3 +486,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitAnimationRelay
   meleeAction: {fileID: 5067843931317994958}
+  leapAction: {fileID: 4301908584900933110}

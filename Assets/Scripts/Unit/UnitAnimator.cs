@@ -67,6 +67,12 @@ public class UnitAnimator : MonoBehaviour
             dashAttackAction.OnDashMoveEnded    += DashAttackAction_OnDashMoveEnded;
             dashAttackAction.OnDashAttackStarted += DashAttackAction_OnDashAttackStarted;
         }
+
+        if (TryGetComponent<LeapAction>(out var leapAction))
+        {
+            leapAction.OnLeapStarted  += (s, e) => unitAnimator.SetTrigger("JumpStart");
+            leapAction.OnLeapLanding  += (s, e) => unitAnimator.SetTrigger("JumpEnd");
+        }
     }
 
     private IceOrbAction iceOrbAction;
