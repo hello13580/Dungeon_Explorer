@@ -281,12 +281,17 @@ public class GridSystemVisual : MonoBehaviour
             BarrierAction => GridVisualType.Green,
             TeleportAction => GridVisualType.Green,
             WindBlastAction => GridVisualType.Green,
+            DefenseAction => GridVisualType.Green,
+            ArrowEffectAction => GridVisualType.Green,
             TauntAction => GridVisualType.Yellow,
             PersistentAOEAction => GridVisualType.Green,
             IceOrbAction => GridVisualType.Green,
             DashAttackAction => GridVisualType.Green,
             BarrierAuraAction => GridVisualType.Green,
             AttackAuraAction => GridVisualType.Green,
+            WhirlwindAction => GridVisualType.Green,
+            LeapAction => GridVisualType.Green,
+            SelfHealAction => GridVisualType.Green,
             _ => GridVisualType.White,
         };
     }

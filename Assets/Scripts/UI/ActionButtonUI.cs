@@ -22,9 +22,11 @@ public class ActionButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 		textMeshPro.text = baseAction.GetActionName().ToUpper();
 		button.onClick.AddListener(delegate
 		{
-			UnitActionSystem.Instance.SetSelectedUnit(TurnSystem.Instance.GetTurnUnit());
-			// 이미 선택된 액션을 다시 누르면 선택 취소
+			// SetSelectedUnit 호출 전에 현재 선택 상태를 먼저 읽어야 한다.
+			// SetSelectedUnit 내부에서 SetSelectedAction(null)을 호출하므로
+			// 순서가 바뀌면 current가 항상 null이 돼 토글이 동작하지 않는다.
 			BaseAction current = UnitActionSystem.Instance.GetSelectedAction();
+			UnitActionSystem.Instance.SetSelectedUnit(TurnSystem.Instance.GetTurnUnit());
 			UnitActionSystem.Instance.SetSelectedAction(current == baseAction ? null : baseAction);
 		});
 	}
