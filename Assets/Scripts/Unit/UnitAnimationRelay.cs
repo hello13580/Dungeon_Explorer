@@ -5,6 +5,11 @@ public class UnitAnimationRelay : MonoBehaviour
 	[SerializeField]
 	private MeleeAction meleeAction;
 
+	public void StepForward()
+	{
+		meleeAction?.StepForward();
+	}
+
 	[SerializeField]
 	private LeapAction leapAction;
 

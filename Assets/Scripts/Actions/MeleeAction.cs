@@ -17,6 +17,10 @@ public class MeleeAction : BaseAction
 	[SerializeField] private float hitForce = 500f;
 	[SerializeField] private float rotateSpeed = 30f;
 
+	[Header("전진 효과")]
+	[SerializeField] private float stepDistance = 0.5f;  // 전진 거리
+	[SerializeField] private float stepDuration = 0.15f; // 전진/복귀 각각 걸리는 시간
+
 	private Unit targetUnit;
 	private State state;
 	private bool canMeleeAttack;
@@ -85,6 +89,33 @@ public class MeleeAction : BaseAction
         ActionComplete();
 	}
 
+	private IEnumerator StepForwardRoutine()
+	{
+		Vector3 origin = transform.position;
+		Vector3 forward = transform.forward;
+		Vector3 target = origin + forward * stepDistance;
+
+		// 전진
+		float elapsed = 0f;
+		while (elapsed < stepDuration)
+		{
+			elapsed += Time.deltaTime;
+			transform.position = Vector3.Lerp(origin, target, elapsed / stepDuration);
+			yield return null;
+		}
+
+		// 복귀
+		elapsed = 0f;
+		while (elapsed < stepDuration)
+		{
+			elapsed += Time.deltaTime;
+			transform.position = Vector3.Lerp(target, origin, elapsed / stepDuration);
+			yield return null;
+		}
+
+		transform.position = origin;
+	}
+
 	private void AimToTarget()
 	{
 		Vector3 targetPos = targetUnit.GetWorldPosition();
@@ -97,6 +128,11 @@ public class MeleeAction : BaseAction
 		{
 			state = State.Attack;
 		}
+	}
+
+	public void StepForward()
+	{
+		StartCoroutine(StepForwardRoutine());
 	}
 
 	public void Melee()
