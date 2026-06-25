@@ -7,6 +7,10 @@ public class SelfHealAction : BaseAction
 {
     [SerializeField] private int healAmount = 30;
 
+    [Header("적 AI 설정")]
+    [SerializeField] private float healthThreshold = 0.5f;  // 이 체력 % 이하일 때만 고려 (0~1)
+    [SerializeField] private float castChance = 0.6f;       // 시전 확률 (0~1)
+
     public static event EventHandler<OnHealEventArgs> OnAnySelfHeal;
     public event EventHandler<OnHealEventArgs> OnSelfHeal;
 
@@ -50,8 +54,17 @@ public class SelfHealAction : BaseAction
 
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
     {
+        // 체력이 threshold 초과면 힐 고려 안 함
+        if (unit.GetHealthNormalized() > healthThreshold)
+            return new EnemyAIAction { gridPosition = gridPosition, actionValue = -1 };
+
+        // 확률 체크 — 실패 시 이 턴엔 힐 안 함
+        if (UnityEngine.Random.value > castChance)
+            return new EnemyAIAction { gridPosition = gridPosition, actionValue = -1 };
+
+        // 체력이 낮을수록 더 높은 우선순위
         int missingHealthPercent = 100 - Mathf.RoundToInt(unit.GetHealthNormalized() * 100f);
-        return new EnemyAIAction { gridPosition = gridPosition, actionValue = 100 + missingHealthPercent * 2 };
+        return new EnemyAIAction { gridPosition = gridPosition, actionValue = 200 + missingHealthPercent * 2 };
     }
 
     public int GetHealAmount() => healAmount;
