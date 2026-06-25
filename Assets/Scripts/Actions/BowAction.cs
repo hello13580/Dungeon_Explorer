@@ -257,10 +257,9 @@ public class BowAction : BaseAction
     {
         Unit targetUnit = LevelGrid.Instance.GetUnitListAtGridPosition(gridPosition)[0];
 
-        // AI �켱���� ��� (�� ü���� ��������, ���� ���� ��ġ �ο�)
-        int actionValue = (targetUnit.GetTeamType() != TeamType.Player) ?
-            500 + (100 - Mathf.RoundToInt(targetUnit.GetHealthNormalized() * 100f)) :
-            1000 + (100 - Mathf.RoundToInt(targetUnit.GetHealthNormalized() * 100f));
+        // 현재 체력 절대값이 낮을수록 높은 우선순위 (체력이 낮은 적을 집중 공략)
+        int currentHealth = targetUnit.GetCurrentHealth();
+        int actionValue = 1000 + (500 - currentHealth);
 
         return new EnemyAIAction { gridPosition = gridPosition, actionValue = actionValue };
     }
