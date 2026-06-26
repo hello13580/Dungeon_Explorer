@@ -113,7 +113,7 @@ public class HealAction : BaseAction
                 {
                     GridPosition testGridPosition = new GridPosition(unitGridPosition.x + x, unitGridPosition.z + z, floor);
                     if (LevelGrid.Instance.IsValidGridPosition(testGridPosition)
-                        && PathFinding.Instance.IsWalkableGridPosition(testGridPosition))
+                        && PathFinding.Instance.IsDirectlyTargetable(testGridPosition))
                     {
                         rangeList.Add(testGridPosition);
                     }

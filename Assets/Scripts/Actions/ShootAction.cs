@@ -185,9 +185,9 @@ public class ShootAction : BaseAction
                 for (int floor = minFloor; floor <= maxFloor; floor++)
                 {
                     GridPosition testGridPosition = new GridPosition(unitGridPosition.x + x, unitGridPosition.z + z, floor);
-                    // IsWalkableGridPosition 체크 없으면 바닥이 없는 허공 타일에도 범위가 표시됨
+                    // 바닥 없는 허공 타일 제외 + 계단 exclusive 타일 포함 (적이 서 있을 수 있으므로)
                     if (LevelGrid.Instance.IsValidGridPosition(testGridPosition)
-                        && PathFinding.Instance.IsWalkableGridPosition(testGridPosition))
+                        && PathFinding.Instance.IsDirectlyTargetable(testGridPosition))
                     {
                         rangeList.Add(testGridPosition);
                     }

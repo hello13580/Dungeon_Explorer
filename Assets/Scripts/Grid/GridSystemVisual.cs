@@ -111,12 +111,27 @@ public class GridSystemVisual : MonoBehaviour
                     Vector3 spawnPos = LevelGrid.Instance.GetWorldPosition(gridPosition);
                     Quaternion spawnRot = Quaternion.identity;
 
-                    if (groundSnapLayerMask != 0 &&
-                        Physics.Raycast(spawnPos + Vector3.up * 2f, Vector3.down, out RaycastHit hit, 3f, groundSnapLayerMask))
+                    RaycastHit hit = default;
+                    bool snapHit = groundSnapLayerMask != 0 &&
+                        Physics.Raycast(spawnPos + Vector3.up * 2f, Vector3.down, out hit, 3f, groundSnapLayerMask);
+
+                    if (snapHit)
                     {
                         spawnPos.y = hit.point.y + 0.05f;
                         spawnRot = Quaternion.FromToRotation(Vector3.up, hit.normal);
                     }
+
+                    // [문제 해결] 계단 exclusive 타일 중 바닥 없는 "가상 복사본" 필터링
+                    //
+                    // StaircaseMonoBehaviour는 중간 계단 타일을 반대 층에도 alt(복사본)로 등록한다.
+                    // 예) 물리적 계단 타일 → floor 0 exclusive 등록
+                    //    패스파인딩용 alt 복사본 → floor 1 exclusive 등록 (실제 메시 없음)
+                    //
+                    // 이 alt 복사본 위치에는 실제 바닥 메시가 없으므로 groundSnap 레이캐스트가 실패한다.
+                    // 레이캐스트가 실패한 exclusive 타일 = 물리적 실체 없는 복사본이므로 비주얼 생성을 건너뛴다.
+                    // → 계단 위에 그리드 비주얼이 2중으로 생기는 문제(경사 1개 + 공중 평행 1개)를 방지한다.
+                    if (!snapHit && PathFinding.Instance.IsStaircaseExclusiveTile(gridPosition))
+                        continue;
 
                     GameObject val = Instantiate(gridSystemVisualSinglePrefab, spawnPos, spawnRot);
                     gridSystemVisualSingleArray[i, j, k] = val.GetComponent<GridSystemVisualSingle>();
@@ -207,6 +222,8 @@ public class GridSystemVisual : MonoBehaviour
             if (LevelGrid.Instance.IsValidGridPosition(gridPosition))
             {
                 GridSystemVisualSingle tile = gridSystemVisualSingleArray[gridPosition.x, gridPosition.z, gridPosition.floor];
+                // 계단 exclusive alt 복사본은 Initialize()에서 생성을 건너뛰므로 null일 수 있음
+                if (tile == null) continue;
                 tile.InstantShow(gridVisualTypeMaterial);
                 // 표시한 타일을 목록에 추가해서 나중에 Hide 시 이 타일만 처리할 수 있게 함
                 visibleTiles.Add(tile);

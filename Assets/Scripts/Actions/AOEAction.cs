@@ -115,7 +115,7 @@ public class AOEAction : BaseAction
                     GridPosition testGridPosition = new GridPosition(unitGridPosition.x + x, unitGridPosition.z + z, floor);
 
                     if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition)) continue;
-                    if (!PathFinding.Instance.IsWalkableGridPosition(testGridPosition)) continue;
+                    if (!PathFinding.Instance.IsDirectlyTargetable(testGridPosition)) continue;
 
                     rangeList.Add(testGridPosition);
                 }
@@ -156,9 +156,9 @@ public class AOEAction : BaseAction
                     GridPosition testGridPosition = new GridPosition(unitGridPosition.x + x, unitGridPosition.z + z, floor);
 
                     if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition)) continue;
-                    if (!PathFinding.Instance.IsWalkableGridPosition(testGridPosition)) continue;
+                    if (!PathFinding.Instance.IsDirectlyTargetable(testGridPosition)) continue;
 
-                    // ��ô ���� ���� (��ֹ� üũ)
+                    // 장애물 시야 차단 체크
                     Vector3 startPos;
                     if (shootPointTransform != null)
                     {

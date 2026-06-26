@@ -273,7 +273,7 @@ public class IceOrbAction : BaseAction
                 {
                     GridPosition testPos = new GridPosition(unitPos.x + x, unitPos.z + z, floor);
                     if (LevelGrid.Instance.IsValidGridPosition(testPos)
-                        && PathFinding.Instance.IsWalkableGridPosition(testPos))
+                        && PathFinding.Instance.IsDirectlyTargetable(testPos))
                         rangeList.Add(testPos);
                 }
             }

@@ -177,7 +177,7 @@ public class DashAttackAction : BaseAction
 
                 GridPosition candidate = targetPos + new GridPosition(x, z, 0);
                 if (!LevelGrid.Instance.IsValidGridPosition(candidate)) continue;
-                if (!PathFinding.Instance.IsWalkableGridPosition(candidate)) continue;
+                if (!PathFinding.Instance.IsDirectlyTargetable(candidate)) continue;
                 if (LevelGrid.Instance.IsGridPositionOccupied(candidate)) continue;
 
                 candidates.Add(candidate);

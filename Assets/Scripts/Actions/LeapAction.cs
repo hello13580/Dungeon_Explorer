@@ -158,7 +158,10 @@ public class LeapAction : BaseAction
                     );
 
                     if (!LevelGrid.Instance.IsValidGridPosition(testPos)) continue;
-                    if (!PathFinding.Instance.IsWalkableGridPosition(testPos)) continue;
+                    // [문제 해결] IsWalkableGridPosition → IsDirectlyTargetable로 교체
+                    // 계단 exclusive 타일은 IsWalkable=false지만 착지 후 계단으로 나갈 수 있으므로
+                    // 점프 착지 지점으로는 유효하다. (PathFinding.IsDirectlyTargetable 주석 참고)
+                    if (!PathFinding.Instance.IsDirectlyTargetable(testPos)) continue;
                     if (testPos == unitPos) continue;
 
                     // 다른 유닛이 점유한 타일 제외

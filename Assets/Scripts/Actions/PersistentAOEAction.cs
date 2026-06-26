@@ -142,7 +142,7 @@ public class PersistentAOEAction : BaseAction
                 {
                     GridPosition testPos = new GridPosition(unitPos.x + x, unitPos.z + z, floor);
                     if (!LevelGrid.Instance.IsValidGridPosition(testPos)) continue;
-                    if (!PathFinding.Instance.IsWalkableGridPosition(testPos)) continue;
+                    if (!PathFinding.Instance.IsDirectlyTargetable(testPos)) continue;
 
                     // 장애물 시야 체크
                     if (obstacleLayerMask != 0)

@@ -93,7 +93,18 @@ public class PathFinding : MonoBehaviour
 					GridPosition gridPosition2 = new GridPosition(j, k, i);
 					Vector3 worldPosition = LevelGrid.Instance.GetWorldPosition(gridPosition2);
 					float num = 0.8f;
-					if (Physics.CheckSphere(worldPosition, num, obstacleLayerMask))
+					// [수정 전] CheckSphere(worldPosition, 0.8f)
+					//   → 중심이 바닥면(y = floor * FLOOR_HEIGHT)에 위치하므로
+					//     감지 범위가 y = [바닥y - 0.8, 바닥y + 0.8]까지 내려감
+					//   → 아래층 벽의 상단이 바닥면 - 0.8(예: 2층 기준 y=2.2) 이상이면
+					//     위층 장애물로 잘못 감지되어 위층 셀이 이동불가로 판정되는 버그 발생
+					//
+					// [수정 후] CheckSphere(worldPosition + Vector3.up * num, num)
+					//   → 중심을 바닥면에서 radius(0.8f)만큼 위로 올림
+					//   → 구의 하단이 바닥면(y = floor * FLOOR_HEIGHT)과 정확히 일치
+					//   → 바닥면 아래에서 끝나는 아래층 오브젝트는 감지하지 않음
+					//   예) 2층(y=3): 구 범위 y=[3.0, 4.6] → 1층 벽(상단 y<3.0)은 감지 안 됨
+					if (Physics.CheckSphere(worldPosition + Vector3.up * num, num, obstacleLayerMask))
 					{
 						GetNode(j, k, i).SetIsWalkable(isWalkable: false);
 						continue;
@@ -324,6 +335,37 @@ public class PathFinding : MonoBehaviour
 	public bool IsWalkableGridPosition(GridPosition gridPosition)
 	{
 		return GetNode(gridPosition.x, gridPosition.z, gridPosition.floor).IsWalkable();
+	}
+
+	// ──────────────────────────────────────────────────────────────────────────
+	// [문제 해결] 점프·텔레포트로 계단 중간 타일을 선택할 수 없는 버그 수정
+	//
+	// [문제 원인]
+	//   RegisterStaircaseTile(isExclusive=true) 호출 시 SetIsWalkable(pos, false)를 설정한다.
+	//   이는 패스파인딩 이웃 탐색에서 계단 exclusive 타일로 직접 진입하는 것을 막기 위한 의도적 설계다.
+	//   (패스파인딩은 staircaseExclusiveTiles 예외 처리로 계단 링크를 통해서만 해당 타일에 진입 가능)
+	//   그런데 점프·텔레포트 액션은 IsWalkableGridPosition()만 체크했고,
+	//   이 메서드는 node.IsWalkable()을 그대로 반환하므로 exclusive 타일에서 false가 반환됐다.
+	//   결과적으로 계단 중간 타일이 점프·텔레포트 유효 범위에서 제외되는 버그가 발생했다.
+	//
+	// [해결 방법]
+	//   IsDirectlyTargetable()을 새로 추가한다.
+	//   "직접 지정 가능 여부"와 "패스파인딩 이웃 탐색 허용 여부"를 분리하는 것이 핵심이다.
+	//   - IsWalkable=true  → 일반 이동 가능 타일 (텔레포트·점프도 허용)
+	//   - staircaseExclusiveTiles → 패스파인딩 직접 진입은 막지만, 착지 후 계단으로 나갈 수 있으므로
+	//                               텔레포트·점프 착지 지점으로는 유효하다
+	//   점프·텔레포트 액션은 IsWalkableGridPosition() 대신 이 메서드를 사용해야 한다.
+	// ──────────────────────────────────────────────────────────────────────────
+	public bool IsDirectlyTargetable(GridPosition gridPosition)
+	{
+		return IsWalkableGridPosition(gridPosition) || staircaseExclusiveTiles.Contains(gridPosition);
+	}
+
+	// GridSystemVisual에서 비주얼 생성 여부를 판단할 때 사용.
+	// exclusive 타일인지 여부만 반환하며, 반대 층 alt 복사본 필터링에 활용된다.
+	public bool IsStaircaseExclusiveTile(GridPosition gridPosition)
+	{
+		return staircaseExclusiveTiles.Contains(gridPosition);
 	}
 
 	public bool IsAnyLink(GridPosition fromPosition, GridPosition toPosition)

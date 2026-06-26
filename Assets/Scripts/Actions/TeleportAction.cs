@@ -85,7 +85,10 @@ public class TeleportAction : BaseAction
                     );
 
                     if (!LevelGrid.Instance.IsValidGridPosition(testPos)) continue;
-                    if (!PathFinding.Instance.IsWalkableGridPosition(testPos)) continue;
+                    // [문제 해결] IsWalkableGridPosition → IsDirectlyTargetable로 교체
+                    // 계단 exclusive 타일은 IsWalkable=false지만 착지 후 계단으로 나갈 수 있으므로
+                    // 텔레포트 목적지로는 유효하다. (PathFinding.IsDirectlyTargetable 주석 참고)
+                    if (!PathFinding.Instance.IsDirectlyTargetable(testPos)) continue;
 
                     // 자기 자신 위치 제외
                     if (testPos == unitGridPosition) continue;

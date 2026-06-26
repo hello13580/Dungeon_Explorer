@@ -20,7 +20,7 @@ MonoBehaviour:
   cameraStartRotation: {x: 0, y: -40, z: 0}
   cameraBoundsMin: {x: 30, y: 35}
   cameraBoundsMax: {x: 75, y: 80}
-  directionalLightIntensity: 0.25
+  directionalLightIntensity: 0.5
   enemySpawnInfos:
   - unitPrefab: {fileID: 7294091289576193561, guid: f42b8bef44b7f6b45a199fd5b806c144, type: 3}
     spawnPointIndex: 0

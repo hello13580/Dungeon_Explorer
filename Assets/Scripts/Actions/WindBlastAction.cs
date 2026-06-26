@@ -76,7 +76,7 @@ public class WindBlastAction : BaseAction
 
                 GridPosition pos = new GridPosition(origin.x + x, origin.z + z, origin.floor);
                 if (!LevelGrid.Instance.IsValidGridPosition(pos)) continue;
-                if (!PathFinding.Instance.IsWalkableGridPosition(pos)) continue;
+                if (!PathFinding.Instance.IsDirectlyTargetable(pos)) continue;
 
                 // 장애물 시야 차단 체크 (ShootAction과 동일하게 유닛 콜라이더 높이 기준)
                 if (obstacleLayerMask != 0)
@@ -134,7 +134,7 @@ public class WindBlastAction : BaseAction
         // 마우스가 유닛 자신 위치거나 사거리 밖/장애물이면 빈 리스트 → 흰색 범위만 표시
         if (mouseGrid == unitPos
             || !LevelGrid.Instance.IsValidGridPosition(mouseGrid)
-            || !PathFinding.Instance.IsWalkableGridPosition(mouseGrid))
+            || !PathFinding.Instance.IsDirectlyTargetable(mouseGrid))
         {
             cachedConeList = new List<GridPosition>();
             cachedConeMouseGrid = mouseGrid;
@@ -189,7 +189,7 @@ public class WindBlastAction : BaseAction
 
                 GridPosition pos = new GridPosition(unitPos.x + x, unitPos.z + z, unitPos.floor);
                 if (!LevelGrid.Instance.IsValidGridPosition(pos)) continue;
-                if (!PathFinding.Instance.IsWalkableGridPosition(pos)) continue;
+                if (!PathFinding.Instance.IsDirectlyTargetable(pos)) continue;
 
                 rangeList.Add(pos);
             }
@@ -270,7 +270,7 @@ public class WindBlastAction : BaseAction
             );
 
             if (!LevelGrid.Instance.IsValidGridPosition(nextPos) ||
-                !PathFinding.Instance.IsWalkableGridPosition(nextPos))
+                !PathFinding.Instance.IsDirectlyTargetable(nextPos))
             {
                 collided = true;
                 break;
