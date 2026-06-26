@@ -43,7 +43,8 @@ public static class GridOutlineUtil
         LineRenderer lr,
         List<Vector2Int> path,
         float heightOffset,
-        Vector3 worldOffset = default)
+        Vector3 worldOffset = default,
+        float referenceY = float.MinValue)
     {
         if (path == null || path.Count == 0)
         {
@@ -55,14 +56,18 @@ public static class GridOutlineUtil
         float half = cellSize * 0.5f;
         Vector3 gridOrigin = LevelGrid.Instance.GetWorldPosition(new GridPosition(0, 0, 0));
 
+        // referenceY가 지정되지 않으면 gridOrigin.y 사용 (기존 동작 유지)
+        float baseY = (referenceY > float.MinValue) ? referenceY : gridOrigin.y;
+
         lr.positionCount = path.Count;
         for (int i = 0; i < path.Count; i++)
         {
             float wx = gridOrigin.x - half + path[i].x * half + worldOffset.x;
             float wz = gridOrigin.z - half + path[i].y * half + worldOffset.z;
-            float wy = gridOrigin.y + heightOffset + worldOffset.y;
+            float wy = baseY + heightOffset + worldOffset.y;
 
-            if (Physics.Raycast(new Vector3(wx, wy + 2f, wz), Vector3.down, out RaycastHit hit, 4f))
+            // 기준 Y보다 4f 위에서 아래로 레이캐스트 (층 높이 대응)
+            if (Physics.Raycast(new Vector3(wx, baseY + 4f, wz), Vector3.down, out RaycastHit hit, 8f))
                 wy = hit.point.y + heightOffset;
 
             lr.SetPosition(i, new Vector3(wx, wy, wz));

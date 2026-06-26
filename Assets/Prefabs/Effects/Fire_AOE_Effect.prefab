@@ -5063,7 +5063,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DamageZoneVisual
   lineWidth: 0.02
-  lineColor: {r: 1, g: 0.4673931, b: 0.2028302, a: 0.9}
+  lineColor: {r: 0.07595385, g: 0.9528302, b: 0, a: 0.9}
   lineMaterial: {fileID: 0}
   heightOffset: 0.1
 --- !u!1 &921189562349464477

@@ -61,7 +61,7 @@ public class AuraVisual : MonoBehaviour
         Vector3 movementOffset = transform.position - gridSnappedCenter;
         movementOffset.y = 0f;
 
-        GridOutlineUtil.ApplyPathToLineRenderer(lineRenderer, cachedPath, heightOffset, movementOffset);
+        GridOutlineUtil.ApplyPathToLineRenderer(lineRenderer, cachedPath, heightOffset, movementOffset, transform.position.y);
     }
 
     private void RebuildPath()

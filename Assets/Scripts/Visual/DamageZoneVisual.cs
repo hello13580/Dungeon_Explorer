@@ -65,7 +65,7 @@ public class DamageZoneVisual : MonoBehaviour
             tileSet.Add(new Vector2Int(pos.x, pos.z));
 
         List<Vector2Int> path = GridOutlineUtil.BuildOutlinePath(tileSet);
-        GridOutlineUtil.ApplyPathToLineRenderer(lineRenderer, path, heightOffset);
+        GridOutlineUtil.ApplyPathToLineRenderer(lineRenderer, path, heightOffset, default, transform.position.y);
         lineRenderer.enabled = true;
     }
 }
