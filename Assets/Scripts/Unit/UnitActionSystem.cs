@@ -94,16 +94,26 @@ public class UnitActionSystem : MonoBehaviour
         GridPosition targetGridPosition = LevelGrid.Instance.GetGridPosition(mouseWorldPosition);
         //Debug.Log($"[Click] world={mouseWorldPosition} → grid=x:{targetGridPosition.x}, z:{targetGridPosition.z}, floor:{targetGridPosition.floor}, valid={selectedAction?.IsValidActionGridPosition(targetGridPosition)}");
 
-        // ���� ����: �� �����ΰ�? + �� ���ΰ�? + ��Ÿ� ���ΰ�? + ����Ʈ�� ����Ѱ�?
+        // 실행 조건: 내 유닛인가? + 내 턴인가? + 유효 타겟인가? + 자원이 충분한가?
         if (selectedUnit.GetTeamType() == TeamType.Player &&
             IsSelectedUnitTurn() &&
-            selectedAction.IsValidActionGridPosition(targetGridPosition) &&
-            selectedUnit.CanTakeAction(selectedAction))
+            selectedAction.IsValidActionGridPosition(targetGridPosition))
         {
-            if (selectedUnit.SpendActionPoint(selectedAction))
+            if (selectedUnit.CanTakeAction(selectedAction))
             {
-                SetBusy();
-                selectedAction.TakeAction(targetGridPosition, ClearBusy);
+                if (selectedUnit.SpendActionPoint(selectedAction))
+                {
+                    SetBusy();
+                    selectedAction.TakeAction(targetGridPosition, ClearBusy);
+                }
+            }
+            else
+            {
+                // 유효한 타일을 클릭했지만 자원이 부족한 경우 → 안내 메시지 표시
+                bool lackAP   = !selectedUnit.CanSpendActionPointsToTakeAction(selectedAction);
+                bool lackMana = !selectedUnit.CanSpendManaToTakeAction(selectedAction);
+                bool lackJP   = !selectedUnit.CanSpendJobPointsToTakeAction(selectedAction);
+                ResourceNotificationUI.Instance?.ShowResourceShortage(lackAP, lackMana, lackJP);
             }
         }
     }

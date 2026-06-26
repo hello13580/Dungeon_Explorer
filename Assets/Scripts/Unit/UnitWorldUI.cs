@@ -27,6 +27,12 @@ public class UnitWorldUI : MonoBehaviour
 	private Image manaBarImage;
 
 	[SerializeField]
+	private TextMeshProUGUI healthText;
+
+	[SerializeField]
+	private TextMeshProUGUI manaText;
+
+	[SerializeField]
 	private Unit unit;
 
 	private void Start()
@@ -68,6 +74,8 @@ public class UnitWorldUI : MonoBehaviour
 	private void UpdateHealthBar()
 	{
 		healthBarImage.fillAmount = healthSystem.GetHealthNormalized();
+		if (healthText != null)
+			healthText.text = $"{healthSystem.GetCurrentHealth()}/{healthSystem.GetMaxHealth()}";
 	}
 
 	private void HealthSystem_OnUnitDamaged(object sender, EventArgs empty)
@@ -105,6 +113,8 @@ public class UnitWorldUI : MonoBehaviour
 			return;
 		}
 		manaBarImage.fillAmount = manaSystem.GetManaNormalized();
+		if (manaText != null)
+			manaText.text = $"{manaSystem.GetCurrentMana()}/{manaSystem.GetMaxMana()}";
 	}
 
 	private void ManaSystem_OnManaChanged(object sender, EventArgs e)
