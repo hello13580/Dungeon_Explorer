@@ -8,4 +8,6 @@ public enum MapNodeType
     Boss,       // 보스 전투
     Rest,       // 휴식 (체력 회복 등)
     Shop,       // 상점
+    Event,      // 이벤트 스테이지
+    Start,      // 시작 지점 (자동 생성 시 첫 노드)
 }

@@ -23,6 +23,8 @@ public class MapNodeUI : MonoBehaviour
     [SerializeField] private Color bossColor     = new Color(0.6f, 0f, 0f);
     [SerializeField] private Color restColor     = Color.green;
     [SerializeField] private Color shopColor     = Color.yellow;
+    [SerializeField] private Color eventColor    = new Color(0.2f, 0.6f, 1f);
+    [SerializeField] private Color startColor    = new Color(0.2f, 0.7f, 0.4f);
 
     private int nodeIndex;
     private Action<int> onNodeClicked; // 클릭 시 MapUI에 인덱스를 전달하는 콜백
@@ -47,11 +49,6 @@ public class MapNodeUI : MonoBehaviour
             nodeButton.onClick.RemoveAllListeners();
             nodeButton.onClick.AddListener(OnButtonClicked);
         }
-
-        // UI 위치 설정 (MapData에 지정된 픽셀 좌표로 이동)
-        RectTransform rt = GetComponent<RectTransform>();
-        if (rt != null)
-            rt.anchoredPosition = nodeData.position;
 
         RefreshState();
     }
@@ -90,6 +87,8 @@ public class MapNodeUI : MonoBehaviour
             MapNodeType.Boss   => bossColor,
             MapNodeType.Rest   => restColor,
             MapNodeType.Shop   => shopColor,
+            MapNodeType.Event  => eventColor,
+            MapNodeType.Start  => startColor,
             _                  => Color.white,
         };
     }
@@ -103,6 +102,8 @@ public class MapNodeUI : MonoBehaviour
             MapNodeType.Boss   => "보스",
             MapNodeType.Rest   => "휴식",
             MapNodeType.Shop   => "상점",
+            MapNodeType.Event  => "이벤트",
+            MapNodeType.Start  => "시작",
             _                  => "?",
         };
     }

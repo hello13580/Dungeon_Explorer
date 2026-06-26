@@ -4,7 +4,6 @@ using UnityEngine;
 /// 맵 위의 노드 하나를 정의하는 ScriptableObject.
 /// MapData의 nodes 배열에 포함되어 맵 전체 구조를 구성한다.
 /// </summary>
-[CreateAssetMenu(fileName = "MapNodeData", menuName = "TBRPG/Map/MapNodeData")]
 public class MapNodeData : ScriptableObject
 {
     [Tooltip("노드의 고유 식별자. MapManager가 방문 기록에 사용한다.")]
@@ -15,6 +14,9 @@ public class MapNodeData : ScriptableObject
 
     [Tooltip("이 노드에 진입했을 때 로드할 스테이지. Rest·Shop처럼 전투가 없으면 null.")]
     public StageData stageData;
+
+    [Tooltip("이벤트 노드일 때 사용할 이벤트 데이터. nodeType이 Event가 아니면 null.")]
+    public EventNodeData eventData;
 
     [Tooltip("맵 UI에서 이 노드를 배치할 위치 (앵커 기준 픽셀 좌표)")]
     public Vector2 position;

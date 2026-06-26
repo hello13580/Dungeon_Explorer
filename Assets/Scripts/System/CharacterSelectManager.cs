@@ -12,7 +12,6 @@ public class CharacterSelectManager : MonoBehaviour
 
     [Header("설정")]
     [SerializeField] private int requiredSelectCount = 4;
-    [SerializeField] private MapData mapData;   // 캐릭터 선택 완료 후 열 맵
     [SerializeField] private MapUI mapUI;        // 맵 패널 직접 참조
 
     private List<CharacterData> selectedCharacters = new List<CharacterData>();
@@ -74,13 +73,20 @@ public class CharacterSelectManager : MonoBehaviour
             PartyManager.Instance.AddToParty(characterData.unitPrefab);
         }
 
-        // 스테이지를 직접 로드하지 않고 맵을 열어서 플레이어가 첫 노드를 선택하게 한다
+        // 맵 자동 생성 후 열기
         if (mapUI == null)
         {
             Debug.LogError("[CharacterSelectManager] MapUI가 설정되지 않았습니다.");
             return;
         }
-        MapManager.Instance.InitializeMap(mapData);
+        if (MapGenerator.Instance == null)
+        {
+            Debug.LogError("[CharacterSelectManager] MapGenerator가 씬에 없습니다.");
+            return;
+        }
+        MapData generated = MapGenerator.Instance.Generate();
+        mapUI.SetMapData(generated);
+        MapManager.Instance.InitializeMap(generated);
         mapUI.OpenMapFromExternal();
     }
 }

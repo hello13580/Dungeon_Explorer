@@ -12,6 +12,7 @@ public class MapUI : MonoBehaviour
 {
     [Header("패널")]
     [SerializeField] private GameObject panel;
+    [SerializeField] private MapPanZoom mapPanZoom;
 
     [Header("맵 데이터")]
     [SerializeField] private MapData mapData; // 이 게임에서 사용할 맵
@@ -20,9 +21,13 @@ public class MapUI : MonoBehaviour
     [SerializeField] private Transform nodeContainer;    // 노드 버튼들이 배치될 부모
     [SerializeField] private GameObject mapNodePrefab;   // MapNodeUI 프리팹
 
-    [Header("연결선 (선택)")]
-    [SerializeField] private Transform lineContainer;    // 노드 간 선이 배치될 부모 (없으면 선 생략)
-    [SerializeField] private GameObject linePrefab;      // 선 이미지 프리팹 (없으면 선 생략)
+    [Header("연결선")]
+    [SerializeField] private Transform lineContainer;       // 노드 간 선이 배치될 부모
+    [SerializeField] private GameObject linePrefab;         // 선 이미지 프리팹
+    [SerializeField] private GameObject arrowHeadPrefab;    // 화살표 머리 프리팹 (삼각형 Image)
+    [SerializeField] private float nodeSizePixels  = 56f;   // 노드 정사각형 크기 (변 중심 계산용)
+    [SerializeField] private float spacingScale    = 1.5f;  // X 간격 배율 (1 = 화면 딱 맞춤, 패닝 대응)
+    [SerializeField] private float maxNodeSpacingY = 120f;  // 노드 간 최대 세로 간격 (픽셀)
 
     // 생성된 노드 UI 목록 (상태 갱신 시 순회)
     private List<MapNodeUI> spawnedNodes = new List<MapNodeUI>();
@@ -36,27 +41,42 @@ public class MapUI : MonoBehaviour
 
         // MapManager 상태가 바뀔 때(VisitNode 호출 등) 노드 비주얼을 갱신한다
         MapManager.OnMapStateChanged += OnMapStateChanged;
+
+        // 이벤트 완료 후 맵 패널을 다시 연다
+        EventUI.OnEventCompleted += OnEventCompleted;
     }
 
     private void OnDestroy()
     {
         SkillUnlockManager.OnSkillUnlockCompleted -= OnSkillUnlockCompleted;
         MapManager.OnMapStateChanged -= OnMapStateChanged;
+        EventUI.OnEventCompleted -= OnEventCompleted;
     }
 
     // ─── 이벤트 핸들러 ───────────────────────────────────────────
 
     private void OnSkillUnlockCompleted(object sender, System.EventArgs e)
     {
-        // 스킬 보상 패널 닫힘 → 맵 패널 오픈
+        OpenMap();
+    }
+
+    private void OnEventCompleted(object sender, System.EventArgs e)
+    {
         OpenMap();
     }
 
     private void OnMapStateChanged(object sender, System.EventArgs e)
     {
-        // 노드 비주얼 전체 갱신 (선택 가능 여부, 방문 표시 등)
         foreach (MapNodeUI nodeUI in spawnedNodes)
             nodeUI.RefreshState();
+
+        // 현재 노드 위치로 자동 패닝
+        int cur = MapManager.Instance?.CurrentNodeIndex ?? -1;
+        if (cur >= 0 && mapData?.nodes != null && cur < mapData.nodes.Length)
+        {
+            float nodeX = ToPixelPosition(mapData.nodes[cur].position).x;
+            mapPanZoom?.PanToNode(nodeX);
+        }
     }
 
     // ─── 맵 열기/닫기 ────────────────────────────────────────────
@@ -67,8 +87,10 @@ public class MapUI : MonoBehaviour
     /// </summary>
     public void OpenMapFromExternal()
     {
-        BuildNodes();
         panel.SetActive(true);
+        Canvas.ForceUpdateCanvases();
+        BuildNodes();
+        ResetViewToStart();
     }
 
     /// <summary>
@@ -91,8 +113,10 @@ public class MapUI : MonoBehaviour
         if (MapManager.Instance != null && MapManager.Instance.CurrentMapData == null)
             MapManager.Instance.InitializeMap(mapData);
 
-        BuildNodes();
         panel.SetActive(true);
+        Canvas.ForceUpdateCanvases();
+        BuildNodes();
+        ResetViewToStart();
     }
 
     private void CloseMap()
@@ -111,6 +135,9 @@ public class MapUI : MonoBehaviour
 
         if (mapData.nodes == null) return;
 
+        Rect containerRect = ((RectTransform)nodeContainer).rect;
+        Debug.Log($"[MapUI] nodeContainer 크기: {containerRect.width} x {containerRect.height}");
+
         for (int i = 0; i < mapData.nodes.Length; i++)
         {
             MapNodeData nodeData = mapData.nodes[i];
@@ -123,6 +150,12 @@ public class MapUI : MonoBehaviour
             // 캡처되므로 로컬 변수로 복사해서 각 노드가 올바른 인덱스를 갖도록 한다.
             int capturedIndex = i;
             nodeUI.Setup(capturedIndex, nodeData, OnNodeClicked);
+
+            // 정규화 좌표 → 실제 픽셀 좌표로 변환해서 배치
+            RectTransform nodeRt = nodeObj.GetComponent<RectTransform>();
+            if (nodeRt != null)
+                nodeRt.anchoredPosition = ToPixelPosition(nodeData.position);
+
             spawnedNodes.Add(nodeUI);
         }
 
@@ -131,7 +164,36 @@ public class MapUI : MonoBehaviour
             BuildLines();
     }
 
-    /// <summary>노드 간 연결선을 이미지로 그린다. linePrefab이 없으면 스킵.</summary>
+    /// <summary>런타임 생성된 MapData를 교체한다. CharacterSelectManager에서 호출.</summary>
+    public void SetMapData(MapData data) => mapData = data;
+
+    private void ResetViewToStart()
+    {
+        if (mapPanZoom == null || mapData?.nodes == null || mapData.nodes.Length == 0) return;
+
+        // 현재 노드가 있으면 그 위치로, 없으면 시작 노드로
+        int cur = MapManager.Instance?.CurrentNodeIndex ?? -1;
+        int targetIdx = (cur >= 0 && cur < mapData.nodes.Length) ? cur : 0;
+        float nodeX = ToPixelPosition(mapData.nodes[targetIdx].position).x;
+        mapPanZoom.ResetView(nodeX);
+    }
+
+    /// <summary>정규화 좌표(-0.5~0.5)를 nodeContainer 실제 픽셀 좌표로 변환한다.</summary>
+    private Vector2 ToPixelPosition(Vector2 normalized)
+    {
+        Rect r = ((RectTransform)nodeContainer).rect;
+
+        // X: spacingScale 적용 (패닝으로 탐색)
+        float px = r.x + (normalized.x * spacingScale + 0.5f) * r.width;
+
+        // Y: maxNodeSpacingY 기준으로 제한 (세로가 너무 벌어지지 않게)
+        float maxHalfY = maxNodeSpacingY * 2f; // 4노드 기준 최대 범위
+        float py = normalized.y * Mathf.Min(r.height * 0.8f, maxHalfY * 2f);
+
+        return new Vector2(px, py);
+    }
+
+    /// <summary>노드 간 방향 있는 연결선을 그린다.</summary>
     private void BuildLines()
     {
         foreach (Transform child in lineContainer)
@@ -144,30 +206,43 @@ public class MapUI : MonoBehaviour
             {
                 if (nextIdx < 0 || nextIdx >= mapData.nodes.Length) continue;
                 MapNodeData toNode = mapData.nodes[nextIdx];
-                DrawLine(fromNode.position, toNode.position);
+                DrawDirectedLine(ToPixelPosition(fromNode.position), ToPixelPosition(toNode.position));
             }
         }
     }
 
-    /// <summary>두 위치 사이에 선 이미지를 배치한다.</summary>
-    private void DrawLine(Vector2 from, Vector2 to)
+    /// <summary>출발 노드 오른쪽 변 → 도착 노드 왼쪽 변으로 연결하는 방향 있는 선을 그린다.</summary>
+    private void DrawDirectedLine(Vector2 fromCenter, Vector2 toCenter)
     {
+        if (linePrefab == null) return;
+
+        float half    = nodeSizePixels * 0.5f;
+        Vector2 from  = fromCenter + new Vector2(half, 0f);   // 출발: 오른쪽 변 중심
+        Vector2 to    = toCenter   + new Vector2(-half, 0f);  // 도착: 왼쪽 변 중심
+
+        Vector2 dir      = to - from;
+        float   distance = dir.magnitude;
+        float   angle    = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+
         GameObject lineObj = Instantiate(linePrefab, lineContainer);
         RectTransform rt = lineObj.GetComponent<RectTransform>();
-        if (rt == null) return;
+        if (rt != null)
+        {
+            rt.anchoredPosition = (from + to) * 0.5f;
+            rt.sizeDelta        = new Vector2(distance, 4f);
+            rt.localRotation    = Quaternion.Euler(0f, 0f, angle);
+        }
 
-        Vector2 dir = to - from;
-        float distance = dir.magnitude;
-
-        // 선의 중심을 두 노드의 중간 지점에 배치
-        rt.anchoredPosition = (from + to) * 0.5f;
-
-        // 선의 너비 = 두 노드 사이의 거리, 높이 = 선 두께 (기본 4px)
-        rt.sizeDelta = new Vector2(distance, 4f);
-
-        // 선의 방향으로 회전
-        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        rt.localRotation = Quaternion.Euler(0f, 0f, angle);
+        if (arrowHeadPrefab != null)
+        {
+            GameObject arrow = Instantiate(arrowHeadPrefab, lineContainer);
+            RectTransform arrowRt = arrow.GetComponent<RectTransform>();
+            if (arrowRt != null)
+            {
+                arrowRt.anchoredPosition = to;
+                arrowRt.localRotation    = Quaternion.Euler(0f, 0f, angle);
+            }
+        }
     }
 
     // ─── 노드 클릭 처리 ──────────────────────────────────────────
@@ -184,7 +259,13 @@ public class MapUI : MonoBehaviour
         // 방문 기록 갱신 — availableNodes가 이 노드의 nextNodeIndices로 교체된다
         MapManager.Instance.VisitNode(nodeIndex);
 
-        if (nodeData.stageData != null)
+        if (nodeData.nodeType == MapNodeType.Event)
+        {
+            // 이벤트 노드: 맵을 닫고 이벤트 팝업 오픈
+            CloseMap();
+            EventUI.Instance?.Open(nodeData.eventData);
+        }
+        else if (nodeData.stageData != null)
         {
             // 전투·엘리트·보스 노드: 맵을 닫고 해당 스테이지 로드
             CloseMap();
