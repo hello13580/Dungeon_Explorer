@@ -21,9 +21,14 @@ public class MeleeAction : BaseAction
 	[SerializeField] private float stepDistance = 0.5f;  // 전진 거리
 	[SerializeField] private float stepDuration = 0.15f; // 전진/복귀 각각 걸리는 시간
 
+	[Header("애니메이션")]
+	[Tooltip("애니메이션 이벤트가 없을 때 자동 완료까지 대기하는 최대 시간. 0이면 이벤트만 기다림.")]
+	[SerializeField] private float animationTimeout = 0f;
+
 	private Unit targetUnit;
 	private State state;
 	private bool canMeleeAttack;
+	private bool attackAnimationDone;
 
 	// 유효 공격 위치 목록 캐시 — 매 UpdateGridVisual마다 점유·팀 체크를 반복하는 비용을 줄임
 	private List<GridPosition> cachedValidGridPositionList;
@@ -77,16 +82,29 @@ public class MeleeAction : BaseAction
 
 		if (canMeleeAttack && state == State.Attack)
 		{
+			attackAnimationDone = false;
 			OnSwordActionStarted?.Invoke(this, EventArgs.Empty);
 			canMeleeAttack = false;
 		}
 
-		yield return new WaitForSeconds(0.3f);
-		state = State.Cooloff;
+		// 애니메이션 이벤트(OnMeleeAnimationComplete)가 호출될 때까지 대기
+		// 애니메이션 이벤트가 없을 경우를 대비해 최대 3초 타임아웃
+		float timeout = animationTimeout > 0f ? animationTimeout : float.MaxValue;
+		while (!attackAnimationDone && timeout > 0f)
+		{
+			timeout -= Time.deltaTime;
+			yield return null;
+		}
 
-		yield return new WaitForSeconds(0.5f);
-        OnSwordActionEnded?.Invoke(this, EventArgs.Empty);
-        ActionComplete();
+		state = State.Cooloff;
+		OnSwordActionEnded?.Invoke(this, EventArgs.Empty);
+		ActionComplete();
+	}
+
+	/// <summary>애니메이션 이벤트 또는 UnitAnimationRelay에서 호출. 공격 애니메이션 완료 신호.</summary>
+	public void OnMeleeAnimationComplete()
+	{
+		attackAnimationDone = true;
 	}
 
 	private IEnumerator StepForwardRoutine()

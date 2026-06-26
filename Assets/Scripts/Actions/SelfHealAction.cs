@@ -54,13 +54,13 @@ public class SelfHealAction : BaseAction
 
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
     {
-        // 체력이 threshold 초과면 힐 고려 안 함
+        // 체력이 threshold 초과면 힐 고려 안 함 (null = 이 액션 선택 불가)
         if (unit.GetHealthNormalized() > healthThreshold)
-            return new EnemyAIAction { gridPosition = gridPosition, actionValue = -1 };
+            return null;
 
         // 확률 체크 — 실패 시 이 턴엔 힐 안 함
         if (UnityEngine.Random.value > castChance)
-            return new EnemyAIAction { gridPosition = gridPosition, actionValue = -1 };
+            return null;
 
         // 체력이 낮을수록 더 높은 우선순위
         int missingHealthPercent = 100 - Mathf.RoundToInt(unit.GetHealthNormalized() * 100f);

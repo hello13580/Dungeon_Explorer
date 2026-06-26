@@ -362,6 +362,7 @@ MonoBehaviour:
   rotateSpeed: 30
   stepDistance: 0.7
   stepDuration: 0.2
+  animationTimeout: 1.5
 --- !u!114 &376090050427871366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -644,6 +645,8 @@ MonoBehaviour:
   jobPointCost: 0
   requiredJobClass: 0
   healAmount: 30
+  healthThreshold: 0.5
+  castChance: 0.6
 --- !u!1 &1471256514613463199 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7478389241422733539, guid: 31ff398b13221204abf58d215dd04293, type: 3}

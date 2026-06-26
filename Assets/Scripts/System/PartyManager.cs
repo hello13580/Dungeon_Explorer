@@ -78,6 +78,7 @@ public class PartyManager : MonoBehaviour
         for (int i = 0; i < partyUnits.Count && i < spawnPoints.Length; i++)
         {
             partyUnits[i].gameObject.SetActive(true);
+            partyUnits[i].transform.rotation = spawnPoints[i].rotation;
             partyUnits[i].RegisterForNewStage(spawnPoints[i].position);
         }
     }

@@ -10,11 +10,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1213345925212744562, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 487.17743
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1213345925212744562, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 346.91864
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1213345925212744562, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_LocalPosition.z
@@ -52,10 +52,30 @@ PrefabInstance:
       propertyPath: teamType
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: unitName
+      value: Ghoul
+      objectReference: {fileID: 0}
+    - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: initialSpeed
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: maxActionPoint
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4801007853815582824, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: originalRootBone
       value: 
       objectReference: {fileID: 6461445708756989639}
+    - target: {fileID: 6281880740096184127, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: manaCost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6281880740096184127, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: actionCost
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6841203341150570205, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: unitAnimator
       value: 
@@ -101,7 +121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a2fe95f482a2194eab12208e93d833a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeAction
-  actionCost: 0
+  actionCost: 1
   manaCost: 0
   jobPointCost: 0
   requiredJobClass: 0
@@ -111,6 +131,7 @@ MonoBehaviour:
   rotateSpeed: 30
   stepDistance: 0.5
   stepDuration: 0.15
+  animationTimeout: 3
 --- !u!114 &7132225039754275014
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -193,7 +214,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1587398109350852149, guid: ad5fc0c9b881e1a468481907403e4906, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3654351790267178351}
   m_SourcePrefab: {fileID: 100100000, guid: ad5fc0c9b881e1a468481907403e4906, type: 3}
 --- !u!95 &145170053381514960 stripped
 Animator:
@@ -210,3 +234,22 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2111135473224887439, guid: ad5fc0c9b881e1a468481907403e4906, type: 3}
   m_PrefabInstance: {fileID: 8884847381674950239}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7875322081316997226 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1587398109350852149, guid: ad5fc0c9b881e1a468481907403e4906, type: 3}
+  m_PrefabInstance: {fileID: 8884847381674950239}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3654351790267178351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7875322081316997226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 899874b53f827df42848aefaa812e9a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitAnimationRelay
+  meleeAction: {fileID: 986954953847984964}
+  leapAction: {fileID: 0}

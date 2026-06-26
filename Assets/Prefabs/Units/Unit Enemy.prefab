@@ -259,6 +259,9 @@ MonoBehaviour:
   damage: 10
   hitForce: 500
   rotateSpeed: 30
+  stepDistance: 0.5
+  stepDuration: 0.15
+  animationTimeout: 3
 --- !u!114 &-3930269276892804090
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -290,3 +293,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitAnimationRelay
   meleeAction: {fileID: 7746137721004683563}
+  leapAction: {fileID: 0}

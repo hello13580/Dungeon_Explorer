@@ -179,8 +179,11 @@ public class PathFinding : MonoBehaviour
 				{
 					neighbor.Reset(currentSearchId);
 				}
+				// 도착 타일은 유닛 점유 무시 (목적지 자체는 허용), 경유 타일만 점유 체크
+				bool isDestination = neighbor == gridObject2;
+				GridPosition? ignore = isDestination ? (GridPosition?)null : startGridPosition;
 				if (hashSet.Contains(neighbor) ||
-					(!IsWalkableArea(neighbor.GetGridPosition(), unitSize, neighbor.GetGridPosition().floor) &&
+					(!IsWalkableArea(neighbor.GetGridPosition(), unitSize, neighbor.GetGridPosition().floor, ignore) &&
 					 !staircaseExclusiveTiles.Contains(neighbor.GetGridPosition())))
 				{
 					continue;
@@ -461,7 +464,7 @@ public class PathFinding : MonoBehaviour
 		return pathLength;
 	}
 
-	public bool IsWalkableArea(GridPosition gridPosition, int size, int floor)
+	public bool IsWalkableArea(GridPosition gridPosition, int size, int floor, GridPosition? ignorePosition = null)
 	{
 		for (int i = 0; i < size; i++)
 		{
@@ -469,13 +472,17 @@ public class PathFinding : MonoBehaviour
 			{
 				GridPosition gridPosition2 = new GridPosition(gridPosition.x + i, gridPosition.z + j, floor);
 				if (gridPosition2.x < 0 || gridPosition2.x >= width || gridPosition2.z < 0 || gridPosition2.z >= height)
-				{
 					return false;
-				}
+
 				if (!GetNode(gridPosition2.x, gridPosition2.z, floor).IsWalkable())
-				{
 					return false;
-				}
+
+				// 유닛이 점유 중인 타일은 통과 불가 (자기 자신 위치는 제외)
+				if (ignorePosition.HasValue && gridPosition2 == ignorePosition.Value)
+					continue;
+
+				if (LevelGrid.Instance.IsGridPositionOccupied(gridPosition2))
+					return false;
 			}
 		}
 		return true;

@@ -85,7 +85,7 @@ public class EnemyTurnManager : MonoBehaviour
 		BaseAction[] baseActionsArray = enemyUnit.GetBaseActionsArray();
 		foreach (BaseAction baseAction in baseActionsArray)
 		{
-			if (enemyUnit.CanSpendActionPointsToTakeAction(baseAction))
+			if (enemyUnit.CanTakeAction(baseAction))
 			{
 				EnemyAIAction bestEnemyAIAction2 = baseAction.GetBestEnemyAIAction();
 				if (bestEnemyAIAction2 != null && (bestEnemyAIAction == null || bestEnemyAIAction2.actionValue > bestEnemyAIAction.actionValue))
