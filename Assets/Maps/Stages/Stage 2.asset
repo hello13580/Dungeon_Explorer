@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StageData
   stageName: stage 2
   mapPrefab: {fileID: 2928425958798730269, guid: ad60a7e73d861c94ba64ad5d28d1cee7, type: 3}
-  floorAmount: 1
+  floorAmount: 3
   mapSpawnPosition: {x: 60, y: 0, z: 60}
   cameraStartPosition: {x: 70, y: 3, z: 50}
   cameraStartRotation: {x: 0, y: -40, z: 0}

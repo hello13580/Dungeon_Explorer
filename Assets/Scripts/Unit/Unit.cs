@@ -441,7 +441,7 @@ public class Unit : MonoBehaviour
 		return healthSystem.GetHealthNormalized();
 	}
 
-	public float GetCurrentHealth()
+	public int GetCurrentHealth()
 	{
 		return healthSystem.GetCurrentHealth();
 	}

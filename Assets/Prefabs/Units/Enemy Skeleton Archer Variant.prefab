@@ -86,7 +86,7 @@ PrefabInstance:
     - target: {fileID: 4801007853815582824, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: originalRootBone
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 4937546578051367337}
     - target: {fileID: 6841203341150570205, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: unitAnimator
       value: 
@@ -232,6 +232,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 6250726028685464179}
   m_SourcePrefab: {fileID: 100100000, guid: a1400470f4c08b445bacf3f5fbaf2ac8, type: 3}
+--- !u!4 &4937546578051367337 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3933447591847190892, guid: a1400470f4c08b445bacf3f5fbaf2ac8, type: 3}
+  m_PrefabInstance: {fileID: 8220153220448149701}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6418709961139077913 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3098493581462905820, guid: a1400470f4c08b445bacf3f5fbaf2ac8, type: 3}
