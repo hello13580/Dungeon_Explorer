@@ -85,9 +85,12 @@ public class MeleeAction : BaseAction
 			canMeleeAttack = false;
 		}
 
-		// 애니메이션 이벤트(OnMeleeAnimationComplete)가 호출될 때까지 대기
-		// 애니메이션 이벤트가 없을 경우를 대비해 최대 3초 타임아웃
-		float timeout = animationTimeout > 0f ? animationTimeout : float.MaxValue;
+		// 애니메이션 이벤트(OnMeleeAnimationComplete)가 올 때까지 대기한다.
+		// [버그 수정] animationTimeout = 0 일 때 float.MaxValue를 사용하던 코드를 3f로 교체.
+		//   float.MaxValue는 사실상 무한 대기로, 애니메이션 이벤트가 발동되지 않으면
+		//   (애니메이션 컨트롤러 설정 누락, 상태 머신 버그 등) 턴이 영원히 끝나지 않는 버그가 발생했다.
+		//   animationTimeout 인스펙터 값이 0이면 3초 기본 타임아웃을 사용해 반드시 완료되도록 보장한다.
+		float timeout = animationTimeout > 0f ? animationTimeout : 3f;
 		while (!attackAnimationDone && timeout > 0f)
 		{
 			timeout -= Time.deltaTime;

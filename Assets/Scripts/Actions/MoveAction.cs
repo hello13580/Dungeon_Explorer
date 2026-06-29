@@ -206,21 +206,32 @@ public class MoveAction : BaseAction
             }
             else
             {
-                // 일반 이동 및 경사로 이동
-                while (Vector3.Distance(transform.position, targetPos) > stoppingDistance)
+                // [버그 수정] 도달 판정을 XZ 거리로만 한다.
+                //
+                // [원인]
+                //   targetPos.y는 지형 스냅(Raycast)으로 결정되므로 유닛의 실제 y와 미세하게 다를 수 있다.
+                //   사이즈 2 유닛은 centerOffset이 더해지므로 이 오차가 더 자주 발생한다.
+                //   이전 코드(Vector3.Distance)는 y 오차가 0.05f를 초과하면 루프에 진입했고,
+                //   그 안에서 moveDir.y = 0 → normalize → zero 벡터 → if(moveDir != zero) 실패
+                //   → 이동도 회전도 없이 yield return null만 반복 → 무한 루프 → 턴이 안 끝나는 버그.
+                //
+                // [해결]
+                //   XZ 성분만으로 거리를 계산해 도달 여부를 판정한다.
+                //   루프 탈출 후 transform.position = targetPos 로 y까지 정확히 스냅된다.
+                while (new Vector2(transform.position.x - targetPos.x, transform.position.z - targetPos.z).magnitude > stoppingDistance)
                 {
                     Vector3 moveDir = (targetPos - transform.position);
-                    // Y축 변화량을 0으로 만들어 앞뒤로 기울어지는 것(Pitch/Roll)을 방지합니다.
                     moveDir.y = 0f;
                     moveDir.Normalize();
 
                     if (moveDir != Vector3.zero)
                     {
-                        // 이제 오직 좌우(Y축 회전)로만 회전하게 됩니다.
+                        // XZ 기준으로만 회전(Y축만 변경) → Pitch/Roll 방지
                         Quaternion targetRotation = Quaternion.LookRotation(moveDir);
                         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotateSpeed);
 
-                        // 이동 자체는 높낮이(targetPos)가 반영되어야 하므로 원래 벡터의 방향을 따로 씁니다.
+                        // 실제 이동 방향은 y를 포함한 원본 벡터를 사용해 경사로 등반을 반영한다.
+                        // Dot > 0.7f: 유닛이 목표 방향에 충분히 정렬된 뒤에만 전진 (뒤로 미끄러짐 방지)
                         Vector3 actualMoveDir = (targetPos - transform.position).normalized;
                         if (Vector3.Dot(transform.forward, moveDir) > 0.7f)
                         {
@@ -346,9 +357,24 @@ public class MoveAction : BaseAction
 
     // --- AI ���� ---
 
+    // [버그 수정] AI 평가 거리 계산을 직선 거리로 교체.
+    //
+    // [원인]
+    //   이전 코드는 GetBestEnemyAIAction() → GetEnemyAIAction(pos) 에서
+    //   GetPathLength(A*)를 호출했다. 이 함수는 이동 가능한 모든 위치(N개)마다 실행되므로
+    //   총 N번의 A* 탐색이 단일 프레임에서 동기적으로 실행됐다.
+    //   사이즈 2 유닛은 IsWalkableArea가 2×2 영역을 체크해 A*당 비용이 ~4배이고,
+    //   2번째 턴부터 죽은 유닛의 그리드가 비워져 N이 급격히 증가하면서 심각한 프리즈가 발생했다.
+    //
+    // [해결]
+    //   AI가 이동 위치를 평가하는 용도로는 직선 거리로 충분하다.
+    //   실제 이동 경로는 TakeAction 시점에 A*로 정확히 계산하므로 이동 자체의 품질은 유지된다.
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
     {
         if (leftMoveDistance <= 0f) return null;
+
+        float cellSize = LevelGrid.Instance.GetCellSize();
+        Vector3 fromWorld = LevelGrid.Instance.GetWorldPosition(gridPosition);
 
         // 도발 중이면 도발 대상 우선
         if (TauntManager.Instance != null && TauntManager.Instance.HasActiveTaunt())
@@ -356,10 +382,9 @@ public class MoveAction : BaseAction
             Unit taunted = TauntManager.Instance.GetTauntedUnit();
             if (taunted != null)
             {
-                int tauntPathLength = PathFinding.Instance.GetPathLength(gridPosition, taunted.GetGridPosition(), unit.GetSize(), allowOccupiedDestination: true);
-                if (tauntPathLength > 0 && tauntPathLength <= visionRange * 10f)
+                float td = Vector3.Distance(fromWorld, taunted.GetWorldPosition()) / cellSize;
+                if (td <= visionRange)
                 {
-                    float td = tauntPathLength / 10f;
                     float distToRange = td < approachRangeMin ? approachRangeMin - td
                                       : td > approachRangeMax ? td - approachRangeMax
                                       : 0f;
@@ -372,25 +397,12 @@ public class MoveAction : BaseAction
         Unit closestPlayer = GetClosestPlayerByPath(gridPosition);
         if (closestPlayer != null)
         {
-            int pathLength = PathFinding.Instance.GetPathLength(gridPosition, closestPlayer.GetGridPosition(), unit.GetSize(), allowOccupiedDestination: true);
+            float worldDist = Vector3.Distance(fromWorld, closestPlayer.GetWorldPosition());
+            float distInCells = worldDist / cellSize;
 
-            float distInCells;
+            if (distInCells > visionRange) return null;
+
             int floorPenalty = (closestPlayer.GetGridPosition().floor != gridPosition.floor) ? -10 : 0;
-
-            if (pathLength > 0)
-            {
-                if (pathLength > visionRange * 10f) return null;
-                distInCells = pathLength / 10f;
-            }
-            else
-            {
-                float worldDist = Vector3.Distance(LevelGrid.Instance.GetWorldPosition(gridPosition), closestPlayer.GetWorldPosition());
-                float cellSize = LevelGrid.Instance.GetCellSize();
-                if (worldDist > visionRange * cellSize) return null;
-                distInCells = worldDist / cellSize;
-            }
-
-            // approachRange 범위 안이면 최고점, 범위 밖이면 가장 가까운 경계까지의 거리로 감점
             float distToRange = distInCells < approachRangeMin ? approachRangeMin - distInCells
                               : distInCells > approachRangeMax ? distInCells - approachRangeMax
                               : 0f;
@@ -416,30 +428,26 @@ public class MoveAction : BaseAction
         return (minDistance == float.MaxValue) ? 0f : minDistance / LevelGrid.Instance.GetCellSize();
     }
 
+    // AI 평가용: 직선 거리로 가장 가까운 플레이어를 찾는다.
+    // 이전에는 GetPathLength(A*)를 사용했으나, 이동 가능한 모든 위치마다 호출되어
+    // 사이즈 2 유닛(오우거 등)에서 N×M번의 A*가 한 프레임에 실행되며 프리즈가 발생했다.
+    // AI 평가 목적에는 직선 거리로 충분하다.
     private Unit GetClosestPlayerByPath(GridPosition fromPos)
     {
         Unit closestUnit = null;
-        int minPathLength = int.MaxValue;
-        Unit closestByDistance = null;
         float minDistance = float.MaxValue;
+        Vector3 fromWorld = LevelGrid.Instance.GetWorldPosition(fromPos);
 
         foreach (Unit playerUnit in UnitManager.Instance.GetFriendlyUnitList())
         {
             if (playerUnit.IsStealthed()) continue;
-            int pathLength = PathFinding.Instance.GetPathLength(fromPos, playerUnit.GetGridPosition(), unit.GetSize(), allowOccupiedDestination: true);
-            if (pathLength > 0 && pathLength < minPathLength)
-            {
-                minPathLength = pathLength;
-                closestUnit = playerUnit;
-            }
-            // 경로가 없는 경우(층이 다를 때 등) 직선 거리로 fallback
-            float dist = Vector3.Distance(LevelGrid.Instance.GetWorldPosition(fromPos), playerUnit.GetWorldPosition());
+            float dist = Vector3.Distance(fromWorld, playerUnit.GetWorldPosition());
             if (dist < minDistance)
             {
                 minDistance = dist;
-                closestByDistance = playerUnit;
+                closestUnit = playerUnit;
             }
         }
-        return closestUnit ?? closestByDistance;
+        return closestUnit;
     }
 }

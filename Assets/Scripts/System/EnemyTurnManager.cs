@@ -60,7 +60,19 @@ public class EnemyTurnManager : MonoBehaviour
 				{
 					isWaitingForAction = false;
 				});
-				yield return new WaitUntil(() => !isWaitingForAction);
+				// [버그 수정] WaitUntil → 타임아웃 루프로 교체.
+				//   WaitUntil(() => !isWaitingForAction) 은 onActionComplete 콜백이 오지 않으면
+				//   영원히 대기한다. 어떤 이유로든 액션이 완료 신호를 보내지 못하면
+				//   (코루틴 예외 크래시, 애니메이션 이벤트 누락 등) 적의 턴이 끝나지 않는다.
+				//   10초 타임아웃을 두어 최악의 경우에도 턴이 강제로 진행되도록 보장한다.
+				float actionTimeout = 10f;
+				while (isWaitingForAction && actionTimeout > 0f)
+				{
+					actionTimeout -= Time.deltaTime;
+					yield return null;
+				}
+				if (isWaitingForAction)
+					Debug.LogWarning($"[EnemyTurnManager] 액션 타임아웃: {bestBaseAction.GetType().Name} — 강제 진행");
 				yield return new WaitForSeconds(0.3f);
 			}
 			else

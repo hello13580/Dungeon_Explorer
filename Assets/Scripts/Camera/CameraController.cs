@@ -18,10 +18,22 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float maxZoom = 30f;
     [SerializeField] private float minZoom = 1f;
 
+    [Header("턴 이동")]
+    [SerializeField] private bool moveOnPlayerTurn = true;
+    // 스프링 강도 — 클수록 빠르게 도달
+    [SerializeField] private float springStrength = 90f;
+    // 감쇠 계수 — 2*sqrt(springStrength)이면 임계감쇠(반동 없음), 그보다 작으면 약간 오버슈트
+    [SerializeField] private float springDamping = 16f;
+
     private float targetZoom;
     private float initialZoom = 15f;
     private Vector3 initialAngle;
     private float zoomVelocity;
+
+    // 스프링 이동용
+    private Vector3 springTarget;
+    private Vector3 springVelocity;
+    private bool springActive = false;
 
     // 카메라 이동 가능 범위 (XZ 평면)
     // SetBounds()로 설정하며, hasBounds가 false이면 범위 제한 없음
@@ -53,8 +65,72 @@ public class CameraController : MonoBehaviour
         targetZoom = initialZoom;
 
         if (follow != null)
-        {
             follow.FollowOffset = new Vector3(follow.FollowOffset.x, initialZoom, follow.FollowOffset.z);
+    }
+
+    private void Start()
+    {
+        if (TurnSystem.Instance != null)
+            TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+    }
+
+    private void OnDestroy()
+    {
+        if (TurnSystem.Instance != null)
+            TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+    }
+
+    private void TurnSystem_OnTurnChanged(object sender, System.EventArgs e)
+    {
+        if (!TurnSystem.Instance.IsPlayerTurn())
+        {
+            // [버그 수정] 적 턴 시작 시 스프링을 즉시 취소한다.
+            //   플레이어 턴에 시작된 스프링이 완전히 감쇠되기 전에 적 턴이 시작되면,
+            //   잔여 velocity가 적 행동 중에도 카메라를 계속 밀어 화면이 흔들리는 버그가 있었다.
+            springActive = false;
+            springVelocity = Vector3.zero;
+            return;
+        }
+
+        if (!moveOnPlayerTurn) return;
+
+        Unit turnUnit = TurnSystem.Instance.GetTurnUnit();
+        if (turnUnit == null) return;
+
+        MoveToPosition(turnUnit.GetWorldPosition());
+    }
+
+    /// <summary>
+    /// 카메라를 지정 월드 좌표 XZ로 스프링 물리를 사용해 부드럽게 이동시킨다.
+    /// Y(높이)는 현재 값을 유지하며, springStrength / springDamping 으로 감도와 반동을 조절한다.
+    /// </summary>
+    public void MoveToPosition(Vector3 worldPos)
+    {
+        // Y는 현재 카메라 높이를 그대로 유지하고 XZ만 목표로 설정한다.
+        // 매번 velocity를 초기화해 이전 이동의 관성이 누적되지 않도록 한다.
+        springTarget = new Vector3(worldPos.x, transform.position.y, worldPos.z);
+        springVelocity = Vector3.zero;
+        springActive = true;
+    }
+
+    private void HandleSpringMove()
+    {
+        if (!springActive) return;
+
+        // 감쇠 스프링 시뮬레이션: F = k*(target-pos) - b*velocity
+        //   springStrength(k): 클수록 빠르게 목표에 도달
+        //   springDamping(b):  2*sqrt(k)보다 작으면 목표를 살짝 지나쳤다 돌아오는 오버슈트 발생
+        //                      2*sqrt(k)이면 임계감쇠(반동 없음), 그보다 크면 과감쇠(느리게 수렴)
+        Vector3 displacement = springTarget - transform.position;
+        Vector3 acceleration = displacement * springStrength - springVelocity * springDamping;
+        springVelocity += acceleration * Time.deltaTime;
+        transform.position += springVelocity * Time.deltaTime;
+
+        // 목표 근처에서 진동하지 않도록 임계값 이하이면 스냅 후 종료
+        if (displacement.sqrMagnitude < 0.0001f && springVelocity.sqrMagnitude < 0.0001f)
+        {
+            transform.position = springTarget;
+            springActive = false;
         }
     }
 
@@ -67,6 +143,7 @@ public class CameraController : MonoBehaviour
             HandleSmoothZoom();
             HandleReturnToInitial();
         }
+        HandleSpringMove();
     }
 
     public void EnableCameraMove() => canCameraMove = true;
@@ -75,6 +152,10 @@ public class CameraController : MonoBehaviour
     private void HandleCameraMove()
     {
         Vector2 inputMoveVector = InputManager.Instance.GetCameraMoveVector();
+
+        // 플레이어가 직접 카메라를 움직이면 스프링 이동 취소
+        if (inputMoveVector != Vector2.zero)
+            springActive = false;
 
         // 카메라가 바라보는 방향 기준으로 이동 (Y축 성분은 무시)
         Vector3 moveDir = transform.forward * inputMoveVector.y + transform.right * inputMoveVector.x;
