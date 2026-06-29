@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class TeleportAction : BaseAction
 {
+    protected override string DefaultActionName() => "순간이동";
     [Header("Teleport Settings")]
     [SerializeField] private int teleportRange = 6;
     [SerializeField] private float teleportDelay = 0.15f; // 이펙트 재생 시간 여유
@@ -16,10 +17,7 @@ public class TeleportAction : BaseAction
     {
         base.Awake();
         actionCost = 1;
-    }
-
-    public override string GetActionName() => "Teleport";
-    public override string GetDescription() =>
+    }    public override string GetDescription() =>
         $"반경 {teleportRange}칸 내 원하는 위치로 즉시 이동한다.";
 
 

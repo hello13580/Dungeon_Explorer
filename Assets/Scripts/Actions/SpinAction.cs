@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SpinAction : BaseAction
 {
+    protected override string DefaultActionName() => "회전 공격";
 	[SerializeField]
 	private float totalSpinAmount;
 
@@ -52,12 +53,6 @@ public class SpinAction : BaseAction
 		GridPosition gridPosition = unit.GetGridPosition();
 		return new List<GridPosition> { gridPosition };
 	}
-
-	public override string GetActionName()
-	{
-		return "Spin";
-	}
-
 	public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
 	{
 		return new EnemyAIAction

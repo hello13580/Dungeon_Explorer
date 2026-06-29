@@ -11,6 +11,7 @@ public class PartyManager : MonoBehaviour
     public static PartyManager Instance { get; private set; }
 
     private List<Unit> partyUnits = new List<Unit>();
+    private List<Unit> incapacitatedUnits = new List<Unit>();
 
     private void Awake()
     {
@@ -35,9 +36,12 @@ public class PartyManager : MonoBehaviour
 
     private void Unit_OnAnyUnitDead(object sender, EventArgs e)
     {
-        // 전투 중 사망한 파티원은 파티에서 제거 (퍼머데스)
+        // 전투 중 쓰러진 파티원은 무력화 리스트로 이동
         if (sender is Unit unit && partyUnits.Contains(unit))
+        {
             partyUnits.Remove(unit);
+            incapacitatedUnits.Add(unit);
+        }
     }
 
     // ─── 파티 구성 ────────────────────────────────────────────────
@@ -65,6 +69,26 @@ public class PartyManager : MonoBehaviour
         foreach (Unit unit in partyUnits)
             if (unit != null) Destroy(unit.gameObject);
         partyUnits.Clear();
+        foreach (Unit unit in incapacitatedUnits)
+            if (unit != null) Destroy(unit.gameObject);
+        incapacitatedUnits.Clear();
+    }
+
+    /// <summary>무력화된 유닛을 부활시켜 파티에 복귀시킨다. 휴식 노드에서 호출.</summary>
+    public bool ReviveUnit(Unit unit, int healAmount = 1)
+    {
+        if (!incapacitatedUnits.Contains(unit)) return false;
+        incapacitatedUnits.Remove(unit);
+        partyUnits.Add(unit);
+        unit.GetComponent<HealthSystem>()?.Heal(healAmount);
+        return true;
+    }
+
+    /// <summary>무력화된 유닛 전체를 부활시킨다.</summary>
+    public void ReviveAll(int healAmount = 1)
+    {
+        foreach (Unit unit in new List<Unit>(incapacitatedUnits))
+            ReviveUnit(unit, healAmount);
     }
 
     // ─── 스테이지 전환 ────────────────────────────────────────────
@@ -86,6 +110,8 @@ public class PartyManager : MonoBehaviour
     // ─── 조회 ─────────────────────────────────────────────────────
 
     public List<Unit> GetPartyUnits() => partyUnits;
+    public List<Unit> GetIncapacitatedUnits() => incapacitatedUnits;
     public int GetPartyCount() => partyUnits.Count;
     public bool HasParty() => partyUnits.Count > 0;
+    public bool HasIncapacitated() => incapacitatedUnits.Count > 0;
 }

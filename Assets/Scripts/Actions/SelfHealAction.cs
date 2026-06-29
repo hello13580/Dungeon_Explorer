@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SelfHealAction : BaseAction
 {
+    protected override string DefaultActionName() => "자가 치유";
     [SerializeField] private int healAmount = 30;
 
     [Header("적 AI 설정")]
@@ -23,10 +24,7 @@ public class SelfHealAction : BaseAction
     {
         base.Awake();
         actionCost = 1;
-    }
-
-    public override string GetActionName() => "SelfHeal";
-    public override string GetDescription() => $"자신의 체력을 {healAmount} 회복한다.";
+    }    public override string GetDescription() => $"자신의 체력을 {healAmount} 회복한다.";
 
     public override List<GridPosition> GetValidActionGridPositionList()
     {

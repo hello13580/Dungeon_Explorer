@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 /// <summary>
 /// 오라 계열 액션이 공통으로 구현하는 인터페이스.

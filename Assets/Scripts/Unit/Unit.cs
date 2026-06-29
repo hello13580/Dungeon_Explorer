@@ -403,7 +403,12 @@ public class Unit : MonoBehaviour
 		}
 		LevelGrid.Instance.RemoveUnitAtGridPosition(GetGridPosition(), this);
 		Unit.OnAnyUnitDead?.Invoke(this, EventArgs.Empty);
-		Destroy(gameObject);
+
+		// 아군은 무력화 상태로 전환 (부활 가능), 적·오브젝트는 즉시 제거
+		if (teamType == TeamType.Player)
+			gameObject.SetActive(false);
+		else
+			Destroy(gameObject);
 	}
 
 	public float GetCurrentSpeed()

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +10,7 @@ using UnityEngine;
 /// </summary>
 public class LeapAction : BaseAction
 {
+    protected override string DefaultActionName() => "도약";
     [Header("사거리")]
     [SerializeField] private int maxRange = 5;
 
@@ -49,9 +50,6 @@ public class LeapAction : BaseAction
     }
 
     private void OnCacheInvalidated(object sender, EventArgs e) => isCacheDirty = true;
-
-    public override string GetActionName() => "Leap";
-
     public override string GetDescription() =>
         $"사거리 {maxRange}칸 내 빈 타일로 점프해 이동한다. 고저차 1층당 사거리 1 소모.";
 

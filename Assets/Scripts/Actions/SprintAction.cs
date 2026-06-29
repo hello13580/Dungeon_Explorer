@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,14 +10,12 @@ using UnityEngine;
 /// </summary>
 public class SprintAction : BaseAction
 {
+    protected override string DefaultActionName() => "질주";
     protected override void Awake()
     {
         base.Awake();
         actionCost = 1;
-    }
-
-    public override string GetActionName() => "Sprint";
-    public override string GetDescription()
+    }    public override string GetDescription()
     {
         MoveAction move = unit.GetAction<MoveAction>();
         float max = move != null ? move.GetMaxMoveDistance() : 0f;

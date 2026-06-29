@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class HealAction : BaseAction
 {
+    protected override string DefaultActionName() => "치유";
     [SerializeField] private int maxHealDistance = 5;
     [SerializeField] private int healAmount = 40;
     [SerializeField] private LayerMask obstacleLayerMask;
@@ -42,10 +43,7 @@ public class HealAction : BaseAction
         BaseAction.OnAnyActionEnded -= OnCacheInvalidated;
     }
 
-    private void OnCacheInvalidated(object sender, EventArgs e) => isCacheDirty = true;
-
-    public override string GetActionName() => "Heal";
-    public override string GetDescription() =>
+    private void OnCacheInvalidated(object sender, EventArgs e) => isCacheDirty = true;    public override string GetDescription() =>
         $"사거리 {maxHealDistance} 내 아군의 체력을 {healAmount} 회복시킨다.";
 
 

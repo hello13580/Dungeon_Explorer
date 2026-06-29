@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +11,7 @@ using UnityEngine;
 [RequireComponent(typeof(LineRenderer))]
 public class WhirlwindAction : BaseAction
 {
+    protected override string DefaultActionName() => "회오리";
     [Header("데미지")]
     [SerializeField] private int damage = 8;
     [SerializeField] private int hitCount = 4;          // 총 피해 횟수
@@ -40,9 +41,6 @@ public class WhirlwindAction : BaseAction
         GridOutlineUtil.SetupLineRenderer(lineRenderer, lineWidth, lineColor, lineMaterial);
         lineRenderer.enabled = false;
     }
-
-    public override string GetActionName() => "Whirlwind";
-
     public override string GetDescription() =>
         $"주변 1칸 내 모든 적에게 {hitCount}번에 걸쳐 각 {unit.CalculateDamage(damage)} 피해를 입힌다. (총 {unit.CalculateDamage(damage) * hitCount})";
 

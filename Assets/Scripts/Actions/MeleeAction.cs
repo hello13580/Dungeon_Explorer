@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class MeleeAction : BaseAction
 {
+    protected override string DefaultActionName() => "근접 공격";
 	private enum State
 	{
 		Aiming,
@@ -56,10 +57,7 @@ public class MeleeAction : BaseAction
 		BaseAction.OnAnyActionEnded -= OnCacheInvalidated;
 	}
 
-	private void OnCacheInvalidated(object sender, EventArgs e) => isCacheDirty = true;
-
-	public override string GetActionName() => "Melee";
-	public override string GetDescription() =>
+	private void OnCacheInvalidated(object sender, EventArgs e) => isCacheDirty = true;	public override string GetDescription() =>
 		$"인접한 적에게 {damage + unit.GetAttackPower()} 피해를 입힌다.";
 
 

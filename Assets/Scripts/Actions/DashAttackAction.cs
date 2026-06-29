@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +9,7 @@ using UnityEngine;
 /// </summary>
 public class DashAttackAction : BaseAction
 {
+    protected override string DefaultActionName() => "돌진 공격";
     [Header("Range")]
     [SerializeField] private int dashRange = 6;       // 대상을 선택할 수 있는 최대 거리
 
@@ -48,10 +49,7 @@ public class DashAttackAction : BaseAction
         BaseAction.OnAnyActionEnded -= OnCacheInvalidated;
     }
 
-    private void OnCacheInvalidated(object sender, EventArgs e) => isCacheDirty = true;
-
-    public override string GetActionName() => "DashAttack";
-    public override string GetDescription() =>
+    private void OnCacheInvalidated(object sender, EventArgs e) => isCacheDirty = true;    public override string GetDescription() =>
         $"사거리 {dashRange} 내 적에게 돌진해 {damage + unit.GetAttackPower()} 피해를 입힌다.";
 
 

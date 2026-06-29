@@ -1,9 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class InteractAction : BaseAction
 {
+    protected override string DefaultActionName() => "상호작용";
 	[SerializeField]
 	private int maxRange;
 
@@ -36,12 +37,6 @@ public class InteractAction : BaseAction
 	}
 
 	private void OnCacheInvalidated(object sender, EventArgs e) => isCacheDirty = true;
-
-	public override string GetActionName()
-	{
-		return "Interact";
-	}
-
 	public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
 	{
 		return new EnemyAIAction

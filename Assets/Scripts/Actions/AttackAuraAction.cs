@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +9,7 @@ using UnityEngine;
 /// </summary>
 public class AttackAuraAction : BaseAction, IAuraAction
 {
+    protected override string DefaultActionName() => "공격 오라";
     [Header("Aura")]
     [SerializeField] private int auraRange = 2;
     [SerializeField] private int auraDuration = 3;   // 오라 지속 턴 수
@@ -118,10 +119,7 @@ public class AttackAuraAction : BaseAction, IAuraAction
         isAuraActive = false;
         isTurnActive = false;
         OnAuraDeactivated?.Invoke(this, EventArgs.Empty);
-    }
-
-    public override string GetActionName() => "AttackAura";
-    public override string GetDescription() =>
+    }    public override string GetDescription() =>
         $"반경 {auraRange}칸 내 아군의 공격력을 {attackBonus} 증가시키는 오라를 생성한다. 범위 밖으로 나가면 즉시 해제. ({auraDuration}턴 지속)";
 
 

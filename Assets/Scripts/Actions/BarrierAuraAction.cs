@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +10,7 @@ using UnityEngine;
 /// </summary>
 public class BarrierAuraAction : BaseAction, IAuraAction
 {
+    protected override string DefaultActionName() => "오라";
     [Header("Aura")]
     [SerializeField] private int auraRange = 2;           // 방어막을 부여할 아군 탐색 범위 (칸)
     [SerializeField] private int auraDuration = 3;        // 오라 지속 턴 수
@@ -96,10 +97,7 @@ public class BarrierAuraAction : BaseAction, IAuraAction
         isAuraActive = false;
         isTurnActive = false;
         OnAuraDeactivated?.Invoke(this, EventArgs.Empty);
-    }
-
-    public override string GetActionName() => "Aura";
-    public override string GetDescription() =>
+    }    public override string GetDescription() =>
         $"반경 {auraRange}칸 내 아군에게 매 턴 {barrierAmount + unit.GetDefensePower()} 방어막을 부여하는 오라를 생성한다. ({auraDuration}턴 지속)";
 
 

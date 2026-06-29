@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +8,7 @@ using UnityEngine;
 /// </summary>
 public class AdrenalineAction : BaseAction
 {
+    protected override string DefaultActionName() => "아드레날린";
     [Header("Recovery")]
     [SerializeField] private int restoreActionPoints = 1;  // 회복할 액션 포인트 수
     [SerializeField] private bool restoreMovement = true;  // 이동 거리도 함께 회복할지 여부
@@ -16,10 +17,7 @@ public class AdrenalineAction : BaseAction
     {
         base.Awake();
         actionCost = 1;
-    }
-
-    public override string GetActionName() => "Adrenaline";
-    public override string GetDescription()
+    }    public override string GetDescription()
     {
         string desc = $"액션 포인트를 {restoreActionPoints} 회복한다.";
         if (restoreMovement) desc += " 이동 거리도 최대치로 회복한다.";

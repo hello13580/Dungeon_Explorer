@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class IceOrbAction : BaseAction
 {
+    protected override string DefaultActionName() => "얼음 구슬";
     private enum State { Aiming, Shooting, Cooloff }
 
     public class OnShootEventArgs : EventArgs
@@ -104,10 +105,7 @@ public class IceOrbAction : BaseAction
         HideCastVFX();
     }
 
-    private void OnCacheInvalidated(object sender, EventArgs e) => isCacheDirty = true;
-
-    public override string GetActionName() => "Ice Orb";
-    public override string GetDescription() =>
+    private void OnCacheInvalidated(object sender, EventArgs e) => isCacheDirty = true;    public override string GetDescription() =>
         $"사거리 {maxRange} 내 적에게 {damage + unit.GetAttackPower()} 피해를 입히고 이동속도를 {Mathf.RoundToInt(slowValue * 100)}% 감소시킨다. ({slowDuration}턴)";
 
 

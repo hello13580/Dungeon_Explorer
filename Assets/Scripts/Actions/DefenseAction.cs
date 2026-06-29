@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +9,7 @@ using UnityEngine;
 /// </summary>
 public class DefenseAction : BaseAction
 {
+    protected override string DefaultActionName() => "방어";
     [SerializeField] private int barrierAmount = 20;   // 기본 방어막 수치
     [SerializeField] private int barrierDuration = 2;  // 방어막 지속 턴
 
@@ -16,10 +17,7 @@ public class DefenseAction : BaseAction
     {
         base.Awake();
         actionCost = 1;
-    }
-
-    public override string GetActionName() => "Defense";
-    public override string GetDescription() =>
+    }    public override string GetDescription() =>
         $"자신에게 {barrierAmount + unit.GetDefensePower()} 방어막을 부여한다. ({barrierDuration}턴 지속)";
 
 

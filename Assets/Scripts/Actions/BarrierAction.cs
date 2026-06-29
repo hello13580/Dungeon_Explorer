@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BarrierAction : BaseAction
 {
+    protected override string DefaultActionName() => "방어막";
     [SerializeField] private int maxBarrierDistance = 5;
     [SerializeField] private int BarrierAmount = 40;
     [SerializeField] private int BarrierDuration = 3;
@@ -43,10 +44,7 @@ public class BarrierAction : BaseAction
         BaseAction.OnAnyActionEnded -= OnCacheInvalidated;
     }
 
-    private void OnCacheInvalidated(object sender, EventArgs e) => isCacheDirty = true;
-
-    public override string GetActionName() => "Barrier";
-    public override string GetDescription() =>
+    private void OnCacheInvalidated(object sender, EventArgs e) => isCacheDirty = true;    public override string GetDescription() =>
         $"사거리 {maxBarrierDistance} 내 아군에게 {BarrierAmount + unit.GetDefensePower()} 방어막을 부여한다. ({BarrierDuration}턴 지속)";
 
 

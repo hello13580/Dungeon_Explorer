@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,6 +7,9 @@ public abstract class BaseAction : MonoBehaviour
 	protected Unit unit;
 
 	protected Action onActionComplete;
+
+	[SerializeField]
+	private string actionName = "";
 
 	[SerializeField]
 	protected int actionCost;
@@ -41,12 +44,16 @@ public abstract class BaseAction : MonoBehaviour
 	/// </summary>
 	public virtual string GetDescription() => "";
 
+	protected virtual string DefaultActionName() => "";
+
 	protected virtual void Awake()
 	{
 		unit = GetComponent<Unit>();
+		if (string.IsNullOrEmpty(actionName))
+			actionName = DefaultActionName();
 	}
 
-	public abstract string GetActionName();
+	public virtual string GetActionName() => actionName;
 
 	public abstract void TakeAction(GridPosition gridPosition, Action onActionComplete);
 

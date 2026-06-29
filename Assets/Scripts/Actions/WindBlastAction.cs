@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +9,7 @@ using UnityEngine;
 /// </summary>
 public class WindBlastAction : BaseAction
 {
+    protected override string DefaultActionName() => "바람 폭발";
     [Header("Range")]
     [SerializeField] private int coneRange = 6;        // 부채꼴 최대 거리 (칸)
     [SerializeField] private float coneAngle = 60f;    // 부채꼴 반각 (총 각도의 절반, 도)
@@ -42,10 +43,7 @@ public class WindBlastAction : BaseAction
     {
         base.Awake();
         actionCost = 1;
-    }
-
-    public override string GetActionName() => "Wind Blast";
-    public override string GetDescription()
+    }    public override string GetDescription()
     {
         int atk = unit.GetAttackPower();
         return $"전방 부채꼴 범위 내 적에게 {blastDamage + atk} 피해를 입히고 {pushDistance}칸 밀쳐낸다. 장애물 충돌 시 {collisionDamage + atk} 추가 피해.";

@@ -44,6 +44,9 @@ public class MapUI : MonoBehaviour
 
         // 이벤트 완료 후 맵 패널을 다시 연다
         EventUI.OnEventCompleted += OnEventCompleted;
+
+        // 휴식 완료 후 맵 패널을 다시 연다
+        RestUI.OnRestCompleted += OnRestCompleted;
     }
 
     private void OnDestroy()
@@ -51,6 +54,7 @@ public class MapUI : MonoBehaviour
         SkillUnlockManager.OnSkillUnlockCompleted -= OnSkillUnlockCompleted;
         MapManager.OnMapStateChanged -= OnMapStateChanged;
         EventUI.OnEventCompleted -= OnEventCompleted;
+        RestUI.OnRestCompleted -= OnRestCompleted;
     }
 
     // ─── 이벤트 핸들러 ───────────────────────────────────────────
@@ -61,6 +65,11 @@ public class MapUI : MonoBehaviour
     }
 
     private void OnEventCompleted(object sender, System.EventArgs e)
+    {
+        OpenMap();
+    }
+
+    private void OnRestCompleted(object sender, System.EventArgs e)
     {
         OpenMap();
     }
@@ -271,11 +280,15 @@ public class MapUI : MonoBehaviour
             CloseMap();
             StageManager.Instance.LoadStage(nodeData.stageData);
         }
+        else if (nodeData.nodeType == MapNodeType.Rest)
+        {
+            CloseMap();
+            RestUI.Instance?.Open();
+        }
         else
         {
-            // Rest·Shop 등 전투가 없는 노드: 해당 기능 처리 후 맵 유지
-            // TODO: Rest·Shop 기능 추가 시 여기에 구현
-            Debug.Log($"[MapUI] 비전투 노드 선택: {nodeData.nodeType}");
+            // Shop 등 전투가 없는 노드: 해당 기능 처리 후 맵 유지
+            Debug.Log($"[MapUI] 미구현 노드 선택: {nodeData.nodeType}");
         }
     }
 }

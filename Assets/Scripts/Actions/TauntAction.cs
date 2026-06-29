@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +8,7 @@ using UnityEngine;
 /// </summary>
 public class TauntAction : BaseAction
 {
+    protected override string DefaultActionName() => "도발";
     [Header("Taunt Settings")]
     [SerializeField] private int tauntRange = 4;    // 도발 적용 반경 (칸)
     [SerializeField] private int tauntDuration = 2; // 지속 턴 수
@@ -20,10 +21,7 @@ public class TauntAction : BaseAction
     {
         base.Awake();
         actionCost = 1;
-    }
-
-    public override string GetActionName() => "Taunt";
-    public override string GetDescription() =>
+    }    public override string GetDescription() =>
         $"반경 {tauntRange}칸 내 모든 적을 도발해 {tauntDuration}턴 동안 자신만 공격하도록 강제한다.";
 
 

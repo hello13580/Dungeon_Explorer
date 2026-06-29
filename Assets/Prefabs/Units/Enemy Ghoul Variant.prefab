@@ -62,7 +62,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: maxActionPoint
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4801007853815582824, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: originalRootBone
@@ -135,7 +135,7 @@ MonoBehaviour:
   rotateSpeed: 30
   stepDistance: 0.5
   stepDuration: 0.15
-  animationTimeout: 2.5
+  animationTimeout: 2.2
 --- !u!114 &7132225039754275014
 MonoBehaviour:
   m_ObjectHideFlags: 0

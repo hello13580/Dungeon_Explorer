@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class MoveAction : BaseAction
 {
+    protected override string DefaultActionName() => "이동";
     public class OnChangeFloorStartedEventArgs : EventArgs
     {
         public GridPosition unitGridPosition;
@@ -117,9 +118,6 @@ public class MoveAction : BaseAction
 
     public float GetLeftMoveDistance() => leftMoveDistance;
     public float GetMaxMoveDistance() => maxMoveDistance;
-
-    public override string GetActionName() => "Move";
-
     public override void TakeAction(GridPosition gridPosition, Action onMovingComplete)
     {
         targetGridPosition = gridPosition;

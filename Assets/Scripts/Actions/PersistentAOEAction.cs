@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +9,7 @@ using UnityEngine;
 /// </summary>
 public class PersistentAOEAction : BaseAction
 {
+    protected override string DefaultActionName() => "지속 범위";
     [Header("Range")]
     [SerializeField] private int maxRange = 7;
     [SerializeField] private int zoneRadius = 1;          // 장판 반경 (칸)
@@ -92,10 +93,7 @@ public class PersistentAOEAction : BaseAction
     {
         yield return new WaitForSeconds(castVFXHideDelay);
         HideCastVFX();
-    }
-
-    public override string GetActionName() => "Zone";
-    public override string GetDescription()
+    }    public override string GetDescription()
     {
         int atk = unit.GetAttackPower();
         return $"지정한 위치에 화염 장판을 설치한다. 설치 시 {initialDamage + atk} 피해, 매 턴 시작 시 {tickDamage + atk} 피해. ({duration}턴 지속, 반경 {zoneRadius}칸)";

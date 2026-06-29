@@ -45,6 +45,9 @@ public class MapGenerator : MonoBehaviour
         );
         if (layerSizes == null) return null;
 
+        // 보스 직전 레이어는 항상 노드 1개 (모든 경로가 이 휴식 노드로 수렴)
+        layerSizes[layerSizes.Count - 1] = 1;
+
         // 2. 레이어별 노드 인덱스 목록 구성
         //    레이어 0 = Start(1개), 1..N = 중간, N+1 = Boss(1개)
         List<List<int>> layerNodes = new List<List<int>>();
@@ -123,7 +126,12 @@ public class MapGenerator : MonoBehaviour
         // 보스 노드
         types[layerNodes[layerNodes.Count - 1][0]] = MapNodeType.Boss;
 
-        // 중간 노드 타입 목록 셔플 후 배정
+        // 보스 직전 레이어는 무조건 휴식으로 고정
+        int preBossLayer = layerNodes.Count - 2;
+        foreach (int nodeId in layerNodes[preBossLayer])
+            types[nodeId] = MapNodeType.Rest;
+
+        // 중간 노드 타입 목록 셔플 후 배정 (보스 직전 레이어 제외)
         var middleTypes = new List<MapNodeType>();
         for (int i = 0; i < config.combatCount; i++) middleTypes.Add(MapNodeType.Combat);
         for (int i = 0; i < config.eliteCount;  i++) middleTypes.Add(MapNodeType.Elite);
@@ -135,6 +143,7 @@ public class MapGenerator : MonoBehaviour
         int typeIdx = 0;
         for (int l = 1; l < layerNodes.Count - 1; l++)
         {
+            if (l == preBossLayer) continue; // 이미 휴식으로 고정됨
             foreach (int nodeId in layerNodes[l])
                 types[nodeId] = middleTypes[typeIdx++];
         }
@@ -159,32 +168,34 @@ public class MapGenerator : MonoBehaviour
         int fromCount = from.Count;
         int toCount   = to.Count;
 
+        // incoming 카운트 추적
+        var incomingCount = new int[toCount];
+
         for (int fi = 0; fi < fromCount; fi++)
         {
             // 상대 위치 기반으로 대응되는 to 인덱스 계산 (교차 방지)
             float rel   = fromCount == 1 ? 0.5f : (float)fi / (fromCount - 1);
             int   toIdx = Mathf.RoundToInt(rel * (toCount - 1));
             AddEdge(from[fi], to[toIdx], nextOf);
+            incomingCount[toIdx]++;
 
-            // 20% 확률로 바로 옆 인덱스(+1)에만 추가 연결 — 먼 대각선 방지
-            if (toIdx + 1 < toCount && Random.value < 0.2f)
+            // 20% 확률로 옆 인덱스(+1)에 추가 연결 — 이미 연결된 노드면 생략
+            if (toIdx + 1 < toCount && incomingCount[toIdx + 1] == 0 && Random.value < 0.2f)
+            {
                 AddEdge(from[fi], to[toIdx + 1], nextOf);
+                incomingCount[toIdx + 1]++;
+            }
         }
 
-        // 모든 toNode가 최소 1개의 incoming을 갖도록 보장
+        // 고립된 to 노드(incoming 없음)에만 최소 1개 연결 보장
         for (int ti = 0; ti < toCount; ti++)
         {
-            bool hasIncoming = false;
-            foreach (int f in from)
-                if (nextOf[f].Contains(to[ti])) { hasIncoming = true; break; }
+            if (incomingCount[ti] > 0) continue;
 
-            if (!hasIncoming)
-            {
-                // 상대 위치상 가장 가까운 fromNode에서 연결
-                float rel = toCount == 1 ? 0.5f : (float)ti / (toCount - 1);
-                int   fi  = Mathf.RoundToInt(rel * (fromCount - 1));
-                AddEdge(from[fi], to[ti], nextOf);
-            }
+            float rel = toCount == 1 ? 0.5f : (float)ti / (toCount - 1);
+            int   fi  = Mathf.RoundToInt(rel * (fromCount - 1));
+            AddEdge(from[fi], to[ti], nextOf);
+            incomingCount[ti]++;
         }
     }
 
@@ -224,11 +235,12 @@ public class MapGenerator : MonoBehaviour
                 }
             }
 
-            // 반대 타입과 너무 가까우면 실패
-            MapNodeType opposite = isShop ? MapNodeType.Rest : MapNodeType.Shop;
+            // 같은 타입끼리(휴식↔휴식, 상점↔상점)만 거리 제약 적용
+            MapNodeType sameType = isShop ? MapNodeType.Shop : MapNodeType.Rest;
             for (int i = 0; i < n; i++)
             {
-                if (types[i] == opposite && dist[i] >= 0 && dist[i] < minDist)
+                if (i == start) continue;
+                if (types[i] == sameType && dist[i] >= 0 && dist[i] < minDist)
                     return false;
             }
         }

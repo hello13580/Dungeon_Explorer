@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ShootAction : BaseAction
 {
+    protected override string DefaultActionName() => "사격";
     private enum State
     {
         Aiming,
@@ -80,10 +81,7 @@ public class ShootAction : BaseAction
 
         yield return new WaitForSeconds(0.2f);
         ActionComplete();
-    }
-
-    public override string GetActionName() => "Shoot";
-    public override string GetDescription() =>
+    }    public override string GetDescription() =>
         $"사거리 {maxShootDistance} 내 적에게 {shootDamage + unit.GetAttackPower()} 피해를 입힌다.";
 
 

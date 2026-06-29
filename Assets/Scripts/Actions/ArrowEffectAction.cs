@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +10,7 @@ using UnityEngine;
 /// </summary>
 public class ArrowEffectAction : BaseAction
 {
+    protected override string DefaultActionName() => "화살 효과";
     public enum ArrowEffectType { None, Poison, Vulnerable, Blind }
 
     [Header("독 바르기")]
@@ -32,9 +33,6 @@ public class ArrowEffectAction : BaseAction
         base.Awake();
         actionCost = 1;
     }
-
-    public override string GetActionName() => "Arrow Effect";
-
     public override string GetDescription() =>
         "다음 기본 사격에 특수한 효과를 부여하여 강화한다";
 
