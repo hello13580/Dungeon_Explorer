@@ -17,7 +17,8 @@ public class MoveAction : BaseAction
     [SerializeField] private float rotateSpeed = 20f;
 
     [Header("AI Settings")]
-    [SerializeField] private float approachRange = 3f;
+    [SerializeField] private float approachRangeMin = 1f;
+    [SerializeField] private float approachRangeMax = 1f;
     [SerializeField] private float visionRange = 10f;
 
     private float leftMoveDistance;
@@ -26,8 +27,9 @@ public class MoveAction : BaseAction
     private int currentPositionIndex;
     private GridPosition targetGridPosition;
 
-    // ĳ�� �� ����ȭ��
+    // 캐시 및 최적화
     private ShootAction _cachedShootAction;
+    private BowAction _cachedBowAction;
     private List<GridPosition> cachedValidGridPositionList;
     private bool isCacheDirty = true;
     private GridPosition cachedFromPosition;
@@ -350,43 +352,51 @@ public class MoveAction : BaseAction
     {
         if (leftMoveDistance <= 0f) return null;
 
-        if (_cachedShootAction == null) _cachedShootAction = unit.GetAction<ShootAction>();
-
-        // 1. ���� ������ ��ġ�ΰ�?
-        int targetCount = _cachedShootAction != null ? _cachedShootAction.GetTargetCountAtPosition(gridPosition) : 0;
-        if (targetCount > 0)
-        {
-            int baseValue = 50 + (10 * targetCount);
-            float distToTarget = Math.Abs(GetClosestTargetDistance(gridPosition) - approachRange);
-            int distanceBonus = Mathf.RoundToInt(10f - distToTarget);
-
-            return new EnemyAIAction { gridPosition = gridPosition, actionValue = Mathf.Clamp(baseValue + distanceBonus, 50, 100) };
-        }
-
-        // 2. ������ �Ұ��������� �÷��̾�� �����ؾ� �ϴ°�?
-        // ?꾨컻 以묒씤 ?좊떅???덉쑝硫??대떦 ?좊떅?먭쾶 ?곗꽑 ?묎렐
+        // 도발 중이면 도발 대상 우선
         if (TauntManager.Instance != null && TauntManager.Instance.HasActiveTaunt())
         {
             Unit taunted = TauntManager.Instance.GetTauntedUnit();
             if (taunted != null)
             {
-                int tauntPathLength = PathFinding.Instance.GetPathLength(gridPosition, taunted.GetGridPosition(), unit.GetSize());
+                int tauntPathLength = PathFinding.Instance.GetPathLength(gridPosition, taunted.GetGridPosition(), unit.GetSize(), allowOccupiedDestination: true);
                 if (tauntPathLength > 0 && tauntPathLength <= visionRange * 10f)
                 {
-                    int tauntProximity = 40 - (tauntPathLength / 10);
-                    return new EnemyAIAction { gridPosition = gridPosition, actionValue = Mathf.Clamp(tauntProximity + 200, 200, 240) };
+                    float td = tauntPathLength / 10f;
+                    float distToRange = td < approachRangeMin ? approachRangeMin - td
+                                      : td > approachRangeMax ? td - approachRangeMax
+                                      : 0f;
+                    int tauntValue = Mathf.RoundToInt(40f - distToRange * 2f);
+                    return new EnemyAIAction { gridPosition = gridPosition, actionValue = Mathf.Clamp(tauntValue + 200, 200, 240) };
                 }
             }
         }
+
         Unit closestPlayer = GetClosestPlayerByPath(gridPosition);
         if (closestPlayer != null)
         {
-            int pathLength = PathFinding.Instance.GetPathLength(gridPosition, closestPlayer.GetGridPosition(), unit.GetSize());
-            if (pathLength > visionRange * 10f) return null;
+            int pathLength = PathFinding.Instance.GetPathLength(gridPosition, closestPlayer.GetGridPosition(), unit.GetSize(), allowOccupiedDestination: true);
 
-            int floorPenalty = (closestPlayer.GetGridPosition().floor > gridPosition.floor) ? -20 : 0;
-            int proximityValue = 40 - (pathLength / 10);
+            float distInCells;
+            int floorPenalty = (closestPlayer.GetGridPosition().floor != gridPosition.floor) ? -10 : 0;
 
+            if (pathLength > 0)
+            {
+                if (pathLength > visionRange * 10f) return null;
+                distInCells = pathLength / 10f;
+            }
+            else
+            {
+                float worldDist = Vector3.Distance(LevelGrid.Instance.GetWorldPosition(gridPosition), closestPlayer.GetWorldPosition());
+                float cellSize = LevelGrid.Instance.GetCellSize();
+                if (worldDist > visionRange * cellSize) return null;
+                distInCells = worldDist / cellSize;
+            }
+
+            // approachRange 범위 안이면 최고점, 범위 밖이면 가장 가까운 경계까지의 거리로 감점
+            float distToRange = distInCells < approachRangeMin ? approachRangeMin - distInCells
+                              : distInCells > approachRangeMax ? distInCells - approachRangeMax
+                              : 0f;
+            int proximityValue = Mathf.RoundToInt(40f - distToRange * 2f);
             return new EnemyAIAction { gridPosition = gridPosition, actionValue = Mathf.Clamp(proximityValue + floorPenalty, 0, 49) };
         }
 
@@ -412,17 +422,26 @@ public class MoveAction : BaseAction
     {
         Unit closestUnit = null;
         int minPathLength = int.MaxValue;
+        Unit closestByDistance = null;
+        float minDistance = float.MaxValue;
 
         foreach (Unit playerUnit in UnitManager.Instance.GetFriendlyUnitList())
         {
             if (playerUnit.IsStealthed()) continue;
-            int pathLength = PathFinding.Instance.GetPathLength(fromPos, playerUnit.GetGridPosition(), unit.GetSize());
+            int pathLength = PathFinding.Instance.GetPathLength(fromPos, playerUnit.GetGridPosition(), unit.GetSize(), allowOccupiedDestination: true);
             if (pathLength > 0 && pathLength < minPathLength)
             {
                 minPathLength = pathLength;
                 closestUnit = playerUnit;
             }
+            // 경로가 없는 경우(층이 다를 때 등) 직선 거리로 fallback
+            float dist = Vector3.Distance(LevelGrid.Instance.GetWorldPosition(fromPos), playerUnit.GetWorldPosition());
+            if (dist < minDistance)
+            {
+                minDistance = dist;
+                closestByDistance = playerUnit;
+            }
         }
-        return closestUnit;
+        return closestUnit ?? closestByDistance;
     }
 }

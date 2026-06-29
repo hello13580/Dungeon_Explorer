@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 285c72c15d630b440bdcdcf3acb99d1d, type: 3}
+  m_Name: Gold Pocket Event
+  m_EditorClassIdentifier: Assembly-CSharp::EventNodeData
+  eventImage: {fileID: 0}
+  eventTitle: "\uB204\uAD70\uAC00\uC758 \uC720\uC2E4\uBB3C"
+  eventDescription: "\uB545\uC5D0 \uB5A8\uC5B4\uC9C4 \uAE08\uD654\uC8FC\uBA38\uB2C8\uB97C
+    \uBC1C\uACAC\uD588\uB2E4! "
+  choices:
+  - choiceText: "\uC8FC\uC6CC\uC11C \uAC00\uC838\uAC04\uB2E4"
+    resultText: "\uC8FC\uBA38\uB2C8\uC5D0 \uB2F4\uAE34 \uAE08\uD654\uB97C \uC2B5\uB4DD\uD588\uB2E4"
+    outcomes:
+    - outcomeType: 0
+      value: 100
+  - choiceText: "\uBB34\uC2DC\uD558\uACE0 \uC9C0\uB098\uAC04\uB2E4"
+    resultText: "\uC544\uBB34\uC77C\uB3C4 \uC77C\uC5B4\uB098\uC9C0 \uC54A\uC558\uB2E4"
+    outcomes: []

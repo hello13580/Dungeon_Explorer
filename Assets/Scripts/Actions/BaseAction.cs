@@ -140,7 +140,8 @@ public abstract class BaseAction : MonoBehaviour
 	public EnemyAIAction GetBestEnemyAIAction()
 	{
 		List<EnemyAIAction> list = new List<EnemyAIAction>();
-		foreach (GridPosition validActionGridPosition in GetValidActionGridPositionList())
+		List<GridPosition> validList = GetValidActionGridPositionList();
+		foreach (GridPosition validActionGridPosition in validList)
 		{
 			EnemyAIAction enemyAIAction = GetEnemyAIAction(validActionGridPosition);
 			if (enemyAIAction != null)

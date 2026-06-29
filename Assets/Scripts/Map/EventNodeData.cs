@@ -8,6 +8,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EventNodeData", menuName = "TBRPG/Map/EventNodeData")]
 public class EventNodeData : ScriptableObject
 {
+    [Tooltip("이벤트 일러스트 이미지 (선택)")]
+    public Sprite eventImage;
+
     [Tooltip("이벤트 제목 (UI 상단에 표시)")]
     public string eventTitle;
 

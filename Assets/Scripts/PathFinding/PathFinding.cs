@@ -152,7 +152,7 @@ public class PathFinding : MonoBehaviour
 		}
 	}
 
-	public List<GridPosition> FindPath(GridPosition startGridPosition, GridPosition endGridPosition, int unitSize, out int pathLength)
+	public List<GridPosition> FindPath(GridPosition startGridPosition, GridPosition endGridPosition, int unitSize, out int pathLength, bool allowOccupiedDestination = false)
 	{
 		currentSearchId++;
 		Heap<PathNode> heap = new Heap<PathNode>(width * height);
@@ -181,7 +181,7 @@ public class PathFinding : MonoBehaviour
 				}
 				// 도착 타일은 유닛 점유 무시 (목적지 자체는 허용), 경유 타일만 점유 체크
 				bool isDestination = neighbor == gridObject2;
-				GridPosition? ignore = isDestination ? (GridPosition?)null : startGridPosition;
+				GridPosition? ignore = (isDestination && allowOccupiedDestination) ? endGridPosition : (isDestination ? (GridPosition?)null : startGridPosition);
 				if (hashSet.Contains(neighbor) ||
 					(!IsWalkableArea(neighbor.GetGridPosition(), unitSize, neighbor.GetGridPosition().floor, ignore) &&
 					 !staircaseExclusiveTiles.Contains(neighbor.GetGridPosition())))
@@ -458,9 +458,9 @@ public class PathFinding : MonoBehaviour
 		return reachable;
 	}
 
-	public int GetPathLength(GridPosition startGridPosition, GridPosition endGridPosition, int unitSize)
+	public int GetPathLength(GridPosition startGridPosition, GridPosition endGridPosition, int unitSize, bool allowOccupiedDestination = false)
 	{
-		FindPath(startGridPosition, endGridPosition, unitSize, out var pathLength);
+		FindPath(startGridPosition, endGridPosition, unitSize, out var pathLength, allowOccupiedDestination);
 		return pathLength;
 	}
 

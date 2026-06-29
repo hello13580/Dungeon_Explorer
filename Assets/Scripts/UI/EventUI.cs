@@ -18,6 +18,9 @@ public class EventUI : MonoBehaviour
     [Header("패널")]
     [SerializeField] private GameObject panel;
 
+    [Header("이미지")]
+    [SerializeField] private Image eventImage;
+
     [Header("텍스트")]
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI descriptionText;
@@ -34,9 +37,7 @@ public class EventUI : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
@@ -52,10 +53,19 @@ public class EventUI : MonoBehaviour
     {
         if (eventData == null) { Debug.LogWarning("[EventUI] EventNodeData가 null입니다."); return; }
 
+        if (eventImage != null)
+        {
+            eventImage.sprite = eventData.eventImage;
+            eventImage.gameObject.SetActive(eventData.eventImage != null);
+        }
+
         titleText.text = eventData.eventTitle;
         descriptionText.text = eventData.eventDescription;
-        resultText.text = string.Empty;
-        resultText.gameObject.SetActive(false);
+        if (resultText != null)
+        {
+            resultText.text = string.Empty;
+            resultText.gameObject.SetActive(false);
+        }
 
         if (confirmButton != null)
             confirmButton.gameObject.SetActive(false);
@@ -82,7 +92,7 @@ public class EventUI : MonoBehaviour
             TextMeshProUGUI label = btnObj.GetComponentInChildren<TextMeshProUGUI>();
             if (label != null) label.text = choice.choiceText;
 
-            Button btn = btnObj.GetComponent<Button>();
+            Button btn = btnObj.GetComponentInChildren<Button>();
             EventChoice captured = choice;
             if (btn != null)
                 btn.onClick.AddListener(() => OnChoiceSelected(captured));
@@ -93,12 +103,17 @@ public class EventUI : MonoBehaviour
     {
         ApplyOutcomes(choice.outcomes);
 
-        // 선택지 버튼 숨기고 결과 텍스트 표시
+        // 선택지 버튼 숨기고 디스크립션을 결과 텍스트로 교체
         foreach (GameObject btn in spawnedButtons)
             btn.SetActive(false);
 
-        resultText.text = choice.resultText;
-        resultText.gameObject.SetActive(true);
+        string outcomeDesc = BuildOutcomeDescription(choice.outcomes);
+        descriptionText.text = string.IsNullOrEmpty(outcomeDesc)
+            ? choice.resultText
+            : choice.resultText + "\n\n" + outcomeDesc;
+
+        if (resultText != null)
+            resultText.gameObject.SetActive(false);
 
         if (confirmButton != null)
             confirmButton.gameObject.SetActive(true);
@@ -108,6 +123,24 @@ public class EventUI : MonoBehaviour
     {
         panel.SetActive(false);
         OnEventCompleted?.Invoke(this, EventArgs.Empty);
+    }
+
+    private string BuildOutcomeDescription(EventOutcome[] outcomes)
+    {
+        if (outcomes == null || outcomes.Length == 0) return string.Empty;
+
+        var lines = new System.Text.StringBuilder();
+        foreach (EventOutcome outcome in outcomes)
+        {
+            switch (outcome.outcomeType)
+            {
+                case EventOutcomeType.GoldGain:   lines.AppendLine($"골드 +{outcome.value}"); break;
+                case EventOutcomeType.GoldLoss:   lines.AppendLine($"골드 -{outcome.value}"); break;
+                case EventOutcomeType.HpHeal:     lines.AppendLine($"체력 +{outcome.value}"); break;
+                case EventOutcomeType.HpDamage:   lines.AppendLine($"체력 -{outcome.value}"); break;
+            }
+        }
+        return lines.ToString().TrimEnd();
     }
 
     private void ApplyOutcomes(EventOutcome[] outcomes)

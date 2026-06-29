@@ -76,6 +76,10 @@ PrefabInstance:
       propertyPath: actionCost
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6281880740096184127, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: approachRange
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6841203341150570205, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: unitAnimator
       value: 
@@ -131,7 +135,7 @@ MonoBehaviour:
   rotateSpeed: 30
   stepDistance: 0.5
   stepDuration: 0.15
-  animationTimeout: 3
+  animationTimeout: 2.5
 --- !u!114 &7132225039754275014
 MonoBehaviour:
   m_ObjectHideFlags: 0

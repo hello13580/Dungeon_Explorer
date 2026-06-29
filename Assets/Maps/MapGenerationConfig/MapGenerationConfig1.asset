@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: MapGenerationConfig1
   m_EditorClassIdentifier: Assembly-CSharp::MapGenerationConfig
   combatCount: 10
-  eliteCount: 10
-  eventCount: 0
+  eliteCount: 0
+  eventCount: 10
   shopCount: 0
   restCount: 0
   layers:
@@ -59,7 +59,8 @@ MonoBehaviour:
     eliteStages:
     - {fileID: 11400000, guid: dd18a53c376c2e74d925237a3664ffb4, type: 2}
   bossStage: {fileID: 11400000, guid: 175b9b507a3c04549a21129c58a1f25c, type: 2}
-  eventDatas: []
+  eventDatas:
+  - {fileID: 11400000, guid: e333164f048dd5e4a9c6f5c20c003991, type: 2}
   canvasWidth: 1280
   canvasHeight: 720
   maxNodesPerLayer: 4

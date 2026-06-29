@@ -261,7 +261,7 @@ MonoBehaviour:
   rotateSpeed: 30
   stepDistance: 0.5
   stepDuration: 0.15
-  animationTimeout: 3
+  animationTimeout: 2
 --- !u!114 &-3930269276892804090
 MonoBehaviour:
   m_ObjectHideFlags: 0

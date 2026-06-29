@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0940bd7b1c4471e46a1d4ce3aa703a49, type: 3}
   m_Name: Stage 2
   m_EditorClassIdentifier: Assembly-CSharp::StageData
-  stageName: stage 2
+  stageName: Stage 2
   mapPrefab: {fileID: 2928425958798730269, guid: ad60a7e73d861c94ba64ad5d28d1cee7, type: 3}
   floorAmount: 3
   mapSpawnPosition: {x: 60, y: 0, z: 60}
