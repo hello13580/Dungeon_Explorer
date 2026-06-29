@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,18 +14,28 @@ public class WhirlwindAction : BaseAction
     protected override string DefaultActionName() => "회오리";
     [Header("데미지")]
     [SerializeField] private int damage = 8;
-    [SerializeField] private int hitCount = 4;          // 총 피해 횟수
+    [SerializeField] private int hitCount = 4;
     [SerializeField] private float hitForce = 300f;
 
     [Header("회전")]
-    [SerializeField] private float spinDuration = 1.5f; // 총 회전 시간 (초)
-    [SerializeField] private float spinSpeed = 720f;    // 초당 회전 각도
+    [SerializeField] private float spinDuration = 1.5f;
+    [SerializeField] private float spinSpeed = 720f;
 
     [Header("윤곽선")]
     [SerializeField] private float lineWidth = 0.08f;
     [SerializeField] private Color lineColor = new Color(0.3f, 1f, 0.3f, 0.9f);
     [SerializeField] private Material lineMaterial;
     [SerializeField] private float heightOffset = 0.1f;
+
+    [Header("트레일")]
+    [SerializeField] private int trailCount = 3;
+    [SerializeField] private float trailRadius = 0.6f;
+    [SerializeField] private float trailHeight = 1f;
+    [SerializeField] private float trailTime = 0.25f;
+    [SerializeField] private float trailStartWidth = 0.15f;
+    [SerializeField] private float trailEndWidth = 0f;
+    [SerializeField] private Color trailColor = new Color(1f, 0.4f, 0.1f, 1f);
+    [SerializeField] private Material trailMaterial;
 
     public event EventHandler OnWhirlwindStarted;
     public event EventHandler OnWhirlwindEnded;
@@ -41,6 +51,7 @@ public class WhirlwindAction : BaseAction
         GridOutlineUtil.SetupLineRenderer(lineRenderer, lineWidth, lineColor, lineMaterial);
         lineRenderer.enabled = false;
     }
+
     public override string GetDescription() =>
         $"주변 1칸 내 모든 적에게 {hitCount}번에 걸쳐 각 {unit.CalculateDamage(damage)} 피해를 입힌다. (총 {unit.CalculateDamage(damage) * hitCount})";
 
@@ -53,22 +64,26 @@ public class WhirlwindAction : BaseAction
     private IEnumerator WhirlwindRoutine()
     {
         OnWhirlwindStarted?.Invoke(this, EventArgs.Empty);
-
-        // 주변 8칸 윤곽선 표시
         ShowOutline();
 
+        // 트레일 포인트 생성
+        GameObject[] trailPoints = CreateTrailPoints();
+
         float elapsed = 0f;
-        float interval = spinDuration / hitCount; // 피해 간격
+        float interval = spinDuration / hitCount;
         float nextHitTime = interval;
         int hitsDealt = 0;
+        float orbitAngle = 0f;
 
         while (elapsed < spinDuration)
         {
-            // 유닛 회전
             transform.eulerAngles += new Vector3(0f, spinSpeed * Time.deltaTime, 0f);
             elapsed += Time.deltaTime;
+            orbitAngle += spinSpeed * Time.deltaTime;
 
-            // 일정 간격마다 주변 적에게 피해
+            // 트레일 포인트를 유닛 주위로 공전
+            UpdateTrailPoints(trailPoints, orbitAngle);
+
             if (hitsDealt < hitCount && elapsed >= nextHitTime)
             {
                 DamageNearbyEnemies();
@@ -79,18 +94,69 @@ public class WhirlwindAction : BaseAction
             yield return null;
         }
 
-        // 마지막 틱이 누락되지 않도록 보장
         while (hitsDealt < hitCount)
         {
             DamageNearbyEnemies();
             hitsDealt++;
         }
 
-        // 회전 종료 후 윤곽선 제거
         lineRenderer.enabled = false;
+
+        // 트레일이 자연스럽게 사라지도록 잠시 후 제거
+        foreach (GameObject tp in trailPoints)
+            if (tp != null) Destroy(tp, trailTime + 0.1f);
 
         OnWhirlwindEnded?.Invoke(this, EventArgs.Empty);
         ActionComplete();
+    }
+
+    private GameObject[] CreateTrailPoints()
+    {
+        GameObject[] points = new GameObject[trailCount];
+        Vector3 center = unit.GetWorldPosition() + Vector3.up * trailHeight;
+
+        for (int i = 0; i < trailCount; i++)
+        {
+            GameObject obj = new GameObject($"WhirlwindTrail_{i}");
+            float startAngle = (360f / trailCount) * i;
+            float rad = startAngle * Mathf.Deg2Rad;
+            obj.transform.position = center + new Vector3(Mathf.Sin(rad) * trailRadius, 0f, Mathf.Cos(rad) * trailRadius);
+
+            TrailRenderer trail = obj.AddComponent<TrailRenderer>();
+            trail.time = trailTime;
+            trail.startWidth = trailStartWidth;
+            trail.endWidth = trailEndWidth;
+            trail.material = trailMaterial != null ? trailMaterial : new Material(Shader.Find("Sprites/Default"));
+
+            Gradient gradient = new Gradient();
+            gradient.SetKeys(
+                new GradientColorKey[] {
+                    new GradientColorKey(trailColor, 0f),
+                    new GradientColorKey(trailColor, 1f)
+                },
+                new GradientAlphaKey[] {
+                    new GradientAlphaKey(1f, 0f),
+                    new GradientAlphaKey(0f, 1f)
+                }
+            );
+            trail.colorGradient = gradient;
+            trail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+
+            points[i] = obj;
+        }
+        return points;
+    }
+
+    private void UpdateTrailPoints(GameObject[] points, float orbitAngle)
+    {
+        Vector3 center = unit.GetWorldPosition() + Vector3.up * trailHeight;
+        for (int i = 0; i < points.Length; i++)
+        {
+            if (points[i] == null) continue;
+            float angle = orbitAngle + (360f / trailCount) * i;
+            float rad = angle * Mathf.Deg2Rad;
+            points[i].transform.position = center + new Vector3(Mathf.Sin(rad) * trailRadius, 0f, Mathf.Cos(rad) * trailRadius);
+        }
     }
 
     private void ShowOutline()
@@ -129,7 +195,6 @@ public class WhirlwindAction : BaseAction
 
                 Unit target = LevelGrid.Instance.GetUnitListAtGridPosition(testPos)[0];
                 if (!TeamHelper.IsHostile(unit.GetTeamType(), target.GetTeamType())) continue;
-                // 사이즈 2 이상 유닛이 여러 타일에 걸쳐 있을 때 중복 피해 방지
                 if (alreadyHit.Contains(target)) continue;
                 alreadyHit.Add(target);
 
@@ -141,13 +206,11 @@ public class WhirlwindAction : BaseAction
         }
     }
 
-    // 휠윈드는 자기 자신 위치를 선택하는 셀프 캐스트
     public override List<GridPosition> GetValidActionGridPositionList()
     {
         return new List<GridPosition> { unit.GetGridPosition() };
     }
 
-    // 그리드 비주얼에서 빨간색으로 표시할 피해 범위 (주변 8칸)
     public override List<GridPosition> GetDamageAffectedGridPosition(GridPosition targetGridPosition)
     {
         List<GridPosition> affected = new List<GridPosition>();
@@ -168,7 +231,6 @@ public class WhirlwindAction : BaseAction
 
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
     {
-        // 주변에 적이 많을수록 가치 높음
         int enemyCount = 0;
         GridPosition myPos = unit.GetGridPosition();
         for (int x = -1; x <= 1; x++)

@@ -352,6 +352,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a2fe95f482a2194eab12208e93d833a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeAction
+  actionName: 
   actionCost: 0
   manaCost: 0
   jobPointCost: 0
@@ -370,16 +371,17 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 416177728078544639}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d6b82363d72ddb54199ea589e571518b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TauntAction
+  actionName: 
   actionCost: 1
   manaCost: 1
   jobPointCost: 0
   requiredJobClass: 0
-  tauntRange: 10
+  tauntRange: 5
   tauntDuration: 2
   tauntDelay: 0.3
 --- !u!114 &6446122214556097310
@@ -394,6 +396,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 097dd49f85ab6364f95fb44e06e1b6fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DefenseAction
+  actionName: 
   actionCost: 1
   manaCost: 10
   jobPointCost: 0
@@ -412,6 +415,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d76c3416fee1f26439a746dd6708fed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DashAttackAction
+  actionName: 
   actionCost: 0
   manaCost: 0
   jobPointCost: 0
@@ -427,13 +431,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 416177728078544639}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: da86a067d6993734ca3bb7293fb7de9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackAuraAction
-  actionCost: 0
-  manaCost: 0
+  actionName: "\uC6A9\uAE30\uC758 \uC624\uB77C"
+  actionCost: 1
+  manaCost: 20
   jobPointCost: 0
   requiredJobClass: 0
   auraRange: 3
@@ -452,7 +457,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AuraVisual
   lineWidth: 0.05
-  lineColor: {r: 1, g: 0.12189148, b: 0, a: 1}
+  lineColor: {r: 0, g: 1, b: 0.06572652, a: 1}
   lineMaterial: {fileID: 0}
   heightOffset: 0.1
 --- !u!120 &7764237978214076057
@@ -577,6 +582,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a146ed92e18230d49beddd0a15e29c65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AdrenalineAction
+  actionName: 
   actionCost: 0
   manaCost: 0
   jobPointCost: 1
@@ -595,7 +601,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 727a51640b8c89f418af6995165ca749, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WhirlwindAction
-  actionCost: 0
+  actionName: "\uC18C\uC6A9\uB3CC\uC774"
+  actionCost: 1
   manaCost: 0
   jobPointCost: 0
   requiredJobClass: 0
@@ -608,6 +615,14 @@ MonoBehaviour:
   lineColor: {r: 0.3, g: 1, b: 0.3, a: 0.9}
   lineMaterial: {fileID: 0}
   heightOffset: 0.1
+  trailCount: 3
+  trailRadius: 3
+  trailHeight: 1
+  trailTime: 0.25
+  trailStartWidth: 3
+  trailEndWidth: 0
+  trailColor: {r: 1, g: 0.4, b: 0.1, a: 1}
+  trailMaterial: {fileID: 2100000, guid: a62297b6b5686544bb9da5a5f981da79, type: 2}
 --- !u!114 &4301908584900933110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -620,6 +635,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2307d1d6a7bc7d4d86131ac5c06131f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LeapAction
+  actionName: 
   actionCost: 0
   manaCost: 0
   jobPointCost: 0
@@ -640,6 +656,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c14f54f409e7be4c9fa9e0f32ca7994, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SelfHealAction
+  actionName: 
   actionCost: 0
   manaCost: 0
   jobPointCost: 0
