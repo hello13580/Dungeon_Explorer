@@ -88,12 +88,20 @@ PrefabInstance:
       value: Skeleton Archer
       objectReference: {fileID: 0}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: attackPower
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: initialSpeed
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: maxActionPoint
-      value: 3
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: enemyDescription
+      value: "\uC6D0\uAC70\uB9AC \uACF5\uACA9\uC744 \uD558\uB294 \uD574\uACE8 \uAD81\uC218"
       objectReference: {fileID: 0}
     - target: {fileID: 4801007853815582824, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: originalRootBone
@@ -115,6 +123,10 @@ PrefabInstance:
       propertyPath: unitAnimator
       value: 
       objectReference: {fileID: 8499823624033837431}
+    - target: {fileID: 7364901892537136982, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: maxHealth
+      value: 80
+      objectReference: {fileID: 0}
     - target: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_Name
       value: Enemy Skeleton Archer Variant
@@ -153,12 +165,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 659678ae845819c4e933d064126c14ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BowAction
+  actionName: 
   actionCost: 1
   manaCost: 20
   jobPointCost: 0
   requiredJobClass: 0
   maxShootDistance: 8
-  shootDamage: 10
+  shootDamage: 0
   ArrowProjectilePrefab: {fileID: 8288394526744401144, guid: 5227d29478847f44faf93cfb0450f0a2, type: 3}
   shootPointTransform: {fileID: 4344263079363881705}
   obstacleLayerMask:

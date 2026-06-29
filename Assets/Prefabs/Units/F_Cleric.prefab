@@ -442,6 +442,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 6cb803e8af4a5d24d9fbbc3415f3ba5e, type: 2}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: initialSpeed
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: maxActionPoint
       value: 3
       objectReference: {fileID: 0}
@@ -532,9 +536,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15b518465d1355946a211273b9df4199, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealAction
+  actionName: "\uD68C\uBCF5"
   actionCost: 0
-  manaCost: 0
-  jobPointCost: 0
+  manaCost: 10
+  jobPointCost: 1
   requiredJobClass: 0
   maxHealDistance: 5
   healAmount: 40
@@ -553,6 +558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7da039c5aa320e94fbb361dc915dd918, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarrierAction
+  actionName: "\uC218\uD638 \uBC29\uC5B4\uB9C9"
   actionCost: 0
   manaCost: 0
   jobPointCost: 0
@@ -575,6 +581,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e31b143bd8068ab4794ad61b71ea86dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeleportAction
+  actionName: "\uC21C\uAC04\uC774\uB3D9"
   actionCost: 0
   manaCost: 0
   jobPointCost: 0
@@ -593,6 +600,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f67f613c65cacd6438b364a899ab20bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WindBlastAction
+  actionName: 
   actionCost: 0
   manaCost: 0
   jobPointCost: 0
@@ -616,19 +624,20 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3042818206337043987}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f7140370758363749a78725d3d97eb63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PersistentAOEAction
+  actionName: "\uC791\uC5F4 \uC9C0\uB300"
   actionCost: 0
   manaCost: 0
   jobPointCost: 0
   requiredJobClass: 0
   maxRange: 7
   zoneRadius: 1
-  initialDamage: 15
-  tickDamage: 8
+  initialDamage: 10
+  tickDamage: 10
   duration: 5
   damageZonePrefab: {fileID: 170574552943811040, guid: 5a2bdfdfce731304fb3273064eb3d837, type: 3}
   obstacleLayerMask:
@@ -645,11 +654,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3042818206337043987}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c8fad9ae961c424ebbcb23c5b2b5323, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IceOrbAction
+  actionName: "\uB0C9\uAE30 "
   actionCost: 0
   manaCost: 0
   jobPointCost: 0
@@ -677,6 +687,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4595b7af94489564aabd9b58bb520ab2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AuraAction
+  actionName: 
   actionCost: 1
   manaCost: 20
   jobPointCost: 1

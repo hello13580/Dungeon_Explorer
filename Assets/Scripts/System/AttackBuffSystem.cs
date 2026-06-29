@@ -17,6 +17,7 @@ public class AttackBuffSystem : MonoBehaviour
     }
 
     private List<AttackBuff> activeBuffs = new List<AttackBuff>();
+    private Dictionary<string, AttackBuff> keyedBuffs = new Dictionary<string, AttackBuff>();
 
     // 오라처럼 "범위 안에 있는 동안만" 유지되는 고정 버프 — 스택되지 않고 켜고 끄는 방식
     private int auraBuff = 0;
@@ -37,6 +38,22 @@ public class AttackBuffSystem : MonoBehaviour
     {
         if (TurnSystem.Instance != null)
             TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+    }
+
+    /// <summary>키가 같은 버프가 이미 있으면 수치·지속 턴을 갱신하고, 없으면 새로 추가한다.</summary>
+    public void ApplyOrRefreshBuff(string key, int amount, int duration)
+    {
+        if (keyedBuffs.TryGetValue(key, out AttackBuff existing))
+        {
+            existing.amount = amount;
+            existing.turnsRemaining = duration;
+        }
+        else
+        {
+            AttackBuff newBuff = new AttackBuff { amount = amount, turnsRemaining = duration };
+            keyedBuffs[key] = newBuff;
+        }
+        OnBuffChanged?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>amount만큼의 공격력 버프를 duration 턴 동안 부여한다.</summary>
@@ -68,6 +85,8 @@ public class AttackBuffSystem : MonoBehaviour
         int total = auraBuff;
         foreach (AttackBuff buff in activeBuffs)
             total += buff.amount;
+        foreach (AttackBuff buff in keyedBuffs.Values)
+            total += buff.amount;
         return total;
     }
 
@@ -85,6 +104,19 @@ public class AttackBuffSystem : MonoBehaviour
                 activeBuffs.RemoveAt(i);
                 changed = true;
             }
+        }
+
+        var expiredKeys = new List<string>();
+        foreach (var kv in keyedBuffs)
+        {
+            kv.Value.turnsRemaining--;
+            if (kv.Value.turnsRemaining <= 0)
+                expiredKeys.Add(kv.Key);
+        }
+        foreach (string key in expiredKeys)
+        {
+            keyedBuffs.Remove(key);
+            changed = true;
         }
 
         if (changed)

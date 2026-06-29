@@ -22,6 +22,10 @@ public class Unit : MonoBehaviour
 	private string unitName = ""; // UI에 표시할 유닛 이름
 
 	[SerializeField]
+	[TextArea(2, 5)]
+	private string enemyDescription = "";
+
+	[SerializeField]
 	private int currentActionPoint;
 
 	[SerializeField]
@@ -323,6 +327,7 @@ public class Unit : MonoBehaviour
 	public int GetCurrentActionPoint() => currentActionPoint;
 	public int GetMaxActionPoint() => maxActionPoint;
 	public string GetUnitName() => unitName;
+	public string GetEnemyDescription() => enemyDescription;
 
 	/// <summary>액션 포인트를 최대치까지 회복한다.</summary>
 	public void RestoreActionPoints()

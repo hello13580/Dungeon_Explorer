@@ -179,11 +179,23 @@ public class PathFinding : MonoBehaviour
 				{
 					neighbor.Reset(currentSearchId);
 				}
-				// 도착 타일은 유닛 점유 무시 (목적지 자체는 허용), 경유 타일만 점유 체크
 				bool isDestination = neighbor == gridObject2;
-				GridPosition? ignore = (isDestination && allowOccupiedDestination) ? endGridPosition : (isDestination ? (GridPosition?)null : startGridPosition);
+
+				// ignore: IsWalkableArea에서 점유 체크를 면제할 기준 위치.
+				// - 경유 타일: 출발지(startGridPosition)를 무시 → 유닛이 자기 발밑을 막지 않게 함.
+				// - 도착 타일 + allowOccupiedDestination: 도착지를 무시 → 점유된 칸(적 유닛 등)도 목적지로 허용.
+				// - 도착 타일(일반): null → 도착 타일의 점유는 그대로 차단.
+				GridPosition? ignore = (isDestination && allowOccupiedDestination) ? endGridPosition
+				                     : (isDestination ? (GridPosition?)null : startGridPosition);
+
+				// ignoreSize: 무시할 영역의 크기.
+				// - 경유 타일: unitSize × unitSize 전체를 무시. 사이즈 2 유닛이라면 2×2 발밑 영역을
+				//   모두 무시해야 자기 몸이 경로를 막지 않는다.
+				// - 도착 타일: 1×1만 무시 (목적지 한 칸만 점유 허용, 주변 칸은 여전히 체크).
+				int ignoreSize = isDestination ? 1 : unitSize;
+
 				if (hashSet.Contains(neighbor) ||
-					(!IsWalkableArea(neighbor.GetGridPosition(), unitSize, neighbor.GetGridPosition().floor, ignore) &&
+					(!IsWalkableArea(neighbor.GetGridPosition(), unitSize, neighbor.GetGridPosition().floor, ignore, ignoreSize) &&
 					 !staircaseExclusiveTiles.Contains(neighbor.GetGridPosition())))
 				{
 					continue;
@@ -266,6 +278,9 @@ public class PathFinding : MonoBehaviour
 		}
 
 		// 일반 이웃 탐색
+		// 사이즈 N 유닛은 현재 위치(gridPosition)를 기준으로 N×N 영역을 점유하므로,
+		// 이웃 타일의 walkable 체크 시 자기 발밑 영역을 무시해야 한다.
+		// 무시하지 않으면 자기 몸과 겹치는 이웃 타일이 "점유됨"으로 판정되어 이웃 목록에서 제외된다.
 		for (int i = -1; i <= 1; i++)
 		{
 			for (int j = -1; j <= 1; j++)
@@ -283,10 +298,11 @@ public class PathFinding : MonoBehaviour
 				for (int k = 0; k < floorAmount; k++)
 				{
 					GridPosition gridPosition2 = new GridPosition(num, num2, k);
-					if (IsWalkableArea(gridPosition2, currentUnitSize, k))
+					// 현재 유닛의 발밑(gridPosition 기준 currentUnitSize×currentUnitSize)은 점유 무시
+					if (IsWalkableArea(gridPosition2, currentUnitSize, k, gridPosition, currentUnitSize))
 					{
 						PathNode node = GetNode(gridPosition2.x, gridPosition2.z, k);
-						if (Vector3.Distance(LevelGrid.Instance.GetWorldPosition(currentNode.GetGridPosition()), LevelGrid.Instance.GetWorldPosition(node.GetGridPosition())) < cellSize * 1.5f && (Mathf.Abs(i) != 1 || Mathf.Abs(j) != 1 || (IsWalkableArea(new GridPosition(gridPosition.x + i, gridPosition.z, k), currentUnitSize, k) && IsWalkableArea(new GridPosition(gridPosition.x, gridPosition.z + j, k), currentUnitSize, k))))
+						if (Vector3.Distance(LevelGrid.Instance.GetWorldPosition(currentNode.GetGridPosition()), LevelGrid.Instance.GetWorldPosition(node.GetGridPosition())) < cellSize * 1.5f && (Mathf.Abs(i) != 1 || Mathf.Abs(j) != 1 || (IsWalkableArea(new GridPosition(gridPosition.x + i, gridPosition.z, k), currentUnitSize, k, gridPosition, currentUnitSize) && IsWalkableArea(new GridPosition(gridPosition.x, gridPosition.z + j, k), currentUnitSize, k, gridPosition, currentUnitSize))))
 						{
 							list.Add(node);
 							break;
@@ -422,7 +438,10 @@ public class PathFinding : MonoBehaviour
 			foreach (PathNode neighbor in GetNeighborList(current, unitSize))
 			{
 				if (visited.Contains(neighbor)) continue;
-				if (!IsWalkableArea(neighbor.GetGridPosition(), unitSize, neighbor.GetGridPosition().floor) &&
+				// startPosition을 ignoreOrigin으로, unitSize를 ignoreSize로 전달.
+				// 사이즈 N 유닛은 N×N 발밑 전체를 점유하므로, 이동 가능 범위 탐색 시
+				// 출발지 영역 전체를 무시하지 않으면 자기 몸이 이동을 막아버린다.
+				if (!IsWalkableArea(neighbor.GetGridPosition(), unitSize, neighbor.GetGridPosition().floor, startPosition, unitSize) &&
 					!staircaseExclusiveTiles.Contains(neighbor.GetGridPosition())) continue;
 
 				// 이번 탐색에서 처음 방문하는 노드면 초기화
@@ -464,7 +483,16 @@ public class PathFinding : MonoBehaviour
 		return pathLength;
 	}
 
-	public bool IsWalkableArea(GridPosition gridPosition, int size, int floor, GridPosition? ignorePosition = null)
+	/// <summary>
+	/// gridPosition을 좌하단으로 하는 size×size 영역이 모두 이동 가능한지 검사한다.
+	///
+	/// ignoreOrigin / ignoreSize:
+	///   ignoreOrigin을 좌하단으로 하는 ignoreSize×ignoreSize 영역 내의 타일은
+	///   점유 여부를 무시한다. 유닛이 자기 발밑을 스스로 막지 않도록 출발지 영역을
+	///   제외할 때 사용한다. 사이즈 1 유닛이면 ignoreSize=1(단일 칸), 사이즈 2 유닛이면
+	///   ignoreSize=2(2×2 전체)를 넘겨야 한다.
+	/// </summary>
+	public bool IsWalkableArea(GridPosition gridPosition, int size, int floor, GridPosition? ignoreOrigin = null, int ignoreSize = 1)
 	{
 		for (int i = 0; i < size; i++)
 		{
@@ -477,9 +505,16 @@ public class PathFinding : MonoBehaviour
 				if (!GetNode(gridPosition2.x, gridPosition2.z, floor).IsWalkable())
 					return false;
 
-				// 유닛이 점유 중인 타일은 통과 불가 (자기 자신 위치는 제외)
-				if (ignorePosition.HasValue && gridPosition2 == ignorePosition.Value)
-					continue;
+				// ignoreOrigin 기준 ignoreSize×ignoreSize 영역 안에 있으면 점유 체크 생략.
+				// 예) 사이즈 2 유닛이 (2,2)에서 이동할 때 ignoreOrigin=(2,2), ignoreSize=2 이면
+				//     (2,2),(3,2),(2,3),(3,3) 네 칸 모두 무시 → 자기 몸을 넘어 경로 탐색 가능.
+				if (ignoreOrigin.HasValue)
+				{
+					int dx = gridPosition2.x - ignoreOrigin.Value.x;
+					int dz = gridPosition2.z - ignoreOrigin.Value.z;
+					if (dx >= 0 && dx < ignoreSize && dz >= 0 && dz < ignoreSize)
+						continue;
+				}
 
 				if (LevelGrid.Instance.IsGridPositionOccupied(gridPosition2))
 					return false;

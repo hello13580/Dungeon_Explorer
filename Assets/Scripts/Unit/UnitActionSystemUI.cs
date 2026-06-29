@@ -1,14 +1,21 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UnitActionSystemUI : MonoBehaviour
 {
-	[SerializeField]
-	private GameObject actionButtonPrefab;
+	[Header("액션 버튼")]
+	[SerializeField] private GameObject actionButtonPrefab;
+	[SerializeField] private Transform actionButtonContainerGameObject;
 
-	[SerializeField]
-	private Transform actionButtonContainerGameObject;
+	[Header("적 정보 패널")]
+	[SerializeField] private GameObject enemyInfoPanel;
+	[SerializeField] private TextMeshProUGUI enemyInfoText;
+
+	[Header("현재 유닛으로 돌아가기")]
+	[SerializeField] private Button returnToCurrentUnitButton;
 
 	private List<ActionButtonUI> activeButtonList;
 
@@ -19,6 +26,13 @@ public class UnitActionSystemUI : MonoBehaviour
 
 	private void Start()
 	{
+		if (enemyInfoPanel != null) enemyInfoPanel.SetActive(false);
+		if (returnToCurrentUnitButton != null)
+		{
+			returnToCurrentUnitButton.gameObject.SetActive(false);
+			returnToCurrentUnitButton.onClick.AddListener(OnReturnToCurrentUnitClicked);
+		}
+
 		CreateUnitActionButtons();
 		UnitActionSystem.Instance.OnSelectedUnitChanged += UnitActionSystem_OnselectedUnitChanged;
 		UnitActionSystem.Instance.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
@@ -28,10 +42,9 @@ public class UnitActionSystemUI : MonoBehaviour
 	private void CreateUnitActionButtons()
 	{
 		foreach (Transform item in actionButtonContainerGameObject)
-		{
 			Destroy(item.gameObject);
-		}
 		activeButtonList.Clear();
+
 		Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
 		if (selectedUnit != null)
 		{
@@ -47,11 +60,53 @@ public class UnitActionSystemUI : MonoBehaviour
 
 	private void UnitActionSystem_OnselectedUnitChanged(object sender, Unit selectedUnit)
 	{
-		if (selectedUnit.GetTeamType() == TeamType.Player && UnitActionSystem.Instance.IsSelectedUnitTurn())
+		bool isEnemy = selectedUnit != null && selectedUnit.GetTeamType() != TeamType.Player;
+		bool isPlayerTurn = TurnSystem.Instance.IsPlayerTurn();
+
+		if (isEnemy)
 		{
-			CreateUnitActionButtons();
+			// 액션 버튼 숨기고 적 정보 표시
+			actionButtonContainerGameObject.gameObject.SetActive(false);
+			if (enemyInfoPanel != null)
+			{
+				enemyInfoPanel.SetActive(true);
+				if (enemyInfoText != null)
+					enemyInfoText.text = BuildEnemyInfo(selectedUnit);
+			}
+			// 플레이어 턴이면 돌아가기 버튼 표시
+			if (returnToCurrentUnitButton != null)
+				returnToCurrentUnitButton.gameObject.SetActive(isPlayerTurn);
 		}
+		else
+		{
+			// 아군 선택: 액션 버튼 표시
+			actionButtonContainerGameObject.gameObject.SetActive(true);
+			if (enemyInfoPanel != null) enemyInfoPanel.SetActive(false);
+			if (returnToCurrentUnitButton != null) returnToCurrentUnitButton.gameObject.SetActive(false);
+
+			if (selectedUnit != null && selectedUnit.GetTeamType() == TeamType.Player && UnitActionSystem.Instance.IsSelectedUnitTurn())
+				CreateUnitActionButtons();
+		}
+
 		UpdateSelectedVisual();
+	}
+
+	private string BuildEnemyInfo(Unit unit)
+	{
+		HealthSystem hs = unit.GetComponent<HealthSystem>();
+		string hp = hs != null ? $"{hs.GetCurrentHealth()} / {hs.GetMaxHealth()}" : "-";
+		string info = $"{unit.GetUnitName()}\nHP  {hp}";
+		string desc = unit.GetEnemyDescription();
+		if (!string.IsNullOrEmpty(desc))
+			info += $"\n\n{desc}";
+		return info;
+	}
+
+	private void OnReturnToCurrentUnitClicked()
+	{
+		Unit turnUnit = TurnSystem.Instance.GetTurnUnit();
+		if (turnUnit != null)
+			UnitActionSystem.Instance.SetSelectedUnit(turnUnit);
 	}
 
 	private void UnitActionSystem_OnSelectedActionChanged(object sender, BaseAction baseAction)
@@ -67,8 +122,6 @@ public class UnitActionSystemUI : MonoBehaviour
 	private void UpdateSelectedVisual()
 	{
 		foreach (ActionButtonUI activeButton in activeButtonList)
-		{
 			activeButton.UpdateSelectedVisual();
-		}
 	}
 }

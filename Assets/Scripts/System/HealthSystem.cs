@@ -14,8 +14,9 @@ public class HealthSystem : MonoBehaviour
 	private StatusEffectSystem statusEffectSystem;
 
 	public event EventHandler OnUnitDeath;
-
 	public event EventHandler OnUnitDamaged;
+	/// <summary>실제 피해를 입을 때 발생. int = 최종 피해량.</summary>
+	public event EventHandler<int> OnDamageTaken;
 
 	private void Awake()
 	{
@@ -42,6 +43,7 @@ public class HealthSystem : MonoBehaviour
 			currentHealth = 0;
 		}
 		this.OnUnitDamaged?.Invoke(this, EventArgs.Empty);
+		OnDamageTaken?.Invoke(this, damageAmount);
 		if (currentHealth == 0)
 		{
 			Die();

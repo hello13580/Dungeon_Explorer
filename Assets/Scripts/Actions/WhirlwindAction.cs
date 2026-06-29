@@ -115,12 +115,13 @@ public class WhirlwindAction : BaseAction
     private void DamageNearbyEnemies()
     {
         GridPosition myPos = unit.GetGridPosition();
+        HashSet<Unit> alreadyHit = new HashSet<Unit>();
 
         for (int x = -1; x <= 1; x++)
         {
             for (int z = -1; z <= 1; z++)
             {
-                if (x == 0 && z == 0) continue; // 자기 자신 제외
+                if (x == 0 && z == 0) continue;
 
                 GridPosition testPos = myPos + new GridPosition(x, z, 0);
                 if (!LevelGrid.Instance.IsValidGridPosition(testPos)) continue;
@@ -128,6 +129,9 @@ public class WhirlwindAction : BaseAction
 
                 Unit target = LevelGrid.Instance.GetUnitListAtGridPosition(testPos)[0];
                 if (!TeamHelper.IsHostile(unit.GetTeamType(), target.GetTeamType())) continue;
+                // 사이즈 2 이상 유닛이 여러 타일에 걸쳐 있을 때 중복 피해 방지
+                if (alreadyHit.Contains(target)) continue;
+                alreadyHit.Add(target);
 
                 Vector3 hitDir = (target.GetWorldPosition() - unit.GetWorldPosition()).normalized;
                 target.GetHitReaction().SetHitDirection(hitDir);

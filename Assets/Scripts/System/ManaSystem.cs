@@ -6,7 +6,11 @@ public class ManaSystem : MonoBehaviour
     [SerializeField] private int maxMana = 100;
     [SerializeField] private int initialMana = 10;  // 전투 시작 시 초기화되는 마나량
     [SerializeField] private int currentMana;
-    [SerializeField] [Range(0f, 1f)] private float regenPercentPerTurn = 0.1f;
+
+    // -1이면 maxMana의 10%를 기본값으로 사용, 0이면 회복 없음
+    [SerializeField] private int baseRegenPerTurn = -1;
+
+    private int bonusRegen = 0;
 
     public event EventHandler OnManaChanged;
 
@@ -30,10 +34,15 @@ public class ManaSystem : MonoBehaviour
 
     public void RegenTurn()
     {
-        int regenAmount = Mathf.Max(1, Mathf.RoundToInt(maxMana * regenPercentPerTurn));
-        currentMana = Mathf.Min(currentMana + regenAmount, maxMana);
+        int baseRegen = baseRegenPerTurn == -1 ? Mathf.Max(1, Mathf.RoundToInt(maxMana * 0.1f)) : baseRegenPerTurn;
+        currentMana = Mathf.Min(currentMana + baseRegen + bonusRegen, maxMana);
         OnManaChanged?.Invoke(this, EventArgs.Empty);
     }
+
+    public void AddBonusRegen(int amount) => bonusRegen += amount;
+    public void RemoveBonusRegen(int amount) => bonusRegen = Mathf.Max(0, bonusRegen - amount);
+    public int GetBaseRegen() => baseRegenPerTurn == -1 ? Mathf.Max(1, Mathf.RoundToInt(maxMana * 0.1f)) : baseRegenPerTurn;
+    public int GetTotalRegen() => GetBaseRegen() + bonusRegen;
 
     /// <summary>전투 시작 시 호출. 마나를 initialMana로 초기화한다.</summary>
     public void ResetToInitialMana()

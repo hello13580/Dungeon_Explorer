@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5454886897658924754, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1213345925212744562, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -64,6 +68,11 @@ PrefabInstance:
       propertyPath: maxActionPoint
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: enemyDescription
+      value: "\uADFC\uC811 \uACF5\uACA9\uC744 \uD558\uB294 \uAD6C\uC6B8. \uD070 \uD53C\uD574\uB97C
+        \uC785\uC744 \uC2DC \uC790\uCCB4 \uD68C\uBCF5 \uB2A5\uB825\uC774 \uC788\uB2E4."
+      objectReference: {fileID: 0}
     - target: {fileID: 4801007853815582824, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: originalRootBone
       value: 
@@ -84,6 +93,10 @@ PrefabInstance:
       propertyPath: unitAnimator
       value: 
       objectReference: {fileID: 145170053381514960}
+    - target: {fileID: 7364901892537136982, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: maxHealth
+      value: 120
+      objectReference: {fileID: 0}
     - target: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_Name
       value: Enemy Ghoul Variant
@@ -125,6 +138,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a2fe95f482a2194eab12208e93d833a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeAction
+  actionName: "\uADFC\uC811 \uACF5\uACA9"
   actionCost: 1
   manaCost: 0
   jobPointCost: 0
@@ -148,6 +162,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c14f54f409e7be4c9fa9e0f32ca7994, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SelfHealAction
+  actionName: 
   actionCost: 2
   manaCost: 20
   jobPointCost: 0

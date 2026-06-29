@@ -175,7 +175,14 @@ public class DamageZone : MonoBehaviour
 
     private bool IsUnitInZone(Unit u)
     {
-        return affectedPositions.Contains(u.GetGridPosition());
+        // 사이즈 N 유닛은 N×N 서브타일 중 하나라도 장판과 겹치면 피해 대상
+        int size = u.GetSize();
+        GridPosition origin = u.GetGridPosition();
+        for (int i = 0; i < size; i++)
+            for (int j = 0; j < size; j++)
+                if (affectedPositions.Contains(new GridPosition(origin.x + i, origin.z + j, origin.floor)))
+                    return true;
+        return false;
     }
 
     public List<GridPosition> GetAffectedPositions() => affectedPositions;

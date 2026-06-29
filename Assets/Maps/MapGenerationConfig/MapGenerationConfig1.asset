@@ -13,23 +13,23 @@ MonoBehaviour:
   m_Name: MapGenerationConfig1
   m_EditorClassIdentifier: Assembly-CSharp::MapGenerationConfig
   combatCount: 10
-  eliteCount: 0
-  eventCount: 10
+  eliteCount: 10
+  eventCount: 3
   shopCount: 0
   restCount: 3
   layers:
   - combatStages:
     - {fileID: 11400000, guid: 175b9b507a3c04549a21129c58a1f25c, type: 2}
     eliteStages:
-    - {fileID: 11400000, guid: dd18a53c376c2e74d925237a3664ffb4, type: 2}
+    - {fileID: 11400000, guid: 27987960022a9b440af8b7d5781d4745, type: 2}
   - combatStages:
     - {fileID: 11400000, guid: 175b9b507a3c04549a21129c58a1f25c, type: 2}
     eliteStages:
-    - {fileID: 11400000, guid: dd18a53c376c2e74d925237a3664ffb4, type: 2}
+    - {fileID: 11400000, guid: 27987960022a9b440af8b7d5781d4745, type: 2}
   - combatStages:
     - {fileID: 11400000, guid: 175b9b507a3c04549a21129c58a1f25c, type: 2}
     eliteStages:
-    - {fileID: 11400000, guid: dd18a53c376c2e74d925237a3664ffb4, type: 2}
+    - {fileID: 11400000, guid: 27987960022a9b440af8b7d5781d4745, type: 2}
   - combatStages:
     - {fileID: 11400000, guid: 175b9b507a3c04549a21129c58a1f25c, type: 2}
     eliteStages:
