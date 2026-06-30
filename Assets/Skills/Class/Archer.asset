@@ -16,3 +16,6 @@ MonoBehaviour:
   learnableSkills:
   - {fileID: 11400000, guid: 05668e50c1053e946b92b411d9a821aa, type: 2}
   - {fileID: 11400000, guid: 696e5991aa03d364c8b6a4bc9d653f88, type: 2}
+  - {fileID: 11400000, guid: be2e507d80267d14b99c130ee33429cb, type: 2}
+  - {fileID: 11400000, guid: 3ed9c903b2d5dc849a51b0b398e7ce50, type: 2}
+  - {fileID: 11400000, guid: 18abc1fcbb5041442b451421079b5643, type: 2}

@@ -73,11 +73,19 @@ public class MeleeAction : BaseAction
 
 	private IEnumerator StateMachineRoutine()
 	{
-		while (state == State.Aiming)
+		// [버그 수정] 회전 수렴 루프에 타임아웃 안전장치 추가.
+		//   대상과 거의 정확히 180도 방향일 때 Vector3.Lerp가 0벡터에 가까운 값을 지나면서
+		//   transform.forward가 불안정해져 각도가 1도 밑으로 절대 떨어지지 않는 엣지 케이스가 있다.
+		//   이 루프엔 원래 타임아웃이 없어서(애니메이션 대기 루프와 달리) 적 턴이 영원히 안 끝나는
+		//   문제가 발생할 수 있었다. 2초 안에 수렴 못 하면 강제로 Attack 상태로 진행한다.
+		float aimTimeout = 2f;
+		while (state == State.Aiming && aimTimeout > 0f)
 		{
 			AimToTarget();
+			aimTimeout -= Time.deltaTime;
 			yield return null;
 		}
+		if (state == State.Aiming) state = State.Attack;
 
 		if (canMeleeAttack && state == State.Attack)
 		{
@@ -138,6 +146,14 @@ public class MeleeAction : BaseAction
 
 	private void AimToTarget()
 	{
+		// 조준 도중 대상이 죽는 등으로 사라지면 즉시 공격 단계로 넘어가 NullReferenceException으로
+		// 코루틴이 중간에 죽어버리는(= 턴이 안 끝나는) 상황을 방지한다.
+		if (targetUnit == null)
+		{
+			state = State.Attack;
+			return;
+		}
+
 		Vector3 targetPos = targetUnit.GetWorldPosition();
 		targetPos.y = transform.position.y;
 

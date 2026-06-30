@@ -117,7 +117,7 @@ public abstract class BaseAction : MonoBehaviour
 		return unit;
 	}
 
-	public int GetActionPointCost() => actionCost;
+	public virtual int GetActionPointCost() => actionCost;
 	public int GetManaCost() => manaCost;
 	public int GetJobPointCost() => jobPointCost;
 	public JobClass GetRequiredJobClass() => requiredJobClass;

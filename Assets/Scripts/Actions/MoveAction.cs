@@ -230,12 +230,14 @@ public class MoveAction : BaseAction
                         Quaternion targetRotation = Quaternion.LookRotation(moveDir);
                         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotateSpeed);
 
-                        // 실제 이동 방향은 y를 포함한 원본 벡터를 사용해 경사로 등반을 반영한다.
                         // Dot > 0.7f: 유닛이 목표 방향에 충분히 정렬된 뒤에만 전진 (뒤로 미끄러짐 방지)
-                        Vector3 actualMoveDir = (targetPos - transform.position).normalized;
                         if (Vector3.Dot(transform.forward, moveDir) > 0.7f)
                         {
-                            transform.position += actualMoveDir * moveSpeed * Time.deltaTime;
+                            // [버그 수정] += 로 직접 더하면 한 프레임에 남은 거리보다 더 이동해
+                            // 목표를 지나칠 수 있다. 그러면 다음 프레임엔 반대로 이동하며
+                            // stoppingDistance 경계를 영원히 진동(oscillation)할 수 있어 무한 루프로 이어졌다.
+                            // MoveTowards는 남은 거리 이상으로는 절대 이동하지 않아 항상 목표에 단조 수렴한다.
+                            transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
                         }
                     }
                     yield return null;

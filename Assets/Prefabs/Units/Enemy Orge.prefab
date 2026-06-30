@@ -978,6 +978,7 @@ GameObject:
   - component: {fileID: -5489734422250259857}
   - component: {fileID: 2006016121126772408}
   - component: {fileID: 1096509081755658327}
+  - component: {fileID: -3839420743819188982}
   m_Layer: 3
   m_Name: Enemy Orge
   m_TagString: Untagged
@@ -1050,6 +1051,7 @@ MonoBehaviour:
   manaCost: 0
   jobPointCost: 0
   requiredJobClass: 0
+  aiPriorityBonus: 0
   maxMoveDistance: 5
   moveSpeed: 4
   rotateSpeed: 20
@@ -1147,6 +1149,7 @@ MonoBehaviour:
   manaCost: 0
   jobPointCost: 0
   requiredJobClass: 0
+  aiPriorityBonus: 0
   maxRange: 0
   obstacleLayerMask:
     serializedVersion: 2
@@ -1234,6 +1237,7 @@ MonoBehaviour:
   manaCost: 0
   jobPointCost: 0
   requiredJobClass: 0
+  aiPriorityBonus: 0
   maxRange: 1
   damage: 0
   hitForce: 500
@@ -1241,6 +1245,24 @@ MonoBehaviour:
   stepDistance: 0.5
   stepDuration: 0.15
   animationTimeout: 2
+--- !u!114 &-3839420743819188982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8531198773615253123}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 274237539b0d6ab418c64a33a9a5e506, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaitAction
+  actionName: 
+  actionCost: 1
+  manaCost: 0
+  jobPointCost: 0
+  requiredJobClass: 0
+  aiPriorityBonus: 0
 --- !u!1 &8639382682928058527
 GameObject:
   m_ObjectHideFlags: 0

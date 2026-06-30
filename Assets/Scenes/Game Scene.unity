@@ -1694,7 +1694,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f00615ea29f0ea48853498caad21cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterSelectManager
-  requiredSelectCount: 2
+  requiredSelectCount: 3
   mapUI: {fileID: 169993099}
 --- !u!1 &257824533
 GameObject:

@@ -10,6 +10,10 @@ public class HealAction : BaseAction
     [SerializeField] private int healAmount = 40;
     [SerializeField] private LayerMask obstacleLayerMask;
 
+    [Header("이펙트")]
+    [SerializeField] private GameObject healEffectPrefab;
+    [SerializeField] private float effectLifetime = 2f;
+
     private Unit targetUnit;
     private float rotateSpeed = 10f;
 
@@ -161,10 +165,21 @@ public class HealAction : BaseAction
         targetUnit.Heal(healAmount);
         OnHeal?.Invoke(this, new OnHealEventArgs { targetUnit = targetUnit, healingUnit = unit });
         OnAnyHeal?.Invoke(this, new OnHealEventArgs { targetUnit = targetUnit, healingUnit = unit });
+        SpawnHealEffect(targetUnit);
 
         yield return new WaitForSeconds(0.5f);
 
         ActionComplete();
+    }
+
+    private void SpawnHealEffect(Unit target)
+    {
+        if (healEffectPrefab == null) return;
+
+        // 캐릭터 몸 중심(콜라이더 bounds center)에 겹치도록 스폰
+        Vector3 spawnPos = target.GetCollider().bounds.center;
+        GameObject effect = Instantiate(healEffectPrefab, spawnPos, Quaternion.identity);
+        Destroy(effect, effectLifetime);
     }
 
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)

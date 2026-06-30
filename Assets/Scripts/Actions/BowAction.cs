@@ -39,6 +39,16 @@ public class BowAction : BaseAction
     private List<GridPosition> cachedValidGridPositionList;
     private bool isCacheDirty = true;
 
+    // 연발 사격(RapidFireAction)으로 부여된, 액션 포인트 1 할인이 적용될 남은 발사 횟수
+    private int discountedShotsRemaining = 0;
+
+    /// <summary>다음 count번의 활 공격에 액션 포인트 1 할인을 적용한다.</summary>
+    public void AddDiscountedShots(int count) => discountedShotsRemaining += count;
+
+    /// <summary>할인이 남아있으면 1 적게, 없으면 평소대로.</summary>
+    public override int GetActionPointCost() =>
+        discountedShotsRemaining > 0 ? Mathf.Max(0, actionCost - 1) : actionCost;
+
     public event EventHandler<OnShootEventArgs> OnStartDrawing;
     public static event EventHandler<OnShootEventArgs> OnAnyShooting;
     public event EventHandler OnStopShooting;
@@ -208,6 +218,11 @@ public class BowAction : BaseAction
             Debug.LogError("�����Ϸ��µ� Ÿ�� ����: " + gridPosition.ToString());
             return;
         }
+
+        // 액션 포인트는 이미 GetActionPointCost()의 할인된 값으로 소모된 뒤이므로,
+        // 실제로 발사가 확정된 이 시점에 할인 횟수를 차감한다.
+        if (discountedShotsRemaining > 0)
+            discountedShotsRemaining--;
 
         targetUnit = targetUnitList[0];
         state = State.Aiming;

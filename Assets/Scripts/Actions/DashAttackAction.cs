@@ -98,7 +98,12 @@ public class DashAttackAction : BaseAction
                         targetPos.y = hit.point.y;
                     }
 
-                    while (Vector3.Distance(transform.position, targetPos) > 0.05f)
+                    // [버그 수정] MoveAction.MoveRoutine과 동일한 원인의 무한 루프 방지.
+                    //   Vector3.Distance는 Y까지 포함하므로, 지형 스냅으로 Y가 미세하게 다르면
+                    //   XZ는 이미 도달했는데도 루프를 못 빠져나가고, dir.y=0 처리 후 zero 벡터가 되어
+                    //   이동도 회전도 없이 영원히 yield return null만 반복했다 (적 턴이 안 끝나는 버그).
+                    //   XZ 거리만으로 도달 여부를 판정하도록 수정.
+                    while (new Vector2(transform.position.x - targetPos.x, transform.position.z - targetPos.z).magnitude > 0.05f)
                     {
                         Vector3 dir = (targetPos - transform.position);
                         dir.y = 0f;
@@ -115,6 +120,9 @@ public class DashAttackAction : BaseAction
 
                         yield return null;
                     }
+
+                    // 루프 탈출 후 정확한 위치(Y 포함)로 스냅
+                    transform.position = targetPos;
                 }
 
                 // 그리드 위치 확정 후 달리기 애니메이션 종료

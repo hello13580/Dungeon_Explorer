@@ -502,15 +502,6 @@ PrefabInstance:
       addedObject: {fileID: 4156730228978834261}
     - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3547905694337137316}
-    - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3285793247934937874}
-    - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1462654360584993284}
-    - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 2498089628362680851}
     - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       insertIndex: -1
@@ -531,7 +522,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3042818206337043987}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 15b518465d1355946a211273b9df4199, type: 3}
   m_Name: 
@@ -541,11 +532,14 @@ MonoBehaviour:
   manaCost: 10
   jobPointCost: 1
   requiredJobClass: 0
+  aiPriorityBonus: 0
   maxHealDistance: 5
   healAmount: 40
   obstacleLayerMask:
     serializedVersion: 2
     m_Bits: 128
+  healEffectPrefab: {fileID: 7384585988940611137, guid: f8d1bf5b44866074eb6a3ab003e0b00a, type: 3}
+  effectLifetime: 2
 --- !u!114 &2451468772223875588
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -553,7 +547,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3042818206337043987}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7da039c5aa320e94fbb361dc915dd918, type: 3}
   m_Name: 
@@ -563,6 +557,7 @@ MonoBehaviour:
   manaCost: 0
   jobPointCost: 0
   requiredJobClass: 0
+  aiPriorityBonus: 0
   maxBarrierDistance: 5
   BarrierAmount: 40
   BarrierDuration: 3
@@ -586,95 +581,9 @@ MonoBehaviour:
   manaCost: 0
   jobPointCost: 0
   requiredJobClass: 0
+  aiPriorityBonus: 0
   teleportRange: 6
   teleportDelay: 0.25
---- !u!114 &3547905694337137316
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3042818206337043987}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f67f613c65cacd6438b364a899ab20bb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WindBlastAction
-  actionName: 
-  actionCost: 0
-  manaCost: 0
-  jobPointCost: 0
-  requiredJobClass: 0
-  coneRange: 6
-  coneAngle: 60
-  pushDistance: 5
-  pushDuration: 0.35
-  arcHeight: 1.2
-  blastDamage: 100
-  collisionDamage: 10
-  hitForce: 800
-  obstacleLayerMask:
-    serializedVersion: 2
-    m_Bits: 128
-  rotateSpeed: 15
---- !u!114 &3285793247934937874
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3042818206337043987}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7140370758363749a78725d3d97eb63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PersistentAOEAction
-  actionName: "\uC791\uC5F4 \uC9C0\uB300"
-  actionCost: 0
-  manaCost: 0
-  jobPointCost: 0
-  requiredJobClass: 0
-  maxRange: 7
-  zoneRadius: 1
-  initialDamage: 10
-  tickDamage: 10
-  duration: 5
-  damageZonePrefab: {fileID: 170574552943811040, guid: 5a2bdfdfce731304fb3273064eb3d837, type: 3}
-  obstacleLayerMask:
-    serializedVersion: 2
-    m_Bits: 128
-  targetingYAxis: 0.5
-  castVFXPrefab: {fileID: 2515834450128478824, guid: 5f094022207b61046ac906d6265aa177, type: 3}
-  castVFXSpawnPoint: {fileID: 4086070362036521838}
-  castVFXHideDelay: 1.5
---- !u!114 &1462654360584993284
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3042818206337043987}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c8fad9ae961c424ebbcb23c5b2b5323, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::IceOrbAction
-  actionName: "\uB0C9\uAE30 "
-  actionCost: 0
-  manaCost: 0
-  jobPointCost: 0
-  requiredJobClass: 0
-  maxRange: 7
-  obstacleLayerMask:
-    serializedVersion: 2
-    m_Bits: 128
-  shootPointTransform: {fileID: 4086070362036521838}
-  damage: 20
-  slowValue: 0.3
-  slowDuration: 2
-  iceOrbPrefab: {fileID: 8932628691767139803, guid: 1a948aa2dfcad594f984f7b0cb25a2e6, type: 3}
-  castVFXPrefab: {fileID: 8151899671444209830, guid: 9dc9943551767cd4ea9f79554a0ba074, type: 3}
-  castVFXHideDelay: 1.5
 --- !u!114 &2498089628362680851
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -692,6 +601,7 @@ MonoBehaviour:
   manaCost: 20
   jobPointCost: 1
   requiredJobClass: 0
+  aiPriorityBonus: 0
   auraRange: 3
   auraDuration: 5
   barrierAmount: 15
@@ -839,6 +749,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8836375730659570798, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -879,11 +793,83 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8575535565378962814, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7396131679210449430, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7317658208579398506, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7130082940711433122, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -6677476012411673238, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5667094384599162000, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5350339615503271073, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -5348461685545500735, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5339575933563721630, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5096111041930432378, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5001753327047693741, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4360163937768109524, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4069264381021921215, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -4003448787998224329, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3258980798990238975, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3218546979534806947, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -2530065510046860966, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1912866279649488066, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1783196133772784797, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -991668458837277651, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -907,11 +893,67 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 714941232434654342, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 849357250311700576, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
       propertyPath: m_Name
       value: F_Sorcerer
       objectReference: {fileID: 0}
+    - target: {fileID: 960637012763589632, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1411385554732849011, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1412394633225009310, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2722821537622104507, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2802193933660191254, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2905906148628833388, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3055892175034110201, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3184531942169020462, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3698554233780768553, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4614046028013460300, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6405080257530259024, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6906299200558681240, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7348829752152768199, guid: 7efdc1578f42f744bbda6847e64dbdbc, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}

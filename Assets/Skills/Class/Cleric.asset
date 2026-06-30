@@ -14,10 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitSkillConfig
   unitClassId: Cleric
   learnableSkills:
-  - {fileID: 11400000, guid: 5bbe82170e9fee74480bdb2e1b27fab7, type: 2}
   - {fileID: 11400000, guid: 23204e7fce192fc498f420bd2e783a6d, type: 2}
-  - {fileID: 11400000, guid: 092c86035cee0f745ad13f1efa0560ac, type: 2}
   - {fileID: 11400000, guid: 3b16aac395ae8754cbfd0d9a9729ece5, type: 2}
-  - {fileID: 11400000, guid: e5268212577b3ca4186d8e131c8b2c79, type: 2}
   - {fileID: 11400000, guid: b3f20338aa5b96b4392cb32eb4b5ee73, type: 2}
   - {fileID: 11400000, guid: 4376735b95a778241b02c3396dd78bc8, type: 2}

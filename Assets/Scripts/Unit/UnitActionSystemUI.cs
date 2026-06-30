@@ -37,6 +37,30 @@ public class UnitActionSystemUI : MonoBehaviour
 		UnitActionSystem.Instance.OnSelectedUnitChanged += UnitActionSystem_OnselectedUnitChanged;
 		UnitActionSystem.Instance.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
 		Unit.OnAnySkillsChanged += Unit_OnAnySkillsChanged;
+		TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+	}
+
+	private void OnDestroy()
+	{
+		if (UnitActionSystem.Instance != null)
+		{
+			UnitActionSystem.Instance.OnSelectedUnitChanged -= UnitActionSystem_OnselectedUnitChanged;
+			UnitActionSystem.Instance.OnSelectedActionChanged -= UnitActionSystem_OnSelectedActionChanged;
+		}
+		Unit.OnAnySkillsChanged -= Unit_OnAnySkillsChanged;
+		if (TurnSystem.Instance != null)
+			TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+	}
+
+	// 적을 본 채로 턴이 넘어가면(플레이어 턴 → 적 턴) 버튼 표시 여부를 다시 평가해야 한다.
+	// 선택된 유닛이 바뀌지 않으면 UnitActionSystem_OnselectedUnitChanged가 호출되지 않으므로
+	// 턴 변경 시점에 별도로 갱신한다.
+	private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
+	{
+		Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
+		bool isEnemySelected = selectedUnit != null && selectedUnit.GetTeamType() != TeamType.Player;
+		if (returnToCurrentUnitButton != null)
+			returnToCurrentUnitButton.gameObject.SetActive(isEnemySelected && TurnSystem.Instance.IsPlayerTurn());
 	}
 
 	private void CreateUnitActionButtons()
