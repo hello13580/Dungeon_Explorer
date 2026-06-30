@@ -40,12 +40,20 @@ public class BarrierAuraAction : BaseAction, IAuraAction
     private void Start()
     {
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+        StageManager.OnStageLoadingStarted += StageManager_OnStageLoadingStarted;
     }
 
     private void OnDestroy()
     {
         if (TurnSystem.Instance != null)
             TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+        StageManager.OnStageLoadingStarted -= StageManager_OnStageLoadingStarted;
+    }
+
+    // 스테이지 전환 시 오라가 다음 스테이지까지 그대로 이어지지 않도록 강제 해제한다
+    private void StageManager_OnStageLoadingStarted(object sender, EventArgs e)
+    {
+        if (isAuraActive) DeactivateAura();
     }
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)

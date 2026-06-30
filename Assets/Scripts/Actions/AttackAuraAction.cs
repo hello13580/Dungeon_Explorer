@@ -41,6 +41,7 @@ public class AttackAuraAction : BaseAction, IAuraAction
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
         // 이동 등 액션이 끝날 때마다 범위 진입/이탈을 갱신
         BaseAction.OnAnyActionEnded += BaseAction_OnAnyActionEnded;
+        StageManager.OnStageLoadingStarted += StageManager_OnStageLoadingStarted;
     }
 
     private void OnDestroy()
@@ -48,6 +49,13 @@ public class AttackAuraAction : BaseAction, IAuraAction
         if (TurnSystem.Instance != null)
             TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
         BaseAction.OnAnyActionEnded -= BaseAction_OnAnyActionEnded;
+        StageManager.OnStageLoadingStarted -= StageManager_OnStageLoadingStarted;
+    }
+
+    // 스테이지 전환 시 오라가 다음 스테이지까지 그대로 이어지지 않도록 강제 해제한다
+    private void StageManager_OnStageLoadingStarted(object sender, EventArgs e)
+    {
+        if (isAuraActive) DeactivateAura();
     }
 
     private void BaseAction_OnAnyActionEnded(object sender, EventArgs e)

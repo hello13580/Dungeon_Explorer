@@ -7,6 +7,7 @@ using UnityEngine;
 /// - 효과 추가/제거
 /// - 매 턴(해당 유닛의 턴 시작) 지속 시간 차감
 /// - 화상(Burn): 해당 유닛의 턴 종료 시 현재 화상 수치만큼 피해 → 수치 1 감소 → 0이 되면 해제
+/// - 재생(Regen): 해당 유닛의 턴 종료 시 현재 재생 수치만큼 회복 → 수치 1 감소 → 0이 되면 해제
 /// - 같은 종류의 효과는 StackingMode에 따라 중첩 처리
 /// </summary>
 public class StatusEffectSystem : MonoBehaviour
@@ -51,6 +52,7 @@ public class StatusEffectSystem : MonoBehaviour
         {
             isTurnActive = false;
             ApplyBurnTick(unit);
+            ApplyRegenTick(unit);
         }
 
         if (TurnSystem.Instance.GetTurnUnit() != unit) return;
@@ -58,11 +60,12 @@ public class StatusEffectSystem : MonoBehaviour
         // ── 턴 시작 처리 ──
         isTurnActive = true;
 
-        // 화상은 수치 기반으로 자체 해제되므로 turnsRemaining 카운트다운에서 제외
+        // 화상·재생은 수치 기반으로 자체 해제되므로 turnsRemaining 카운트다운에서 제외
         bool changed = false;
         for (int i = activeEffects.Count - 1; i >= 0; i--)
         {
             if (activeEffects[i].type == StatusEffectType.Burn) continue;
+            if (activeEffects[i].type == StatusEffectType.Regen) continue;
 
             activeEffects[i].turnsRemaining--;
             if (activeEffects[i].turnsRemaining <= 0)
@@ -101,6 +104,28 @@ public class StatusEffectSystem : MonoBehaviour
         {
             OnEffectsChanged?.Invoke(this, EventArgs.Empty);
         }
+    }
+
+    /// <summary>
+    /// 이 유닛의 턴 종료 시 재생 틱 처리.
+    /// 현재 재생 수치만큼 회복하고, 수치를 1 감소시킨다.
+    /// 수치가 0 이하가 되면 재생 상태이상을 제거한다.
+    /// </summary>
+    private void ApplyRegenTick(Unit unit)
+    {
+        StatusEffect regen = activeEffects.Find(e => e.type == StatusEffectType.Regen);
+        if (regen == null) return;
+
+        int healAmount = Mathf.RoundToInt(regen.value);
+        if (healAmount > 0)
+            unit.Heal(healAmount);
+
+        regen.value -= 1f;
+
+        if (regen.value <= 0f)
+            activeEffects.Remove(regen);
+
+        OnEffectsChanged?.Invoke(this, EventArgs.Empty);
     }
 
     // ─── 효과 추가/제거 ────────────────────────────────────────────────
@@ -175,6 +200,9 @@ public class StatusEffectSystem : MonoBehaviour
 
     /// <summary>현재 화상 수치. 0이면 화상 없음.</summary>
     public int GetBurnStacks() => Mathf.RoundToInt(GetTotalValue(StatusEffectType.Burn));
+
+    /// <summary>현재 재생 수치. 0이면 재생 없음.</summary>
+    public int GetRegenStacks() => Mathf.RoundToInt(GetTotalValue(StatusEffectType.Regen));
 
     public List<StatusEffect> GetActiveEffects() => activeEffects;
 }

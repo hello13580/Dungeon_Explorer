@@ -153,6 +153,8 @@ public class UnitEffectsListUI : MonoBehaviour
                 return $"속박 ({effect.turnsRemaining}턴)";
             case StatusEffectType.Burn:
                 return $"화상 {Mathf.RoundToInt(effect.value)}";
+            case StatusEffectType.Regen:
+                return $"재생 {Mathf.RoundToInt(effect.value)}";
             default:
                 return $"{effect.displayName} ({effect.turnsRemaining}턴)";
         }

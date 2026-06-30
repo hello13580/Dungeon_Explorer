@@ -447,7 +447,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: maxActionPoint
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: ShootPointTransform
@@ -519,6 +519,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7225607481331310480}
+    - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6203745783052763311}
   m_SourcePrefab: {fileID: 100100000, guid: 31ff398b13221204abf58d215dd04293, type: 3}
 --- !u!1 &3042818206337043987 stripped
 GameObject:
@@ -563,14 +566,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarrierAction
   actionName: "\uC218\uD638 \uBC29\uC5B4\uB9C9"
-  actionCost: 0
-  manaCost: 0
+  actionCost: 1
+  manaCost: 10
   jobPointCost: 0
   requiredJobClass: 0
   aiPriorityBonus: 0
   maxBarrierDistance: 5
   BarrierAmount: 40
-  BarrierDuration: 3
+  BarrierDuration: 7
   obstacleLayerMask:
     serializedVersion: 2
     m_Bits: 128
@@ -778,14 +781,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3042818206337043987}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 01d372f1f1d36c54892b3f336a151ad1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HolyBurstAction
   actionName: "\uC2E0\uC131 \uD3ED\uBC1C"
-  actionCost: 0
-  manaCost: 0
+  actionCost: 1
+  manaCost: 20
   jobPointCost: 0
   requiredJobClass: 0
   aiPriorityBonus: 0
@@ -796,11 +799,40 @@ MonoBehaviour:
     m_Bits: 128
   shootPointTransform: {fileID: 4086070362036521838}
   damage: 18
-  barrierAmount: 30
+  barrierAmount: 20
   barrierDuration: 5
   impactVFXPrefab: {fileID: 4737006685481212167, guid: 27d0772081832e34ea7b0825443c1645, type: 3}
   impactVFXOffset: {x: 0, y: 1, z: 0}
   impactVFXLifetime: 3
+  castVFXPrefab: {fileID: 6382894885670788809, guid: 19945ca5062e8224dba6714a59e017a5, type: 3}
+  castVFXSpawnPoint: {fileID: 4086070362036521838}
+  castVFXHideDelay: 1.5
+--- !u!114 &6203745783052763311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3042818206337043987}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16bfbd76cbfb1284a95653693d68ab4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RegenBuffAction
+  actionName: "\uC7AC\uC0DD\uC758 \uAE30\uB3C4"
+  actionCost: 0
+  manaCost: 15
+  jobPointCost: 1
+  requiredJobClass: 4
+  aiPriorityBonus: 0
+  maxRange: 5
+  regenAmount: 3
+  obstacleLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  buffEffectPrefab: {fileID: 8568502112785259859, guid: 5729a40df461da6498f8e289dd5bf821, type: 3}
+  buffEffectHeightOffset: 0.3
+  buffEffectLifetime: 5
   castVFXPrefab: {fileID: 6382894885670788809, guid: 19945ca5062e8224dba6714a59e017a5, type: 3}
   castVFXSpawnPoint: {fileID: 4086070362036521838}
   castVFXHideDelay: 1.5

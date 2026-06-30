@@ -27,12 +27,20 @@ public class TauntManager : MonoBehaviour
     private void Start()
     {
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+        StageManager.OnStageLoadingStarted += StageManager_OnStageLoadingStarted;
     }
 
     private void OnDestroy()
     {
         if (TurnSystem.Instance != null)
             TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+        StageManager.OnStageLoadingStarted -= StageManager_OnStageLoadingStarted;
+    }
+
+    // 스테이지 전환 시 도발 상태를 해제한다
+    private void StageManager_OnStageLoadingStarted(object sender, EventArgs e)
+    {
+        if (HasActiveTaunt()) ClearTaunt();
     }
 
     /// <summary>도발 시작. 같은 유닛이 다시 도발하면 지속 시간을 갱신한다.</summary>

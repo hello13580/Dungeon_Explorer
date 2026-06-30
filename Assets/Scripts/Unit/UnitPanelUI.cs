@@ -24,6 +24,7 @@ public class UnitPanelUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI unitNameText;    // 유닛 이름
     [SerializeField] private TextMeshProUGUI attackPowerText; // 공격력 수치
     [SerializeField] private TextMeshProUGUI defPowerText;    // 방어력 수치
+    [SerializeField] private TextMeshProUGUI manaRegenText;   // 턴당 마나 재생력 (마나 없는 유닛이면 숨김)
 
     [SerializeField] private HealthSystem healthSystem;
     [SerializeField] private BarrierSystem barrierSystem;
@@ -198,6 +199,10 @@ public class UnitPanelUI : MonoBehaviour
 
     private void UpdateManaBar()
     {
+        // 마나 시스템이 없는 유닛은 재생력 텍스트도 숨긴다
+        if (manaRegenText != null)
+            manaRegenText.text = manaSystem != null ? $"재생 : {manaSystem.GetTotalRegen()}" : "";
+
         if (manaSystem == null) return;
         if (manaBarImage != null)
             manaBarImage.fillAmount = manaSystem.GetManaNormalized();

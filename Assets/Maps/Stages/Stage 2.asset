@@ -22,8 +22,10 @@ MonoBehaviour:
   cameraBoundsMax: {x: 75, y: 80}
   directionalLightIntensity: 0.5
   enemySpawnInfos:
-  - unitPrefab: {fileID: 979890781461446910, guid: 30ee87877c5b0d24bb480b20a440bf83, type: 3}
+  - unitPrefab: {fileID: 979890781461446910, guid: 8360eaef7deff434b9e19f0a49db7a52, type: 3}
     spawnPointIndex: 0
-  - unitPrefab: {fileID: 979890781461446910, guid: 30ee87877c5b0d24bb480b20a440bf83, type: 3}
+  - unitPrefab: {fileID: 7294091289576193561, guid: f42b8bef44b7f6b45a199fd5b806c144, type: 3}
     spawnPointIndex: 1
+  - unitPrefab: {fileID: 7294091289576193561, guid: f42b8bef44b7f6b45a199fd5b806c144, type: 3}
+    spawnPointIndex: 2
   playerSpawnInfos: []

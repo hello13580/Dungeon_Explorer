@@ -199,8 +199,12 @@ PrefabInstance:
       value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: attackPower
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: initialSpeed
-      value: 9
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: maxActionPoint
@@ -321,7 +325,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7364901892537136982, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: maxHealth
-      value: 200
+      value: 350
       objectReference: {fileID: 0}
     - target: {fileID: 7971065863894727130, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_IsActive
@@ -397,7 +401,7 @@ MonoBehaviour:
   requiredJobClass: 0
   aiPriorityBonus: 0
   maxRange: 1
-  damage: 10
+  damage: 0
   hitForce: 500
   rotateSpeed: 30
   stepDistance: 0.5
@@ -434,9 +438,9 @@ MonoBehaviour:
   jobPointCost: 0
   requiredJobClass: 0
   aiPriorityBonus: 0
-  attackBonusPerStack: 5
+  attackBonusPerStack: 10
   duration: 100
-  maxStacks: 5
+  maxStacks: 100
   animationDuration: 0.5
   buffEffectPrefab: {fileID: 7812585453298936655, guid: 4da2216bfcbd6764c9dee834c281d43d, type: 3}
   effectHeightOffset: 0.3

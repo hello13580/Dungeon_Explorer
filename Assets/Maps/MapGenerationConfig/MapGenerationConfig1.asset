@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e4047a5a6984034298cbbce1ff9dfdf, type: 3}
   m_Name: MapGenerationConfig1
   m_EditorClassIdentifier: Assembly-CSharp::MapGenerationConfig
-  combatCount: 10
-  eliteCount: 10
-  eventCount: 3
+  combatCount: 15
+  eliteCount: 5
+  eventCount: 5
   shopCount: 0
   restCount: 3
   layers:
@@ -23,43 +23,44 @@ MonoBehaviour:
     eliteStages: []
   - combatStages:
     - {fileID: 11400000, guid: dd18a53c376c2e74d925237a3664ffb4, type: 2}
+    eliteStages: []
+  - combatStages:
+    - {fileID: 11400000, guid: 7e47b90afaf3c83499f43ac8908dcfec, type: 2}
     eliteStages:
     - {fileID: 11400000, guid: 27987960022a9b440af8b7d5781d4745, type: 2}
   - combatStages:
-    - {fileID: 11400000, guid: 175b9b507a3c04549a21129c58a1f25c, type: 2}
+    - {fileID: 11400000, guid: 629a61a1c720bbb4c8117cd236864e9c, type: 2}
     eliteStages:
     - {fileID: 11400000, guid: 27987960022a9b440af8b7d5781d4745, type: 2}
   - combatStages:
-    - {fileID: 11400000, guid: 175b9b507a3c04549a21129c58a1f25c, type: 2}
+    - {fileID: 11400000, guid: b9950f9be65c2e24c8112aeadc14076a, type: 2}
     eliteStages:
-    - {fileID: 11400000, guid: dd18a53c376c2e74d925237a3664ffb4, type: 2}
+    - {fileID: 11400000, guid: 27987960022a9b440af8b7d5781d4745, type: 2}
   - combatStages:
-    - {fileID: 11400000, guid: 175b9b507a3c04549a21129c58a1f25c, type: 2}
+    - {fileID: 11400000, guid: 8e5d9fbf4fc97f94892bf73e3ef5c1f8, type: 2}
     eliteStages:
-    - {fileID: 11400000, guid: dd18a53c376c2e74d925237a3664ffb4, type: 2}
+    - {fileID: 11400000, guid: 6db16eac2c484684fa98581bdcdad988, type: 2}
   - combatStages:
-    - {fileID: 11400000, guid: 175b9b507a3c04549a21129c58a1f25c, type: 2}
+    - {fileID: 11400000, guid: 268625aa90ddfc447a03127306967224, type: 2}
     eliteStages:
-    - {fileID: 11400000, guid: dd18a53c376c2e74d925237a3664ffb4, type: 2}
+    - {fileID: 11400000, guid: 27987960022a9b440af8b7d5781d4745, type: 2}
   - combatStages:
-    - {fileID: 11400000, guid: 175b9b507a3c04549a21129c58a1f25c, type: 2}
+    - {fileID: 11400000, guid: 62f68f0f9c747544f82c7391d2d3f783, type: 2}
     eliteStages:
-    - {fileID: 11400000, guid: dd18a53c376c2e74d925237a3664ffb4, type: 2}
+    - {fileID: 11400000, guid: 6db16eac2c484684fa98581bdcdad988, type: 2}
   - combatStages:
-    - {fileID: 11400000, guid: 175b9b507a3c04549a21129c58a1f25c, type: 2}
+    - {fileID: 11400000, guid: 268625aa90ddfc447a03127306967224, type: 2}
     eliteStages:
-    - {fileID: 11400000, guid: dd18a53c376c2e74d925237a3664ffb4, type: 2}
+    - {fileID: 11400000, guid: 6db16eac2c484684fa98581bdcdad988, type: 2}
   - combatStages:
-    - {fileID: 11400000, guid: 175b9b507a3c04549a21129c58a1f25c, type: 2}
+    - {fileID: 11400000, guid: ac8337437aa623f438f098fd15d6dd26, type: 2}
     eliteStages:
-    - {fileID: 11400000, guid: dd18a53c376c2e74d925237a3664ffb4, type: 2}
-  - combatStages:
-    - {fileID: 11400000, guid: 175b9b507a3c04549a21129c58a1f25c, type: 2}
-    eliteStages:
-    - {fileID: 11400000, guid: dd18a53c376c2e74d925237a3664ffb4, type: 2}
-  bossStage: {fileID: 11400000, guid: 175b9b507a3c04549a21129c58a1f25c, type: 2}
+    - {fileID: 11400000, guid: 6db16eac2c484684fa98581bdcdad988, type: 2}
+  bossStage: {fileID: 11400000, guid: f64e7a5b15f90044798e0d1801b9aa2b, type: 2}
   eventDatas:
   - {fileID: 11400000, guid: e333164f048dd5e4a9c6f5c20c003991, type: 2}
+  - {fileID: 11400000, guid: 00c0322460f25ab48a2fbac1c49e0aea, type: 2}
+  - {fileID: 11400000, guid: 4a9fe5ca14b6ffa4b88d8f6ea9fd7d1c, type: 2}
   canvasWidth: 1280
   canvasHeight: 720
   maxNodesPerLayer: 4

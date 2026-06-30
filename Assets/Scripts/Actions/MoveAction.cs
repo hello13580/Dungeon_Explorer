@@ -359,18 +359,14 @@ public class MoveAction : BaseAction
 
     // --- AI ���� ---
 
-    // [버그 수정] AI 평가 거리 계산을 직선 거리로 교체.
-    //
-    // [원인]
-    //   이전 코드는 GetBestEnemyAIAction() → GetEnemyAIAction(pos) 에서
-    //   GetPathLength(A*)를 호출했다. 이 함수는 이동 가능한 모든 위치(N개)마다 실행되므로
-    //   총 N번의 A* 탐색이 단일 프레임에서 동기적으로 실행됐다.
-    //   사이즈 2 유닛은 IsWalkableArea가 2×2 영역을 체크해 A*당 비용이 ~4배이고,
-    //   2번째 턴부터 죽은 유닛의 그리드가 비워져 N이 급격히 증가하면서 심각한 프리즈가 발생했다.
-    //
-    // [해결]
-    //   AI가 이동 위치를 평가하는 용도로는 직선 거리로 충분하다.
-    //   실제 이동 경로는 TakeAction 시점에 A*로 정확히 계산하므로 이동 자체의 품질은 유지된다.
+    // [버그 수정 이력]
+    //   한때 성능 문제(N×M번의 A*로 인한 프리즈)로 이 평가를 직선 거리로 바꿨었다.
+    //   하지만 직선 거리만으로는 "계단을 빙 돌아가야 하는 경로"를 인식하지 못해서,
+    //   2층 단상처럼 위아래로 떨어진 목표를 직선상 가장 가까운 칸(계단 반대편 바로 밑)에서
+    //   더 이상 전진하지 않고 제자리에 머무는 버그가 생겼다.
+    //   이제 GetClosestPlayerByPath()로 "어떤 플레이어를 쫓을지"만 직선 거리(저렴)로 정하고,
+    //   실제 점수는 그 한 명에 대한 A* 경로 길이로 계산한다 (후보 위치당 A* 1회 — N번,
+    //   이전의 N×M번보다 훨씬 가볍다). 경로가 없으면(층 분리 등) 직선 거리로 폴백한다.
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
     {
         if (leftMoveDistance <= 0f) return null;
@@ -399,8 +395,19 @@ public class MoveAction : BaseAction
         Unit closestPlayer = GetClosestPlayerByPath(gridPosition);
         if (closestPlayer != null)
         {
-            float worldDist = Vector3.Distance(fromWorld, closestPlayer.GetWorldPosition());
-            float distInCells = worldDist / cellSize;
+            int pathLength = PathFinding.Instance.GetPathLength(gridPosition, closestPlayer.GetGridPosition(), unit.GetSize(), allowOccupiedDestination: true);
+
+            float distInCells;
+            if (pathLength > 0)
+            {
+                distInCells = pathLength / 10f;
+            }
+            else
+            {
+                // 경로가 없으면(층이 분리되어 있는 등) 직선 거리로 폴백
+                float worldDist = Vector3.Distance(fromWorld, closestPlayer.GetWorldPosition());
+                distInCells = worldDist / cellSize;
+            }
 
             if (distInCells > visionRange) return null;
 

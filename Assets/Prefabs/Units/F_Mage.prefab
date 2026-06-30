@@ -731,11 +731,11 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 2ab5bb6079c726b49b5e52ff7e0366e8, type: 2}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: initialSpeed
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: maxActionPoint
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: ShootPointTransform
@@ -808,6 +808,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1096189560809306391}
+    - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8876471109350023421}
   m_SourcePrefab: {fileID: 100100000, guid: 31ff398b13221204abf58d215dd04293, type: 3}
 --- !u!1 &3042818206337043987 stripped
 GameObject:
@@ -1095,6 +1098,33 @@ MonoBehaviour:
   outlineColor: {r: 0.4, g: 0.8, b: 1, a: 0.9}
   outlineMaterial: {fileID: 0}
   outlineHeightOffset: 0.1
+--- !u!114 &8876471109350023421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3042818206337043987}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40b1c7748e7cb0843bd59d4ba8eb4a63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ManaRegenBuffAction
+  actionName: "\uD758\uB7EC\uB118\uCE58\uB294 \uB9C8\uB098"
+  actionCost: 0
+  manaCost: 15
+  jobPointCost: 1
+  requiredJobClass: 3
+  aiPriorityBonus: 0
+  maxRange: 5
+  regenAmount: 10
+  duration: 20
+  obstacleLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  buffEffectPrefab: {fileID: 7441502302898250610, guid: a71f1983ff30cab41b872a3918daf205, type: 3}
+  effectHeightOffset: 0.3
+  effectLifetime: 2
 --- !u!4 &5514658485211722722 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1213345925212744562, guid: 31ff398b13221204abf58d215dd04293, type: 3}

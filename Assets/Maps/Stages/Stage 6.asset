@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0940bd7b1c4471e46a1d4ce3aa703a49, type: 3}
+  m_Name: Stage 6
+  m_EditorClassIdentifier: Assembly-CSharp::StageData
+  stageName: Stage 6
+  mapPrefab: {fileID: 2928425958798730269, guid: ad60a7e73d861c94ba64ad5d28d1cee7, type: 3}
+  floorAmount: 3
+  mapSpawnPosition: {x: 60, y: 0, z: 60}
+  cameraStartPosition: {x: 70, y: 3, z: 50}
+  cameraStartRotation: {x: 0, y: -40, z: 0}
+  cameraBoundsMin: {x: 30, y: 35}
+  cameraBoundsMax: {x: 75, y: 80}
+  directionalLightIntensity: 0.5
+  enemySpawnInfos:
+  - unitPrefab: {fileID: 8531198773615253123, guid: 30a9c0070d124bd40a38a299f6fee53a, type: 3}
+    spawnPointIndex: 0
+  - unitPrefab: {fileID: 6080288289000896006, guid: efb43229574632d4991c3c219de420f7, type: 3}
+    spawnPointIndex: 1
+  - unitPrefab: {fileID: 6080288289000896006, guid: efb43229574632d4991c3c219de420f7, type: 3}
+    spawnPointIndex: 2
+  - unitPrefab: {fileID: 3042818206337043987, guid: b34018bcb7a29ba4485d0ac7ace86158, type: 3}
+    spawnPointIndex: 3
+  - unitPrefab: {fileID: 3042818206337043987, guid: b34018bcb7a29ba4485d0ac7ace86158, type: 3}
+    spawnPointIndex: 4
+  playerSpawnInfos: []

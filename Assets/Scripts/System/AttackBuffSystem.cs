@@ -32,12 +32,24 @@ public class AttackBuffSystem : MonoBehaviour
     private void Start()
     {
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+        StageManager.OnStageLoadingStarted += StageManager_OnStageLoadingStarted;
     }
 
     private void OnDestroy()
     {
         if (TurnSystem.Instance != null)
             TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+        StageManager.OnStageLoadingStarted -= StageManager_OnStageLoadingStarted;
+    }
+
+    // 스테이지 전환 시 전투 중에만 유효한 공격력 버프를 전부 해제한다 (영구 스탯과는 무관)
+    private void StageManager_OnStageLoadingStarted(object sender, EventArgs e)
+    {
+        bool changed = activeBuffs.Count > 0 || keyedBuffs.Count > 0 || auraBuff != 0;
+        activeBuffs.Clear();
+        keyedBuffs.Clear();
+        auraBuff = 0;
+        if (changed) OnBuffChanged?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>키가 같은 버프가 이미 있으면 수치·지속 턴을 갱신하고, 없으면 새로 추가한다.</summary>

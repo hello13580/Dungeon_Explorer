@@ -47,6 +47,12 @@ public class UnitAnimator : MonoBehaviour
 			healAction.OnHeal += healAction_OnHeal;
         }
 
+        if (TryGetComponent<RegenBuffAction>(out var regenBuffAction))
+        {
+            // HealAction과 같은 시전 모션을 재사용 — 동일한 트리거(isHealing)를 쏜다.
+            regenBuffAction.OnRegenBuff += (s, e) => unitAnimator.SetTrigger("isHealing");
+        }
+
         if (TryGetComponent<BarrierAction>(out var barrierAction))
         {
             barrierAction.OnBarrier += BarrierAction_OnBarrier;
@@ -73,6 +79,18 @@ public class UnitAnimator : MonoBehaviour
         {
             // IceOrbAction과 같은 시전 모션을 재사용 — 동일한 트리거(isIceOrb)를 쏜다.
             windBlastAction.OnWindBlastStarted += (s, e) => unitAnimator.SetTrigger("isIceOrb");
+        }
+
+        if (TryGetComponent<VulnerableStrikeAction>(out var vulnerableStrikeAction))
+        {
+            // IceOrbAction과 같은 시전 모션을 재사용 — 동일한 트리거(isIceOrb)를 쏜다.
+            vulnerableStrikeAction.OnVulnerableStrike += (s, e) => unitAnimator.SetTrigger("isIceOrb");
+        }
+
+        if (TryGetComponent<WeakenStrikeAction>(out var weakenStrikeAction))
+        {
+            // IceOrbAction과 같은 시전 모션을 재사용 — 동일한 트리거(isIceOrb)를 쏜다.
+            weakenStrikeAction.OnWeakenStrike += (s, e) => unitAnimator.SetTrigger("isIceOrb");
         }
 
         if (TryGetComponent<PersistentAOEAction>(out var persistentAOEAction))

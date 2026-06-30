@@ -27,11 +27,21 @@ public class BarrierSystem : MonoBehaviour
     {
         TurnSystem.Instance.OnTurnChanged += OnTurnChanged;
         healthSystem = GetComponent<HealthSystem>();
+        StageManager.OnStageLoadingStarted += StageManager_OnStageLoadingStarted;
     }
 
     private void OnDestroy()
     {
         TurnSystem.Instance.OnTurnChanged -= OnTurnChanged;
+        StageManager.OnStageLoadingStarted -= StageManager_OnStageLoadingStarted;
+    }
+
+    // 스테이지 전환 시 보호막을 전부 제거한다
+    private void StageManager_OnStageLoadingStarted(object sender, EventArgs e)
+    {
+        if (barriers.Count == 0) return;
+        barriers.Clear();
+        OnBarrierChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void OnTurnChanged(object sender, EventArgs e)

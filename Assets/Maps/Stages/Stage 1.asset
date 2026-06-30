@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StageData
   stageName: Stage 1
   mapPrefab: {fileID: 2928425958798730269, guid: 4bb0bbf5ab34a34449d33ffacff5e2cf, type: 3}
-  floorAmount: 1
+  floorAmount: 3
   mapSpawnPosition: {x: 60, y: 0, z: 60}
   cameraStartPosition: {x: 70, y: 3, z: 50}
   cameraStartRotation: {x: 0, y: -40, z: 0}
@@ -22,14 +22,10 @@ MonoBehaviour:
   cameraBoundsMax: {x: 75, y: 80}
   directionalLightIntensity: 0.5
   enemySpawnInfos:
-  - unitPrefab: {fileID: 7294091289576193561, guid: f42b8bef44b7f6b45a199fd5b806c144, type: 3}
+  - unitPrefab: {fileID: 6080288289000896006, guid: efb43229574632d4991c3c219de420f7, type: 3}
     spawnPointIndex: 0
-  - unitPrefab: {fileID: 7294091289576193561, guid: f42b8bef44b7f6b45a199fd5b806c144, type: 3}
+  - unitPrefab: {fileID: 6080288289000896006, guid: efb43229574632d4991c3c219de420f7, type: 3}
     spawnPointIndex: 1
-  - unitPrefab: {fileID: 6080288289000896006, guid: efb43229574632d4991c3c219de420f7, type: 3}
+  - unitPrefab: {fileID: 7294091289576193561, guid: f42b8bef44b7f6b45a199fd5b806c144, type: 3}
     spawnPointIndex: 2
-  - unitPrefab: {fileID: 6080288289000896006, guid: efb43229574632d4991c3c219de420f7, type: 3}
-    spawnPointIndex: 3
-  - unitPrefab: {fileID: 6080288289000896006, guid: efb43229574632d4991c3c219de420f7, type: 3}
-    spawnPointIndex: 4
   playerSpawnInfos: []

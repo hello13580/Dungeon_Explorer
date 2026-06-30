@@ -249,8 +249,12 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: initialSpeed
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: maxActionPoint
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2383374090818007313, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_IsActive

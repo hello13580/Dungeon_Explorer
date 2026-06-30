@@ -1021,7 +1021,7 @@ MonoBehaviour:
   attackPower: 0
   defensePower: 0
   teamType: 1
-  initialSpeed: 10
+  initialSpeed: 5
   currentSpeed: 0
   actionGauge: 0
   ShootPointTransform: {fileID: 0}

@@ -61,8 +61,12 @@ PrefabInstance:
       value: Ghoul
       objectReference: {fileID: 0}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: attackPower
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: initialSpeed
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: maxActionPoint
@@ -95,7 +99,7 @@ PrefabInstance:
       objectReference: {fileID: 145170053381514960}
     - target: {fileID: 7364901892537136982, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: maxHealth
-      value: 120
+      value: 250
       objectReference: {fileID: 0}
     - target: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_Name
@@ -145,7 +149,7 @@ MonoBehaviour:
   requiredJobClass: 0
   aiPriorityBonus: 0
   maxRange: 1
-  damage: 10
+  damage: 0
   hitForce: 500
   rotateSpeed: 30
   stepDistance: 0.5
