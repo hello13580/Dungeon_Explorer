@@ -31,10 +31,24 @@ public class WindBlastAction : BaseAction
     [Header("Timing")]
     [SerializeField] private float rotateSpeed = 15f;
 
+    [Header("VFX")]
+    [Tooltip("타격 방향으로 발사되는 바람 이펙트")]
+    [SerializeField] private GameObject blastVFXPrefab;
+    [Tooltip("시전자 위치 기준 스폰 오프셋. Z는 조준 방향으로의 전방 거리, Y는 높이")]
+    [SerializeField] private Vector3 blastVFXOffset = new Vector3(0f, 1f, 1f);
+    [SerializeField] private float blastVFXLifetime = 2f;
+
+    [Header("Cast VFX")]
+    [Tooltip("이 액션을 선택해서 방향을 지정하는 동안 표시되는 이펙트. 영속 오브젝트(유닛)에 부모로 붙이지 않는다.")]
+    [SerializeField] private Transform castVFXPrefab;
+    [SerializeField] private Transform castVFXSpawnPoint;
+    [SerializeField] private float castVFXHideDelay = 1.5f;
+
     public event EventHandler OnWindBlastStarted;
     public event EventHandler OnWindBlastEnded;
 
     private GridPosition targetGridPosition;
+    private GameObject activeCastVFX;
 
     // 마우스 방향 기준 부채꼴 캐시 — 시각화와 클릭 판정이 동일한 리스트를 참조하도록
     private List<GridPosition> cachedConeList = new List<GridPosition>();
@@ -44,7 +58,59 @@ public class WindBlastAction : BaseAction
     {
         base.Awake();
         actionCost = 1;
-    }    public override string GetDescription()
+    }
+
+    private void Start()
+    {
+        UnitActionSystem.Instance.OnSelectedActionChanged += OnSelectedActionChanged;
+    }
+
+    private void OnDestroy()
+    {
+        if (UnitActionSystem.Instance != null)
+            UnitActionSystem.Instance.OnSelectedActionChanged -= OnSelectedActionChanged;
+        HideCastVFX();
+    }
+
+    // ─── 시전 이펙트 (목표 지정 중 표시) ─────────────────────────────────
+
+    private void OnSelectedActionChanged(object sender, BaseAction selectedAction)
+    {
+        if (selectedAction == this)
+            ShowCastVFX();
+        else
+            HideCastVFX();
+    }
+
+    /// <summary>유닛(영속 오브젝트)에 부모로 붙이면 "Cannot instantiate objects with a parent
+    /// which is persistent" 경고가 뜨므로, 부모 없이 스폰하고 직접 참조로 관리한다.</summary>
+    private void ShowCastVFX()
+    {
+        if (castVFXPrefab == null || activeCastVFX != null) return;
+        Transform spawnPoint = castVFXSpawnPoint != null ? castVFXSpawnPoint : unit.transform;
+        activeCastVFX = Instantiate(castVFXPrefab, spawnPoint.position, spawnPoint.rotation).gameObject;
+    }
+
+    private void HideCastVFX()
+    {
+        if (activeCastVFX == null) return;
+        Destroy(activeCastVFX);
+        activeCastVFX = null;
+    }
+
+    private void HideCastVFXDelayed()
+    {
+        if (activeCastVFX == null) return;
+        StartCoroutine(HideCastVFXRoutine());
+    }
+
+    private IEnumerator HideCastVFXRoutine()
+    {
+        yield return new WaitForSeconds(castVFXHideDelay);
+        HideCastVFX();
+    }
+
+    public override string GetDescription()
     {
         int atk = unit.GetAttackPower();
         return $"전방 부채꼴 범위 내 적에게 {blastDamage + atk} 피해를 입히고 {pushDistance}칸 밀쳐낸다. 장애물 충돌 시 {collisionDamage + atk} 추가 피해.";
@@ -207,6 +273,7 @@ public class WindBlastAction : BaseAction
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
         targetGridPosition = gridPosition;
+        HideCastVFXDelayed();
         ActionStart(onActionComplete);
         StartCoroutine(WindBlastRoutine());
     }
@@ -224,6 +291,7 @@ public class WindBlastAction : BaseAction
         }
 
         OnWindBlastStarted?.Invoke(this, EventArgs.Empty);
+        SpawnBlastVFX();
 
         Vector2 aimDir = GetAimDir(unit.GetGridPosition(), targetGridPosition);
         Vector2Int pushDir = GetPushDir(aimDir);
@@ -247,6 +315,20 @@ public class WindBlastAction : BaseAction
 
         OnWindBlastEnded?.Invoke(this, EventArgs.Empty);
         ActionComplete();
+    }
+
+    /// <summary>회전이 끝나 조준 방향이 확정된 시점(transform.forward 기준)에 전방으로 이펙트를 스폰한다.</summary>
+    private void SpawnBlastVFX()
+    {
+        if (blastVFXPrefab == null) return;
+
+        Vector3 spawnPos = unit.GetWorldPosition()
+                          + Vector3.up * blastVFXOffset.y
+                          + transform.forward * blastVFXOffset.z
+                          + transform.right * blastVFXOffset.x;
+
+        GameObject vfx = Instantiate(blastVFXPrefab, spawnPos, transform.rotation);
+        Destroy(vfx, blastVFXLifetime);
     }
 
     private IEnumerator PushUnitRoutine(Unit target, Vector2Int pushDir)

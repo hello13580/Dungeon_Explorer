@@ -846,24 +846,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f67f613c65cacd6438b364a899ab20bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WindBlastAction
-  actionName: 
-  actionCost: 0
-  manaCost: 0
+  actionName: "\uB0C9\uAE30 \uD30C\uB3D9"
+  actionCost: 1
+  manaCost: 30
   jobPointCost: 0
   requiredJobClass: 0
   aiPriorityBonus: 0
-  coneRange: 6
-  coneAngle: 60
+  coneRange: 7
+  coneAngle: 30
   pushDistance: 5
   pushDuration: 0.35
   arcHeight: 1.2
-  blastDamage: 100
-  collisionDamage: 10
+  blastDamage: 15
+  collisionDamage: 20
   hitForce: 800
   obstacleLayerMask:
     serializedVersion: 2
     m_Bits: 128
   rotateSpeed: 15
+  blastVFXPrefab: {fileID: 1933841571898710198, guid: 03eef2605cbe7234596116701a5b92ed, type: 3}
+  blastVFXOffset: {x: 0, y: 1, z: 1}
+  blastVFXLifetime: 2
+  castVFXPrefab: {fileID: 8151899671444209830, guid: 9dc9943551767cd4ea9f79554a0ba074, type: 3}
+  castVFXSpawnPoint: {fileID: 4086070362036521838}
+  castVFXHideDelay: 1.5
 --- !u!114 &3285793247934937874
 MonoBehaviour:
   m_ObjectHideFlags: 0

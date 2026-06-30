@@ -69,6 +69,12 @@ public class UnitAnimator : MonoBehaviour
             holyBurstAction.OnStartShooting += holyBurstAction_OnStartShooting;
         }
 
+        if (TryGetComponent<WindBlastAction>(out var windBlastAction))
+        {
+            // IceOrbAction과 같은 시전 모션을 재사용 — 동일한 트리거(isIceOrb)를 쏜다.
+            windBlastAction.OnWindBlastStarted += (s, e) => unitAnimator.SetTrigger("isIceOrb");
+        }
+
         if (TryGetComponent<PersistentAOEAction>(out var persistentAOEAction))
         {
             persistentAOEAction.OnCastStarted += PersistentAOEAction_OnCastStarted;

@@ -20,6 +20,7 @@ public class SkillUnlockManager : MonoBehaviour
         Speed,
         Defense,
         Token,
+        ManaRegen,
     }
 
     /// <summary>스킬 선택 UI에 넘겨줄 선택지 하나.</summary>
@@ -142,6 +143,9 @@ public class SkillUnlockManager : MonoBehaviour
             case StatBoostType.Token:
                 SkillEnhancementTokenManager.Instance.AddTokens(1);
                 break;
+            case StatBoostType.ManaRegen:
+                option.targetUnit?.GetManaSystem()?.AddBonusRegen(1);
+                break;
         }
     }
 
@@ -216,7 +220,18 @@ public class SkillUnlockManager : MonoBehaviour
     /// </summary>
     private SkillUnlockOption BuildRandomStatBoostOption(string unitClassId, Unit unit)
     {
-        StatBoostType type = (StatBoostType)UnityEngine.Random.Range(0, 4);
+        // 마나 시스템이 없는 유닛(예: 마나를 안 쓰는 직업)에게는 ManaRegen 후보를 제외한다.
+        List<StatBoostType> candidates = new List<StatBoostType>
+        {
+            StatBoostType.Attack,
+            StatBoostType.Speed,
+            StatBoostType.Defense,
+            StatBoostType.Token,
+        };
+        if (unit.GetManaSystem() != null)
+            candidates.Add(StatBoostType.ManaRegen);
+
+        StatBoostType type = candidates[UnityEngine.Random.Range(0, candidates.Count)];
 
         string name, desc;
         switch (type)
@@ -232,6 +247,10 @@ public class SkillUnlockManager : MonoBehaviour
             case StatBoostType.Defense:
                 name = "방어력 증가";
                 desc = "방어력이 영구히 1 증가한다.";
+                break;
+            case StatBoostType.ManaRegen:
+                name = "마나 재생 증가";
+                desc = "턴마다 회복하는 마나가 영구히 1 증가한다.";
                 break;
             default:
                 name = "스킬 강화 토큰 획득";
