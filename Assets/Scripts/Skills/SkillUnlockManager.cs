@@ -132,13 +132,13 @@ public class SkillUnlockManager : MonoBehaviour
         switch (option.statBoostType)
         {
             case StatBoostType.Attack:
-                option.targetUnit?.AddPermanentAttackPower(1);
+                option.targetUnit?.AddPermanentAttackPower(5);
                 break;
             case StatBoostType.Speed:
-                option.targetUnit?.AddPermanentSpeed(1f);
+                option.targetUnit?.AddPermanentSpeed(2f);
                 break;
             case StatBoostType.Defense:
-                option.targetUnit?.AddPermanentDefensePower(1);
+                option.targetUnit?.AddPermanentDefensePower(5);
                 break;
             case StatBoostType.Token:
                 SkillEnhancementTokenManager.Instance.AddTokens(1);
@@ -238,15 +238,15 @@ public class SkillUnlockManager : MonoBehaviour
         {
             case StatBoostType.Attack:
                 name = "공격력 증가";
-                desc = "공격력이 영구히 1 증가한다.";
+                desc = "공격력이 영구히 5 증가한다.";
                 break;
             case StatBoostType.Speed:
                 name = "속도 증가";
-                desc = "속도가 영구히 1 증가한다.";
+                desc = "속도가 영구히 2 증가한다.";
                 break;
             case StatBoostType.Defense:
                 name = "방어력 증가";
-                desc = "방어력이 영구히 1 증가한다.";
+                desc = "방어력이 영구히 5 증가한다.";
                 break;
             case StatBoostType.ManaRegen:
                 name = "마나 재생 증가";

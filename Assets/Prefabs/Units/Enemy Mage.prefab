@@ -559,7 +559,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: attackPower
-      value: 30
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: skillConfig

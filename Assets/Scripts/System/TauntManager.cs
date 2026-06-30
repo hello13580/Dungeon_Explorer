@@ -28,6 +28,7 @@ public class TauntManager : MonoBehaviour
     {
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
         StageManager.OnStageLoadingStarted += StageManager_OnStageLoadingStarted;
+        Unit.OnAnyUnitDead += Unit_OnAnyUnitDead;
     }
 
     private void OnDestroy()
@@ -35,6 +36,17 @@ public class TauntManager : MonoBehaviour
         if (TurnSystem.Instance != null)
             TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
         StageManager.OnStageLoadingStarted -= StageManager_OnStageLoadingStarted;
+        Unit.OnAnyUnitDead -= Unit_OnAnyUnitDead;
+    }
+
+    // [버그 수정] 아군이 죽으면 Destroy가 아니라 SetActive(false)만 되므로(부활 가능하게 하기 위함),
+    // tauntedUnit 레퍼런스는 유니티의 == null 체크로 걸러지지 않는다 (Destroy된 객체만 그렇게 됨).
+    // 그래서 도발 대상이 죽어도 TauntManager가 계속 유효한 도발로 착각해서, 적들이 죽은 아군의
+    // 마지막 위치로 계속 유도되는 버그가 있었다. 사망 이벤트를 직접 구독해서 즉시 해제한다.
+    private void Unit_OnAnyUnitDead(object sender, EventArgs e)
+    {
+        if (sender is Unit deadUnit && deadUnit == tauntedUnit)
+            ClearTaunt();
     }
 
     // 스테이지 전환 시 도발 상태를 해제한다

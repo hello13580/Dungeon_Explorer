@@ -128,6 +128,11 @@ public class Unit : MonoBehaviour
 		float num = (float)(size - 1) * cellSize * 0.5f;
 		Vector3 worldPosition = LevelGrid.Instance.GetWorldPosition(savedPosition);
 		transform.position = new Vector3(worldPosition.x + num, transform.position.y, worldPosition.z + num);
+		// [버그 수정] RegisterForNewStage()가 SetActive(true) 직후 같은 프레임에 호출되면,
+		// 유니티가 이 유닛의 첫 활성화에 대해 지연시켰던 Start()를 그 뒤에 실행시켜
+		// 같은 칸에 두 번 등록되는 문제가 있었다(GridObject.AddUnit이 단순 List.Add라 중복 허용).
+		// 등록 전 먼저 제거해서 중복이 생기지 않도록 한다(없으면 RemoveUnit은 조용히 무시됨).
+		LevelGrid.Instance.RemoveUnitAtGridPosition(savedPosition, this);
 		LevelGrid.Instance.AddUnitAtGridPosition(savedPosition, this);
 		TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
 		healthSystem.OnUnitDeath += HealthSystem_OnUnitDeath;
@@ -149,7 +154,8 @@ public class Unit : MonoBehaviour
 		transform.position = new Vector3(worldPos.x + offset, spawnPosition.y, worldPos.z + offset);
 		savedPosition = newGridPos;
 
-		// LevelGrid에 등록
+		// LevelGrid에 등록 (중복 방지를 위해 먼저 제거 후 추가 — Start() 위 주석 참고)
+		LevelGrid.Instance.RemoveUnitAtGridPosition(savedPosition, this);
 		LevelGrid.Instance.AddUnitAtGridPosition(savedPosition, this);
 
 		// TurnSystem 이벤트 중복 구독 방지 후 재구독

@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37e63fb8a0bd6b943afcfbad386944a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GrenadeProjectile
-  damage: 20
+  damage: 35
   hitForce: 1000
   grenadeExplodeVFXPrefab: {fileID: 1551601706292589308, guid: 16a412fa6be40fa48a1ea93a97d00a18, type: 3}
   trailRenderer: {fileID: 5718861160759027633}

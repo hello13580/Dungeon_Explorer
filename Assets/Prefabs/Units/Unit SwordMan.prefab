@@ -241,6 +241,10 @@ PrefabInstance:
       value: Warrior
       objectReference: {fileID: 0}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: attackPower
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: skillConfig
       value: 
       objectReference: {fileID: 11400000, guid: 5e774e89a2872f245a12b6f7c666f4c3, type: 2}
@@ -346,7 +350,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6281880740096184127, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: maxMoveDistance
-      value: 6
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6988814540745093479, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_IsActive
@@ -495,7 +499,7 @@ MonoBehaviour:
   jobPointCost: 0
   requiredJobClass: 0
   aiPriorityBonus: 0
-  barrierAmount: 30
+  barrierAmount: 35
   barrierDuration: 5
 --- !u!114 &5390978927517487483
 MonoBehaviour:

@@ -438,6 +438,10 @@ PrefabInstance:
       value: Cleric
       objectReference: {fileID: 0}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: attackPower
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: skillConfig
       value: 
       objectReference: {fileID: 11400000, guid: 6cb803e8af4a5d24d9fbbc3415f3ba5e, type: 2}
