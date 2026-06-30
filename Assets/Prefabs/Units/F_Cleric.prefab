@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 3420512385138785671}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.572, z: 0.768}
+  m_LocalPosition: {x: 0, y: 1.572, z: 0.878}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -469,6 +469,10 @@ PrefabInstance:
       propertyPath: unitAnimator
       value: 
       objectReference: {fileID: 8234408710390179531}
+    - target: {fileID: 7364901892537136982, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: maxHealth
+      value: 250
+      objectReference: {fileID: 0}
     - target: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_Name
       value: F_Cleric
@@ -509,6 +513,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2967303920937980213}
+    - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -2857898837055903457}
+    - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7225607481331310480}
   m_SourcePrefab: {fileID: 100100000, guid: 31ff398b13221204abf58d215dd04293, type: 3}
 --- !u!1 &3042818206337043987 stripped
 GameObject:
@@ -591,7 +601,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3042818206337043987}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4595b7af94489564aabd9b58bb520ab2, type: 3}
   m_Name: 
@@ -732,6 +742,68 @@ MonoBehaviour:
   lineColor: {r: 0.956295, g: 1, b: 0, a: 0.85}
   lineMaterial: {fileID: 0}
   heightOffset: 0.05
+--- !u!114 &-2857898837055903457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3042818206337043987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d51232d988fd9f4e839566f346961ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LightOrbAction
+  actionName: "\uBE5B\uC758 \uC77C\uACA9"
+  actionCost: 1
+  manaCost: 0
+  jobPointCost: 0
+  requiredJobClass: 0
+  aiPriorityBonus: 0
+  maxRange: 7
+  obstacleLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  shootPointTransform: {fileID: 4086070362036521838}
+  damage: 20
+  slowValue: 0.3
+  slowDuration: 2
+  iceOrbPrefab: {fileID: 82123728905266663, guid: 6505324869023a24e8961a8ebc3659e2, type: 3}
+  castVFXPrefab: {fileID: 6382894885670788809, guid: 19945ca5062e8224dba6714a59e017a5, type: 3}
+  castVFXHideDelay: 1.5
+--- !u!114 &7225607481331310480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3042818206337043987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01d372f1f1d36c54892b3f336a151ad1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HolyBurstAction
+  actionName: "\uC2E0\uC131 \uD3ED\uBC1C"
+  actionCost: 0
+  manaCost: 0
+  jobPointCost: 0
+  requiredJobClass: 0
+  aiPriorityBonus: 0
+  maxRange: 7
+  burstRadius: 1
+  obstacleLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  shootPointTransform: {fileID: 4086070362036521838}
+  damage: 18
+  barrierAmount: 30
+  barrierDuration: 5
+  impactVFXPrefab: {fileID: 4737006685481212167, guid: 27d0772081832e34ea7b0825443c1645, type: 3}
+  impactVFXOffset: {x: 0, y: 1, z: 0}
+  impactVFXLifetime: 3
+  castVFXPrefab: {fileID: 6382894885670788809, guid: 19945ca5062e8224dba6714a59e017a5, type: 3}
+  castVFXSpawnPoint: {fileID: 4086070362036521838}
+  castVFXHideDelay: 1.5
 --- !u!4 &5514658485211722722 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1213345925212744562, guid: 31ff398b13221204abf58d215dd04293, type: 3}

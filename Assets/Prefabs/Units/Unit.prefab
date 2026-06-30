@@ -1048,6 +1048,7 @@ MonoBehaviour:
   manaCost: 0
   jobPointCost: 0
   requiredJobClass: 0
+  aiPriorityBonus: 0
   maxMoveDistance: 5
   moveSpeed: 4
   rotateSpeed: 20
@@ -1135,7 +1136,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8531198773615253123}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ffae0b56544bf81449bdfa5f88f5efef, type: 3}
   m_Name: 
@@ -1145,6 +1146,7 @@ MonoBehaviour:
   manaCost: 0
   jobPointCost: 0
   requiredJobClass: 0
+  aiPriorityBonus: 0
   maxRange: 0
   obstacleLayerMask:
     serializedVersion: 2

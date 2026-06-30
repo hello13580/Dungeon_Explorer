@@ -57,9 +57,26 @@ public class UnitAnimator : MonoBehaviour
             iceOrbAction.OnStartShooting += iceOrbAction_OnStartShooting;
         }
 
+        if (TryGetComponent<LightOrbAction>(out var lightOrbAction))
+        {
+            // IceOrbAction과 같은 시전 모션·애니메이션 이벤트를 재사용 — 동일한 트리거(isIceOrb)를 쏜다.
+            lightOrbAction.OnStartShooting += lightOrbAction_OnStartShooting;
+        }
+
+        if (TryGetComponent<HolyBurstAction>(out var holyBurstAction))
+        {
+            // LightOrbAction과 같은 시전 모션·애니메이션 이벤트를 재사용 — 동일한 트리거(isIceOrb)를 쏜다.
+            holyBurstAction.OnStartShooting += holyBurstAction_OnStartShooting;
+        }
+
         if (TryGetComponent<PersistentAOEAction>(out var persistentAOEAction))
         {
             persistentAOEAction.OnCastStarted += PersistentAOEAction_OnCastStarted;
+        }
+
+        if (TryGetComponent<BlizzardAction>(out var blizzardAction))
+        {
+            blizzardAction.OnCastStarted += BlizzardAction_OnCastStarted;
         }
 
         if (TryGetComponent<TeleportAction>(out var teleportAction))
@@ -117,6 +134,36 @@ public class UnitAnimator : MonoBehaviour
             action.ShootOrb();
     }
 
+    private void lightOrbAction_OnStartShooting(object sender, LightOrbAction.OnShootEventArgs e)
+    {
+        unitAnimator.SetTrigger("isIceOrb");
+    }
+
+    /// <summary>
+    /// 애니메이션 이벤트에서 직접 호출. 이 시점에 빛의 구체가 발사됨.
+    /// FireIceOrb와 같은 애니메이션 이벤트(타이밍)를 공유한다.
+    /// </summary>
+    public void FireLightOrb()
+    {
+        if (TryGetComponent<LightOrbAction>(out var action))
+            action.ShootOrb();
+    }
+
+    private void holyBurstAction_OnStartShooting(object sender, HolyBurstAction.OnShootEventArgs e)
+    {
+        unitAnimator.SetTrigger("isIceOrb");
+    }
+
+    /// <summary>
+    /// 애니메이션 이벤트에서 직접 호출. 이 시점에 신성 폭발 구체가 발사됨.
+    /// FireIceOrb와 같은 애니메이션 이벤트(타이밍)를 공유한다.
+    /// </summary>
+    public void FireHolyBurst()
+    {
+        if (TryGetComponent<HolyBurstAction>(out var action))
+            action.ShootOrb();
+    }
+
     private void TeleportAction_OnTeleportCompleted(object sender, GridPosition e)
     {
         unitAnimator.SetTrigger("isTeleport");
@@ -134,6 +181,20 @@ public class UnitAnimator : MonoBehaviour
     {
         if (TryGetComponent<PersistentAOEAction>(out var action))
             action.SpawnZoneFromAnimation();
+    }
+
+    private void BlizzardAction_OnCastStarted(object sender, EventArgs e)
+    {
+        unitAnimator.SetTrigger("isBlizzard");
+    }
+
+    /// <summary>
+    /// 애니메이션 이벤트에서 직접 호출. 이 시점에 눈보라 효과가 발동됨.
+    /// </summary>
+    public void SpawnBlizzard()
+    {
+        if (TryGetComponent<BlizzardAction>(out var action))
+            action.SpawnBlizzardFromAnimation();
     }
 
     private void BarrierAction_OnBarrier(object sender, BarrierAction.OnBarrierEventArgs e)

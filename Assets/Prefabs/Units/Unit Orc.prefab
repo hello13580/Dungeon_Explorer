@@ -203,8 +203,13 @@ PrefabInstance:
       value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: maxActionPoint
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: enemyDescription
-      value: "\uC2A4\uC2A4\uB85C\uB97C \uAC15\uD654\uC2DC\uD0A4\uB294"
+      value: "\uC2A4\uC2A4\uB85C\uB97C \uB05D\uC5C6\uC774 \uAC15\uD654\uC2DC\uD0A4\uB294
+        \uC624\uD06C \uC804\uC0AC\uC785\uB2C8\uB2E4 "
       objectReference: {fileID: 0}
     - target: {fileID: 2383374090818007313, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_IsActive
@@ -314,6 +319,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7364901892537136982, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: maxHealth
+      value: 200
+      objectReference: {fileID: 0}
     - target: {fileID: 7971065863894727130, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -382,7 +391,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeAction
   actionName: 
-  actionCost: 5
+  actionCost: 1
   manaCost: 0
   jobPointCost: 0
   requiredJobClass: 0

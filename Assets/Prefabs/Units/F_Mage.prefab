@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 3420512385138785671}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.572, z: 0.768}
+  m_LocalPosition: {x: 0, y: 1.572, z: 0.59}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -673,6 +673,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5454886897658924754, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 278515026146484350, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: jobClass
       value: 4
@@ -737,6 +741,10 @@ PrefabInstance:
       propertyPath: ShootPointTransform
       value: 
       objectReference: {fileID: 4086070362036521838}
+    - target: {fileID: 3205401662026989563, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: baseRegenPerTurn
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 4801007853815582824, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: originalRootBone
       value: 
@@ -753,6 +761,10 @@ PrefabInstance:
       propertyPath: unitAnimator
       value: 
       objectReference: {fileID: 6995826067929490789}
+    - target: {fileID: 7364901892537136982, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: maxHealth
+      value: 200
+      objectReference: {fileID: 0}
     - target: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_Name
       value: F_Mage
@@ -793,6 +805,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2967303920937980213}
+    - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1096189560809306391}
   m_SourcePrefab: {fileID: 100100000, guid: 31ff398b13221204abf58d215dd04293, type: 3}
 --- !u!1 &3042818206337043987 stripped
 GameObject:
@@ -862,15 +877,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PersistentAOEAction
   actionName: "\uC791\uC5F4 \uC9C0\uB300"
-  actionCost: 0
-  manaCost: 0
+  actionCost: 1
+  manaCost: 20
   jobPointCost: 0
   requiredJobClass: 0
   aiPriorityBonus: 0
   maxRange: 7
   zoneRadius: 1
-  initialBurnStacks: 3
-  tickBurnStacks: 2
+  initialBurnStacks: 4
+  tickBurnStacks: 4
   duration: 5
   damageZonePrefab: {fileID: 170574552943811040, guid: 5a2bdfdfce731304fb3273064eb3d837, type: 3}
   obstacleLayerMask:
@@ -892,8 +907,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c8fad9ae961c424ebbcb23c5b2b5323, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IceOrbAction
-  actionName: "\uB0C9\uAE30 "
-  actionCost: 0
+  actionName: "\uBE59\uACB0\uD0C4"
+  actionCost: 1
   manaCost: 0
   jobPointCost: 0
   requiredJobClass: 0
@@ -903,7 +918,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   shootPointTransform: {fileID: 4086070362036521838}
-  damage: 20
+  damage: 18
   slowValue: 0.3
   slowDuration: 2
   iceOrbPrefab: {fileID: 8932628691767139803, guid: 1a948aa2dfcad594f984f7b0cb25a2e6, type: 3}
@@ -1035,6 +1050,45 @@ MonoBehaviour:
   lineColor: {r: 0.956295, g: 1, b: 0, a: 0.85}
   lineMaterial: {fileID: 0}
   heightOffset: 0.05
+--- !u!114 &1096189560809306391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3042818206337043987}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97c5c0d343267ce4191db35e379ba871, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlizzardAction
+  actionName: "\uB208\uBCF4\uB77C"
+  actionCost: 1
+  manaCost: 40
+  jobPointCost: 0
+  requiredJobClass: 0
+  aiPriorityBonus: 0
+  maxRange: 7
+  blizzardRadius: 2
+  initialDamage: 10
+  tickDamage: 10
+  duration: 5
+  slowValue: 0.5
+  slowDuration: 3
+  obstacleLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  targetingYAxis: 0.5
+  zonePrefab: {fileID: 0}
+  impactVFXPrefab: {fileID: 2151534343677383834, guid: b37028d0b58bbb4469fa985dd27948ce, type: 3}
+  impactVFXOffset: {x: -1.5, y: 5, z: -1.5}
+  castVFXPrefab: {fileID: 8151899671444209830, guid: 9dc9943551767cd4ea9f79554a0ba074, type: 3}
+  castVFXSpawnPoint: {fileID: 4086070362036521838}
+  castVFXLifetime: 1.5
+  outlineWidth: 0.08
+  outlineColor: {r: 0.4, g: 0.8, b: 1, a: 0.9}
+  outlineMaterial: {fileID: 0}
+  outlineHeightOffset: 0.1
 --- !u!4 &5514658485211722722 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1213345925212744562, guid: 31ff398b13221204abf58d215dd04293, type: 3}

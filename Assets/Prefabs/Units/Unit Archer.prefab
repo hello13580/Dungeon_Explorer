@@ -408,6 +408,10 @@ PrefabInstance:
       propertyPath: unitAnimator
       value: 
       objectReference: {fileID: 3768778077213943451}
+    - target: {fileID: 7364901892537136982, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: maxHealth
+      value: 200
+      objectReference: {fileID: 0}
     - target: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_Name
       value: Unit Archer
@@ -467,7 +471,7 @@ MonoBehaviour:
   jobPointCost: 0
   requiredJobClass: 0
   aiPriorityBonus: 0
-  maxShootDistance: 15
+  maxShootDistance: 12
   shootDamage: 20
   ArrowProjectilePrefab: {fileID: 8288394526744401144, guid: 5227d29478847f44faf93cfb0450f0a2, type: 3}
   shootPointTransform: {fileID: 4486312566150377040}
@@ -514,7 +518,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5ef11a7b069ecc498cfbfef7d53852d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowEffectAction
-  actionName: "\uC900\uBE44\uB41C \uD654\uC0B4"
+  actionName: "\uC791\uC804 \uBC14\uAFB8\uAE30"
   actionCost: 1
   manaCost: 10
   jobPointCost: 0
@@ -565,7 +569,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4e1b58a8d3d27f46a5abb765eee240f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StealthAction
-  actionName: "\uC740\uC2E0"
+  actionName: "\uC740\uC2E0\uC220"
   actionCost: 1
   manaCost: 20
   jobPointCost: 0
@@ -586,7 +590,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76eecee8269837c46907005cb89c43cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RapidFireAction
-  actionName: "\uC18D\uC0AC "
+  actionName: "\uC5F0\uBC1C \uC0AC\uACA9"
   actionCost: 1
   manaCost: 30
   jobPointCost: 0
