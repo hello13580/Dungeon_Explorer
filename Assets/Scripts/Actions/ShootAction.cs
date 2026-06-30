@@ -6,6 +6,7 @@ using UnityEngine;
 public class ShootAction : BaseAction
 {
     protected override string DefaultActionName() => "사격";
+    public override ActionCategory GetActionCategory() => ActionCategory.Attack;
     private enum State
     {
         Aiming,

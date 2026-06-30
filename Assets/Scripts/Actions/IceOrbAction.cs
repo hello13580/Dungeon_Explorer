@@ -6,6 +6,7 @@ using UnityEngine;
 public class IceOrbAction : BaseAction
 {
     protected override string DefaultActionName() => "얼음 구슬";
+    public override ActionCategory GetActionCategory() => ActionCategory.Attack;
     private enum State { Aiming, Shooting, Cooloff }
 
     public class OnShootEventArgs : EventArgs

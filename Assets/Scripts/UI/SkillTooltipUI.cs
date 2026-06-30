@@ -58,7 +58,9 @@ public class SkillTooltipUI : MonoBehaviour
         if (descriptionText != null)
         {
             string desc = action.GetDescription();
-            descriptionText.text = string.IsNullOrEmpty(desc) ? "설명 없음" : desc;
+            string body = string.IsNullOrEmpty(desc) ? "설명 없음" : desc;
+            string category = action.GetActionCategory() == ActionCategory.Attack ? "공격" : "전술";
+            descriptionText.text = $"{category} - {body}";
         }
 
         RefreshCostIcons(action);

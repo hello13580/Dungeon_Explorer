@@ -5,16 +5,16 @@ using UnityEngine;
 
 /// <summary>
 /// 다음 화살에 특수 효과를 장착하는 액션.
-/// 사용하면 ActionSelectionUI를 통해 독/취약/약화 중 하나를 선택한다.
+/// 사용하면 ActionSelectionUI를 통해 브로드헤드 화살촉/취약/약화 중 하나를 선택한다.
 /// 선택 후 BowAction이 적중할 때 한 번만 효과를 적용하고 소진된다.
 /// </summary>
 public class ArrowEffectAction : BaseAction
 {
     protected override string DefaultActionName() => "화살 효과";
-    public enum ArrowEffectType { None, Poison, Vulnerable, Blind }
+    public enum ArrowEffectType { None, Broadhead, Vulnerable, Blind }
 
-    [Header("독 바르기")]
-    [SerializeField] private int poisonStacks = 3;         // 중독 초기 수치 (매 턴 1씩 감소)
+    [Header("브로드헤드 화살촉")]
+    [SerializeField] private float broadheadDamageMultiplier = 1.5f; // 다음 화살 피해 배율
 
     [Header("급소 사격 (취약)")]
     [SerializeField] private float vulnerableValue = 0.3f; // 받는 피해 증가 비율
@@ -43,8 +43,8 @@ public class ArrowEffectAction : BaseAction
         var options = new List<ActionSelectionUI.OptionData>
         {
             new ActionSelectionUI.OptionData(
-                "독 바르기",
-                $"적중한 적에게 중독을 {poisonStacks} 부여한다."
+                "브로드헤드 화살촉",
+                $"다음 화살의 피해를 {broadheadDamageMultiplier:0.#}배로 증가시킨다."
             ),
             new ActionSelectionUI.OptionData(
                 "급소 사격",
@@ -65,7 +65,7 @@ public class ArrowEffectAction : BaseAction
     {
         pendingEffect = index switch
         {
-            0 => ArrowEffectType.Poison,
+            0 => ArrowEffectType.Broadhead,
             1 => ArrowEffectType.Vulnerable,
             2 => ArrowEffectType.Blind,
             _ => ArrowEffectType.None,
@@ -79,7 +79,19 @@ public class ArrowEffectAction : BaseAction
         ActionComplete();
     }
 
-    /// <summary>BowAction 적중 시 호출. 장착된 효과를 대상에게 적용하고 소진한다.</summary>
+    /// <summary>
+    /// BowAction이 피해를 계산하기 전에 호출. 브로드헤드 화살촉이 장착되어 있으면
+    /// 배율을 반환하고 소진한다. 장착되어 있지 않으면 1배를 반환하고 아무 것도 소진하지 않는다
+    /// (다른 효과는 ApplyEffectToTarget에서 그대로 처리됨).
+    /// </summary>
+    public float ConsumeDamageMultiplier()
+    {
+        if (pendingEffect != ArrowEffectType.Broadhead) return 1f;
+        pendingEffect = ArrowEffectType.None; // 소진
+        return broadheadDamageMultiplier;
+    }
+
+    /// <summary>BowAction 적중 시 호출. 장착된 상태이상 효과를 대상에게 적용하고 소진한다.</summary>
     public void ApplyEffectToTarget(Unit target)
     {
         if (pendingEffect == ArrowEffectType.None) return;
@@ -89,12 +101,6 @@ public class ArrowEffectAction : BaseAction
 
         switch (pendingEffect)
         {
-            case ArrowEffectType.Poison:
-                ses.AddEffect(new StatusEffect(
-                    StatusEffectType.Poison, poisonStacks, poisonStacks,
-                    "중독", StackingMode.AddValue));
-                break;
-
             case ArrowEffectType.Vulnerable:
                 ses.AddEffect(new StatusEffect(
                     StatusEffectType.DamageAmplify, vulnerableValue, vulnerableDuration,

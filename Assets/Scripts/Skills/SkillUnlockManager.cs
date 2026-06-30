@@ -13,12 +13,25 @@ public class SkillUnlockManager : MonoBehaviour
 
     [SerializeField] private int optionsPerClass = 3; // 직업당 보여줄 선택지 수
 
+    /// <summary>영구 스탯/토큰 보상 종류.</summary>
+    public enum StatBoostType
+    {
+        Attack,
+        Speed,
+        Defense,
+        Token,
+    }
+
     /// <summary>스킬 선택 UI에 넘겨줄 선택지 하나.</summary>
     public class SkillUnlockOption
     {
         public SkillDefinition skillDef;
         public string unitClassId;
         public Unit targetUnit;
+
+        /// <summary>true면 스킬 습득이 아니라 영구 스탯 증가/토큰 보상이다.</summary>
+        public bool isStatBoost;
+        public StatBoostType statBoostType;
     }
 
     /// <summary>직업 보상 차례가 시작될 때 발생. 해당 직업의 선택지 목록을 전달한다.</summary>
@@ -94,15 +107,42 @@ public class SkillUnlockManager : MonoBehaviour
         ShowNextOption();
     }
 
-    /// <summary>확정 버튼 클릭 시 호출. 스킬을 습득하지만 패널은 닫지 않는다.</summary>
+    /// <summary>확정 버튼 클릭 시 호출. 스킬을 습득하거나 스탯 보상을 적용한다. 패널은 닫지 않는다.</summary>
     public void ConfirmUnlock(SkillUnlockOption option)
     {
-        if (option == null || option.skillDef == null) return;
+        if (option == null) return;
+
+        if (option.isStatBoost)
+        {
+            ApplyStatBoost(option);
+            return;
+        }
+
+        if (option.skillDef == null) return;
 
         PartySkillData.Instance.LearnSkill(option.unitClassId, option.skillDef.actionTypeName);
 
         if (option.targetUnit != null)
             option.targetUnit.UnlockSkillByTypeName(option.skillDef.actionTypeName);
+    }
+
+    private void ApplyStatBoost(SkillUnlockOption option)
+    {
+        switch (option.statBoostType)
+        {
+            case StatBoostType.Attack:
+                option.targetUnit?.AddPermanentAttackPower(1);
+                break;
+            case StatBoostType.Speed:
+                option.targetUnit?.AddPermanentSpeed(1f);
+                break;
+            case StatBoostType.Defense:
+                option.targetUnit?.AddPermanentDefensePower(1);
+                break;
+            case StatBoostType.Token:
+                SkillEnhancementTokenManager.Instance.AddTokens(1);
+                break;
+        }
     }
 
     /// <summary>
@@ -144,11 +184,12 @@ public class SkillUnlockManager : MonoBehaviour
             // 배울 스킬이 없으면 이 직업은 보상 큐에 넣지 않는다
             if (unlearnedSkills.Count == 0) continue;
 
-            // 미습득 스킬을 섞어서 최대 optionsPerClass개 선택
+            // 선택지 중 하나는 항상 영구 스탯/토큰 보상으로 고정 배정하고,
+            // 나머지(최대 optionsPerClass - 1개)는 미습득 스킬로 채운다.
             Shuffle(unlearnedSkills);
             List<SkillUnlockOption> classOptions = new List<SkillUnlockOption>();
-            int count = Mathf.Min(optionsPerClass, unlearnedSkills.Count);
-            for (int i = 0; i < count; i++)
+            int skillSlotCount = Mathf.Min(optionsPerClass - 1, unlearnedSkills.Count);
+            for (int i = 0; i < skillSlotCount; i++)
             {
                 classOptions.Add(new SkillUnlockOption
                 {
@@ -157,15 +198,67 @@ public class SkillUnlockManager : MonoBehaviour
                     targetUnit  = unit
                 });
             }
+            classOptions.Add(BuildRandomStatBoostOption(config.unitClassId, unit));
+
+            // 스탯 보상 슬롯이 항상 마지막에 있지 않도록 섞는다
+            Shuffle(classOptions);
+
             result.Add(classOptions);
         }
 
         return result;
     }
 
+    /// <summary>
+    /// 공격력/속도/방어력/스킬 강화 토큰 중 하나를 무작위로 골라 스탯 보상 선택지를 만든다.
+    /// skillDef는 표시용으로 즉석에서 만든 SkillDefinition이며, actionTypeName은 비워둔다
+    /// (실제 스킬이 아니므로 PartySkillData에 등록되지 않는다).
+    /// </summary>
+    private SkillUnlockOption BuildRandomStatBoostOption(string unitClassId, Unit unit)
+    {
+        StatBoostType type = (StatBoostType)UnityEngine.Random.Range(0, 4);
+
+        string name, desc;
+        switch (type)
+        {
+            case StatBoostType.Attack:
+                name = "공격력 증가";
+                desc = "공격력이 영구히 1 증가한다.";
+                break;
+            case StatBoostType.Speed:
+                name = "속도 증가";
+                desc = "속도가 영구히 1 증가한다.";
+                break;
+            case StatBoostType.Defense:
+                name = "방어력 증가";
+                desc = "방어력이 영구히 1 증가한다.";
+                break;
+            default:
+                name = "스킬 강화 토큰 획득";
+                desc = "스킬 강화 토큰을 1개 획득한다.";
+                break;
+        }
+
+        SkillDefinition displayDef = ScriptableObject.CreateInstance<SkillDefinition>();
+        displayDef.skillName = name;
+        displayDef.description = desc;
+        // 실제 액션이 아니므로 빈 문자열로 둔다 (null이면 FindActionType의 Assembly.GetType(null)이 예외를 던짐)
+        displayDef.actionTypeName = "";
+
+        return new SkillUnlockOption
+        {
+            skillDef    = displayDef,
+            unitClassId = unitClassId,
+            targetUnit  = unit,
+            isStatBoost = true,
+            statBoostType = type,
+        };
+    }
+
     /// <summary>어셈블리 전체에서 typeName에 해당하는 Type을 찾는다.</summary>
     private static System.Type FindActionType(string typeName)
     {
+        if (string.IsNullOrEmpty(typeName)) return null;
         foreach (System.Reflection.Assembly assembly in System.AppDomain.CurrentDomain.GetAssemblies())
         {
             System.Type type = assembly.GetType(typeName);

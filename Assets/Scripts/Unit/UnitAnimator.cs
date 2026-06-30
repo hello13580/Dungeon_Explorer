@@ -25,6 +25,12 @@ public class UnitAnimator : MonoBehaviour
         {
             bowAction.OnStartDrawing += BowAction_OnStartShooting;
         }
+
+        if (TryGetComponent<PiercingArrowAction>(out var piercingArrowAction))
+        {
+            // BowAction과 같은 활쏘기 모션을 그대로 재사용 — 동일한 트리거(isDrawing)를 쏜다.
+            piercingArrowAction.OnStartDrawing += (s, e) => unitAnimator.SetTrigger("isDrawing");
+        }
         if (TryGetComponent<MeleeAction>(out var meleeAction))
 		{
 			meleeAction.OnSwordActionStarted += MeleeAction_OnSwordActionStarted;
@@ -73,6 +79,26 @@ public class UnitAnimator : MonoBehaviour
             leapAction.OnLeapStarted  += (s, e) => unitAnimator.SetTrigger("JumpStart");
             leapAction.OnLeapLanding  += (s, e) => unitAnimator.SetTrigger("JumpEnd");
         }
+
+        if (TryGetComponent<SelfAttackBuffAction>(out var selfAttackBuffAction))
+        {
+            selfAttackBuffAction.OnSelfBuffStarted += SelfAttackBuffAction_OnSelfBuffStarted;
+        }
+
+        if (TryGetComponent<SelfAttackStackBuffAction>(out var selfAttackStackBuffAction))
+        {
+            selfAttackStackBuffAction.OnSelfBuffStackStarted += SelfAttackStackBuffAction_OnSelfBuffStackStarted;
+        }
+    }
+
+    private void SelfAttackBuffAction_OnSelfBuffStarted(object sender, EventArgs e)
+    {
+        unitAnimator.SetTrigger("isSelfBuff");
+    }
+
+    private void SelfAttackStackBuffAction_OnSelfBuffStackStarted(object sender, EventArgs e)
+    {
+        unitAnimator.SetTrigger("isSelfBuffStack");
     }
 
     private IceOrbAction iceOrbAction;

@@ -6,6 +6,7 @@ using UnityEngine;
 public class AOEAction : BaseAction
 {
     protected override string DefaultActionName() => "수류탄";
+    public override ActionCategory GetActionCategory() => ActionCategory.Attack;
     private enum State { Aiming, Throwing }
 
     public event EventHandler OnAOEActionStarted;

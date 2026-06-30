@@ -6,6 +6,7 @@ using UnityEngine;
 public class BowAction : BaseAction
 {
     protected override string DefaultActionName() => "활 공격";
+    public override ActionCategory GetActionCategory() => ActionCategory.Attack;
     private enum State
     {
         Aiming,
@@ -30,6 +31,9 @@ public class BowAction : BaseAction
     private Unit targetUnit;
     private float rotateSpeed = 10f;
     private bool arrowShot = false;
+    // BowAction과 PiercingArrowAction이 같은 활쏘기 애니메이션·이벤트를 공유하므로,
+    // 실제로 이 액션이 발사 대기 중일 때만 ShootArrow() 호출에 반응하도록 구분한다.
+    private bool awaitingArrowRelease = false;
 
     // 유효 타겟 목록 캐시 — 매 UpdateGridVisual마다 레이캐스트를 다시 쏘는 비용을 줄임
     private List<GridPosition> cachedValidGridPositionList;
@@ -70,6 +74,7 @@ public class BowAction : BaseAction
         }
 
         arrowShot = false;
+        awaitingArrowRelease = true;
         OnStartDrawing?.Invoke(this, new OnShootEventArgs { targetUnit = targetUnit, shootingUnit = unit });
         ArrowInBow.gameObject.SetActive(true);
         OnAnyShooting?.Invoke(this, new OnShootEventArgs { targetUnit = targetUnit, shootingUnit = unit });
@@ -212,6 +217,10 @@ public class BowAction : BaseAction
 
     public void ShootArrow()
     {
+        // 다른 액션(PiercingArrowAction 등)이 같은 애니메이션 이벤트를 공유해서 호출한 경우 무시
+        if (!awaitingArrowRelease) return;
+        awaitingArrowRelease = false;
+
         if (targetUnit == null) return;
 
         Transform arrowTransform = Instantiate(ArrowProjectilePrefab, shootPointTransform.position, Quaternion.identity);
@@ -243,10 +252,14 @@ public class BowAction : BaseAction
         Vector3 hitDir = (e.hitPosition - transform.position).normalized;
         targetUnit.GetHitReaction().SetHitDirection(hitDir);
         targetUnit.GetHitReaction().SetHitForce(e.hitForce);
-        targetUnit.Damage(unit.CalculateDamage(shootDamage));
 
-        // 장착된 화살 효과가 있으면 적용하고 소진한다
+        // 브로드헤드 화살촉이 장착되어 있으면 피해 계산 전에 배율을 소진해 반영한다
         ArrowEffectAction arrowEffect = unit.GetAction<ArrowEffectAction>();
+        float damageMultiplier = arrowEffect != null ? arrowEffect.ConsumeDamageMultiplier() : 1f;
+        int finalDamage = Mathf.RoundToInt(unit.CalculateDamage(shootDamage) * damageMultiplier);
+        targetUnit.Damage(finalDamage);
+
+        // 장착된 나머지 효과(취약/약화)가 있으면 적용하고 소진한다
         if (arrowEffect != null && arrowEffect.HasPendingEffect())
             arrowEffect.ApplyEffectToTarget(targetUnit);
     }

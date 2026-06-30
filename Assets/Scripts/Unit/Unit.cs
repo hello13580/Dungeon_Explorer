@@ -364,6 +364,24 @@ public class Unit : MonoBehaviour
 	/// <summary>방어막 스킬의 고정 수치에 더해지는 방어력 스탯.</summary>
 	public int GetDefensePower() => defensePower;
 
+	// ── 영구 스탯 보상 (스킬 보상 화면의 스탯 증가 선택지에서 호출) ──────────────
+
+	/// <summary>공격력을 영구히 증가시킨다.</summary>
+	public void AddPermanentAttackPower(int amount) => attackPower += amount;
+
+	/// <summary>방어력을 영구히 증가시킨다.</summary>
+	public void AddPermanentDefensePower(int amount) => defensePower += amount;
+
+	/// <summary>
+	/// 속도를 영구히 증가시킨다. initialSpeed(턴마다 회복되는 기준값)와
+	/// currentSpeed(현재 행동 게이지 증가량) 둘 다 올려야 즉시 효과가 반영된다.
+	/// </summary>
+	public void AddPermanentSpeed(float amount)
+	{
+		initialSpeed += amount;
+		currentSpeed += amount;
+	}
+
 	private void TurnSystem_OnTurnChanged(object sender, EventArgs empty)
 	{
 		if (TurnSystem.Instance.GetTurnUnit() == this)

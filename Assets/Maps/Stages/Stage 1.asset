@@ -24,6 +24,12 @@ MonoBehaviour:
   enemySpawnInfos:
   - unitPrefab: {fileID: 7294091289576193561, guid: f42b8bef44b7f6b45a199fd5b806c144, type: 3}
     spawnPointIndex: 0
-  - unitPrefab: {fileID: 6080288289000896006, guid: efb43229574632d4991c3c219de420f7, type: 3}
+  - unitPrefab: {fileID: 7294091289576193561, guid: f42b8bef44b7f6b45a199fd5b806c144, type: 3}
     spawnPointIndex: 1
+  - unitPrefab: {fileID: 6080288289000896006, guid: efb43229574632d4991c3c219de420f7, type: 3}
+    spawnPointIndex: 2
+  - unitPrefab: {fileID: 6080288289000896006, guid: efb43229574632d4991c3c219de420f7, type: 3}
+    spawnPointIndex: 3
+  - unitPrefab: {fileID: 6080288289000896006, guid: efb43229574632d4991c3c219de420f7, type: 3}
+    spawnPointIndex: 4
   playerSpawnInfos: []

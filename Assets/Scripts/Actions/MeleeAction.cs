@@ -6,6 +6,7 @@ using UnityEngine;
 public class MeleeAction : BaseAction
 {
     protected override string DefaultActionName() => "근접 공격";
+    public override ActionCategory GetActionCategory() => ActionCategory.Attack;
 	private enum State
 	{
 		Aiming,

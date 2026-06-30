@@ -176,7 +176,19 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 278515026146484350, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: jobClass
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 824317938774298299, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1040527253068630008, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1083295451396311091, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -220,6 +232,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1432405575631177337, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1530180869234286455, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: unitName
       value: Warrior
@@ -232,7 +248,23 @@ PrefabInstance:
       propertyPath: maxActionPoint
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 2383374090818007313, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2452699894393773731, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2457059149345196608, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2515051250729034015, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2550381519306367109, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -248,11 +280,23 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3205401662026989563, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: baseRegenPerTurn
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 3410202215308030086, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3684559895275931546, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3861810990722280766, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3923874669555046219, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -268,7 +312,19 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5009673836563313612, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5107092432488616923, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5539406945224170274, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5769921809255776873, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -279,6 +335,18 @@ PrefabInstance:
     - target: {fileID: 6988814540745093479, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7102083976136416045, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7320338190276012164, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8358018469200764359, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_Name
@@ -328,6 +396,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7876850637185599193}
+    - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6283480739303459421}
     - targetCorrespondingSourceObject: {fileID: 7478389241422733539, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4048200313592570681}
@@ -352,11 +423,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a2fe95f482a2194eab12208e93d833a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeAction
-  actionName: 
-  actionCost: 0
+  actionName: "\uBCA0\uAE30"
+  actionCost: 1
   manaCost: 0
   jobPointCost: 0
   requiredJobClass: 0
+  aiPriorityBonus: 0
   maxRange: 1
   damage: 20
   hitForce: 500
@@ -381,6 +453,7 @@ MonoBehaviour:
   manaCost: 1
   jobPointCost: 0
   requiredJobClass: 0
+  aiPriorityBonus: 0
   tauntRange: 5
   tauntDuration: 2
   tauntDelay: 0.3
@@ -396,11 +469,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 097dd49f85ab6364f95fb44e06e1b6fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DefenseAction
-  actionName: 
+  actionName: "\uB9C9\uAE30"
   actionCost: 1
   manaCost: 10
   jobPointCost: 0
   requiredJobClass: 0
+  aiPriorityBonus: 0
   barrierAmount: 30
   barrierDuration: 5
 --- !u!114 &5390978927517487483
@@ -415,13 +489,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d76c3416fee1f26439a746dd6708fed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DashAttackAction
-  actionName: 
-  actionCost: 0
-  manaCost: 0
+  actionName: "\uB3CC\uC9C4 \uBCA0\uAE30"
+  actionCost: 1
+  manaCost: 20
   jobPointCost: 0
   requiredJobClass: 0
+  aiPriorityBonus: 0
   dashRange: 6
-  damage: 15
+  damage: 20
   hitForce: 600
   moveSpeed: 12
 --- !u!114 &-8365129192744788836
@@ -441,6 +516,7 @@ MonoBehaviour:
   manaCost: 20
   jobPointCost: 0
   requiredJobClass: 0
+  aiPriorityBonus: 0
   auraRange: 3
   auraDuration: 5
   attackBonus: 10
@@ -587,6 +663,7 @@ MonoBehaviour:
   manaCost: 0
   jobPointCost: 1
   requiredJobClass: 0
+  aiPriorityBonus: 0
   restoreActionPoints: 1
   restoreMovement: 1
 --- !u!114 &5491698710431730677
@@ -603,9 +680,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WhirlwindAction
   actionName: "\uC18C\uC6A9\uB3CC\uC774"
   actionCost: 1
-  manaCost: 0
+  manaCost: 30
   jobPointCost: 0
   requiredJobClass: 0
+  aiPriorityBonus: 0
   damage: 8
   hitCount: 4
   hitForce: 300
@@ -635,11 +713,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2307d1d6a7bc7d4d86131ac5c06131f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LeapAction
-  actionName: 
-  actionCost: 0
-  manaCost: 0
+  actionName: "\uB3C4\uC57D"
+  actionCost: 1
+  manaCost: 10
   jobPointCost: 0
   requiredJobClass: 0
+  aiPriorityBonus: 0
   maxRange: 5
   jumpDuration: 0.6
   jumpArcHeight: 3
@@ -656,14 +735,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c14f54f409e7be4c9fa9e0f32ca7994, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SelfHealAction
-  actionName: 
+  actionName: "\uBD95\uB300 \uAC10\uAE30"
   actionCost: 0
-  manaCost: 0
-  jobPointCost: 0
-  requiredJobClass: 0
+  manaCost: 10
+  jobPointCost: 1
+  requiredJobClass: 2
+  aiPriorityBonus: 0
   healAmount: 30
   healthThreshold: 0.5
   castChance: 0.6
+  healEffectPrefab: {fileID: 7384585988940611137, guid: f8d1bf5b44866074eb6a3ab003e0b00a, type: 3}
+  effectLifetime: 2
+--- !u!114 &6283480739303459421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 416177728078544639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00081f6b51a680b418ccb388dea3914b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SelfAttackBuffAction
+  actionName: "\uBD84\uB178"
+  actionCost: 1
+  manaCost: 10
+  jobPointCost: 0
+  requiredJobClass: 0
+  aiPriorityBonus: 0
+  attackBonus: 10
+  duration: 10
+  animationDuration: 0.3
+  buffEffectPrefab: {fileID: 7812585453298936655, guid: 4da2216bfcbd6764c9dee834c281d43d, type: 3}
+  effectHeightOffset: 0.3
+  effectLifetime: 3
 --- !u!1 &1471256514613463199 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7478389241422733539, guid: 31ff398b13221204abf58d215dd04293, type: 3}

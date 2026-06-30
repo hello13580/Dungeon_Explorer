@@ -43,9 +43,10 @@ public class SkillCardUI : MonoBehaviour
 
         if (descriptionText != null)
         {
-            // 유닛에 이미 붙어있는 액션 컴포넌트에서 실제 스탯 반영 설명을 가져온다.
+            // 유닛에 이미 붙어있는 액션 컴포넌트에서 실제 스탯 반영 설명과 카테고리를 가져온다.
             // GetDescription()이 빈 문자열을 반환하면 ScriptableObject의 정적 설명을 사용한다.
             string dynamicDesc = "";
+            ActionCategory? category = null;
             if (option.targetUnit != null)
             {
                 System.Type actionType = FindActionType(option.skillDef.actionTypeName);
@@ -53,12 +54,16 @@ public class SkillCardUI : MonoBehaviour
                 {
                     BaseAction action = option.targetUnit.GetComponent(actionType) as BaseAction;
                     if (action != null)
+                    {
                         dynamicDesc = action.GetDescription();
+                        category = action.GetActionCategory();
+                    }
                 }
             }
-            descriptionText.text = string.IsNullOrEmpty(dynamicDesc)
-                ? option.skillDef.description
-                : dynamicDesc;
+            string body = string.IsNullOrEmpty(dynamicDesc) ? option.skillDef.description : dynamicDesc;
+            descriptionText.text = category.HasValue
+                ? $"{(category.Value == ActionCategory.Attack ? "공격" : "전술")} - {body}"
+                : body;
         }
 
         if (iconImage != null && option.skillDef.icon != null)
@@ -119,6 +124,7 @@ public class SkillCardUI : MonoBehaviour
 
     private static System.Type FindActionType(string typeName)
     {
+        if (string.IsNullOrEmpty(typeName)) return null;
         foreach (System.Reflection.Assembly assembly in System.AppDomain.CurrentDomain.GetAssemblies())
         {
             System.Type type = assembly.GetType(typeName);

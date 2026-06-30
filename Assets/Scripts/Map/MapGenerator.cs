@@ -131,22 +131,74 @@ public class MapGenerator : MonoBehaviour
         foreach (int nodeId in layerNodes[preBossLayer])
             types[nodeId] = MapNodeType.Rest;
 
-        // 중간 노드 타입 목록 셔플 후 배정 (보스 직전 레이어 제외)
-        var middleTypes = new List<MapNodeType>();
-        for (int i = 0; i < config.combatCount; i++) middleTypes.Add(MapNodeType.Combat);
-        for (int i = 0; i < config.eliteCount;  i++) middleTypes.Add(MapNodeType.Elite);
-        for (int i = 0; i < config.eventCount;  i++) middleTypes.Add(MapNodeType.Event);
-        for (int i = 0; i < config.shopCount;   i++) middleTypes.Add(MapNodeType.Shop);
-        for (int i = 0; i < config.restCount;   i++) middleTypes.Add(MapNodeType.Rest);
-        Shuffle(middleTypes);
+        // [버그 수정] 전투/엘리트를 레이어 풀 유무와 무관하게 전체에서 무작위 배정하던 방식 →
+        // 레이어별 스테이지 풀(LayerStageConfig)이 실제로 존재하는 레이어에만 그 타입을 배정한다.
+        // 수정 전: 레이어에 엘리트 스테이지가 0개인데도 Elite 타입이 배정되어
+        //          node.stageData가 null이 되고, 클릭 시 스테이지 로드 없이 다음으로 넘어가버렸다.
 
-        int typeIdx = 0;
+        // 보스 직전 레이어를 제외한 모든 미들 레이어 노드를 슬롯으로 모은다.
+        // 슬롯에는 어느 미들 레이어(0-based, layers 배열 인덱스와 동일)에 속하는지 함께 기록한다.
+        var slots = new List<(int nodeId, int middleLayer)>();
         for (int l = 1; l < layerNodes.Count - 1; l++)
         {
-            if (l == preBossLayer) continue; // 이미 휴식으로 고정됨
+            if (l == preBossLayer) continue;
+            int middleLayer = l - 1;
             foreach (int nodeId in layerNodes[l])
-                types[nodeId] = middleTypes[typeIdx++];
+                slots.Add((nodeId, middleLayer));
         }
+        Shuffle(slots);
+
+        bool LayerHasCombat(int ml) => ml >= 0 && config.layers != null && ml < config.layers.Length &&
+            config.layers[ml] != null && config.layers[ml].combatStages != null && config.layers[ml].combatStages.Length > 0;
+        bool LayerHasElite(int ml) => ml >= 0 && config.layers != null && ml < config.layers.Length &&
+            config.layers[ml] != null && config.layers[ml].eliteStages != null && config.layers[ml].eliteStages.Length > 0;
+
+        var assigned = new bool[totalNodes];
+        int remainingCombat = config.combatCount;
+        int remainingElite = config.eliteCount;
+
+        // 1) 전투 배정 — 전투 풀이 있는 레이어의 슬롯에만
+        foreach (var slot in slots)
+        {
+            if (remainingCombat <= 0) break;
+            if (assigned[slot.nodeId] || !LayerHasCombat(slot.middleLayer)) continue;
+            types[slot.nodeId] = MapNodeType.Combat;
+            assigned[slot.nodeId] = true;
+            remainingCombat--;
+        }
+
+        // 2) 엘리트 배정 — 엘리트 풀이 있는 레이어의 슬롯에만
+        foreach (var slot in slots)
+        {
+            if (remainingElite <= 0) break;
+            if (assigned[slot.nodeId] || !LayerHasElite(slot.middleLayer)) continue;
+            types[slot.nodeId] = MapNodeType.Elite;
+            assigned[slot.nodeId] = true;
+            remainingElite--;
+        }
+
+        // 풀이 있는 레이어의 슬롯이 부족해 다 배정하지 못한 경우 — 이벤트로 대체하고 경고
+        if (remainingCombat > 0)
+            Debug.LogWarning($"[MapGenerator] 전투 스테이지 풀이 있는 레이어 슬롯이 부족해 {remainingCombat}개를 배정하지 못했습니다. 이벤트로 대체합니다.");
+        if (remainingElite > 0)
+            Debug.LogWarning($"[MapGenerator] 엘리트 스테이지 풀이 있는 레이어 슬롯이 부족해 {remainingElite}개를 배정하지 못했습니다. 이벤트로 대체합니다.");
+
+        // 3) 나머지(이벤트·상점·휴식 + 못 배정된 전투/엘리트분)를 남은 슬롯에 무작위 배정
+        var remainingTypes = new List<MapNodeType>();
+        for (int i = 0; i < config.eventCount; i++) remainingTypes.Add(MapNodeType.Event);
+        for (int i = 0; i < config.shopCount;  i++) remainingTypes.Add(MapNodeType.Shop);
+        for (int i = 0; i < config.restCount;  i++) remainingTypes.Add(MapNodeType.Rest);
+        for (int i = 0; i < remainingCombat + remainingElite; i++) remainingTypes.Add(MapNodeType.Event);
+        Shuffle(remainingTypes);
+
+        int idx = 0;
+        foreach (var slot in slots)
+        {
+            if (assigned[slot.nodeId]) continue;
+            types[slot.nodeId] = remainingTypes[idx++];
+            assigned[slot.nodeId] = true;
+        }
+
         return types;
     }
 

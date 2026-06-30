@@ -10,6 +10,7 @@ using UnityEngine;
 public class WindBlastAction : BaseAction
 {
     protected override string DefaultActionName() => "바람 폭발";
+    public override ActionCategory GetActionCategory() => ActionCategory.Attack;
     [Header("Range")]
     [SerializeField] private int coneRange = 6;        // 부채꼴 최대 거리 (칸)
     [SerializeField] private float coneAngle = 60f;    // 부채꼴 반각 (총 각도의 절반, 도)

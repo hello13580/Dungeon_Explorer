@@ -10,6 +10,7 @@ using UnityEngine;
 public class DashAttackAction : BaseAction
 {
     protected override string DefaultActionName() => "돌진 공격";
+    public override ActionCategory GetActionCategory() => ActionCategory.Attack;
     [Header("Range")]
     [SerializeField] private int dashRange = 6;       // 대상을 선택할 수 있는 최대 거리
 

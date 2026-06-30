@@ -6,7 +6,7 @@ using UnityEngine;
 /// 유닛에 적용된 상태이상들을 관리하는 컴포넌트.
 /// - 효과 추가/제거
 /// - 매 턴(해당 유닛의 턴 시작) 지속 시간 차감
-/// - 중독(Poison): 해당 유닛의 턴 종료 시 현재 중독 수치만큼 피해 → 수치 1 감소 → 0이 되면 해제
+/// - 화상(Burn): 해당 유닛의 턴 종료 시 현재 화상 수치만큼 피해 → 수치 1 감소 → 0이 되면 해제
 /// - 같은 종류의 효과는 StackingMode에 따라 중첩 처리
 /// </summary>
 public class StatusEffectSystem : MonoBehaviour
@@ -50,7 +50,7 @@ public class StatusEffectSystem : MonoBehaviour
         if (isTurnActive && TurnSystem.Instance.GetTurnUnit() != unit)
         {
             isTurnActive = false;
-            ApplyPoisonTick(unit);
+            ApplyBurnTick(unit);
         }
 
         if (TurnSystem.Instance.GetTurnUnit() != unit) return;
@@ -58,11 +58,11 @@ public class StatusEffectSystem : MonoBehaviour
         // ── 턴 시작 처리 ──
         isTurnActive = true;
 
-        // 중독은 수치 기반으로 자체 해제되므로 turnsRemaining 카운트다운에서 제외
+        // 화상은 수치 기반으로 자체 해제되므로 turnsRemaining 카운트다운에서 제외
         bool changed = false;
         for (int i = activeEffects.Count - 1; i >= 0; i--)
         {
-            if (activeEffects[i].type == StatusEffectType.Poison) continue;
+            if (activeEffects[i].type == StatusEffectType.Burn) continue;
 
             activeEffects[i].turnsRemaining--;
             if (activeEffects[i].turnsRemaining <= 0)
@@ -75,26 +75,26 @@ public class StatusEffectSystem : MonoBehaviour
     }
 
     /// <summary>
-    /// 이 유닛의 턴 종료 시 중독 틱 처리.
-    /// 현재 중독 수치만큼 피해를 주고, 수치를 1 감소시킨다.
-    /// 수치가 0 이하가 되면 중독 상태이상을 제거한다.
+    /// 이 유닛의 턴 종료 시 화상 틱 처리.
+    /// 현재 화상 수치만큼 피해를 주고, 수치를 1 감소시킨다.
+    /// 수치가 0 이하가 되면 화상 상태이상을 제거한다.
     /// </summary>
-    private void ApplyPoisonTick(Unit unit)
+    private void ApplyBurnTick(Unit unit)
     {
-        StatusEffect poison = activeEffects.Find(e => e.type == StatusEffectType.Poison);
-        if (poison == null) return;
+        StatusEffect burn = activeEffects.Find(e => e.type == StatusEffectType.Burn);
+        if (burn == null) return;
 
-        // 현재 중독 수치만큼 피해
-        int damage = Mathf.RoundToInt(poison.value);
+        // 현재 화상 수치만큼 피해
+        int damage = Mathf.RoundToInt(burn.value);
         if (damage > 0)
             unit.Damage(damage);
 
-        // 중독 수치 1 감소
-        poison.value -= 1f;
+        // 화상 수치 1 감소
+        burn.value -= 1f;
 
-        if (poison.value <= 0f)
+        if (burn.value <= 0f)
         {
-            activeEffects.Remove(poison);
+            activeEffects.Remove(burn);
             OnEffectsChanged?.Invoke(this, EventArgs.Empty);
         }
         else
@@ -173,8 +173,8 @@ public class StatusEffectSystem : MonoBehaviour
     /// <summary>속박 상태 여부. true면 이동 불가.</summary>
     public bool IsRooted() => HasEffect(StatusEffectType.Root);
 
-    /// <summary>현재 중독 수치. 0이면 중독 없음.</summary>
-    public int GetPoisonStacks() => Mathf.RoundToInt(GetTotalValue(StatusEffectType.Poison));
+    /// <summary>현재 화상 수치. 0이면 화상 없음.</summary>
+    public int GetBurnStacks() => Mathf.RoundToInt(GetTotalValue(StatusEffectType.Burn));
 
     public List<StatusEffect> GetActiveEffects() => activeEffects;
 }

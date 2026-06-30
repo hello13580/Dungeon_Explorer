@@ -3176,6 +3176,9 @@ MonoBehaviour:
   zoomSpeed: 1
   maxZoom: 30
   minZoom: 1
+  moveOnPlayerTurn: 1
+  springStrength: 90
+  springDamping: 18
 --- !u!1 &655884753
 GameObject:
   m_ObjectHideFlags: 0

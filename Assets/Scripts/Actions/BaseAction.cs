@@ -33,6 +33,16 @@ public abstract class BaseAction : MonoBehaviour
 	[SerializeField]
 	protected JobClass requiredJobClass = JobClass.None;
 
+	/// <summary>
+	/// 적 AI가 이 액션을 평가할 때 actionValue에 더해지는 보너스.
+	/// 같은 액션 스크립트라도 유닛마다 별도 컴포넌트 인스턴스이므로,
+	/// 이 값을 유닛별로 다르게 설정해 액션 우선순위를 유닛 특성에 맞게 조정할 수 있다.
+	/// 예: 오우거의 MeleeAction은 +50, 같은 오우거의 버프 액션은 -30 등.
+	/// </summary>
+	[SerializeField]
+	[Tooltip("적 AI 평가 시 이 액션의 actionValue에 더해지는 보너스. 유닛별로 다르게 설정 가능.")]
+	protected int aiPriorityBonus = 0;
+
 	public static event EventHandler OnAnyActionStarted;
 
 	public static event EventHandler OnAnyActionEnded;
@@ -54,6 +64,12 @@ public abstract class BaseAction : MonoBehaviour
 	}
 
 	public virtual string GetActionName() => actionName;
+
+	/// <summary>
+	/// 액션 분류. 대미지를 입히는 액션은 Attack을 override하고, 그 외(이동·버프·힐·유틸리티 등)는
+	/// 기본값인 Tactical을 그대로 사용한다.
+	/// </summary>
+	public virtual ActionCategory GetActionCategory() => ActionCategory.Tactical;
 
 	public abstract void TakeAction(GridPosition gridPosition, Action onActionComplete);
 
@@ -153,6 +169,9 @@ public abstract class BaseAction : MonoBehaviour
 			EnemyAIAction enemyAIAction = GetEnemyAIAction(validActionGridPosition);
 			if (enemyAIAction != null)
 			{
+				// 유닛별 AI 우선순위 보너스 적용 (인스펙터에서 액션별로 설정)
+				enemyAIAction.actionValue += aiPriorityBonus;
+
 				// 도발 중인 유닛이 있으면 그 위치를 타겟으로 하는 액션에 압도적인 보너스
 				if (TauntManager.Instance != null && TauntManager.Instance.HasActiveTaunt())
 				{

@@ -143,6 +143,7 @@ MonoBehaviour:
   manaCost: 0
   jobPointCost: 0
   requiredJobClass: 0
+  aiPriorityBonus: 0
   maxRange: 1
   damage: 10
   hitForce: 500
@@ -167,9 +168,12 @@ MonoBehaviour:
   manaCost: 20
   jobPointCost: 0
   requiredJobClass: 0
+  aiPriorityBonus: 0
   healAmount: 30
   healthThreshold: 0.5
   castChance: 0.6
+  healEffectPrefab: {fileID: 7384585988940611137, guid: f8d1bf5b44866074eb6a3ab003e0b00a, type: 3}
+  effectLifetime: 2
 --- !u!1001 &8884847381674950239
 PrefabInstance:
   m_ObjectHideFlags: 0

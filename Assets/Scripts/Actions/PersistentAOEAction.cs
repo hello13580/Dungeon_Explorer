@@ -5,18 +5,20 @@ using UnityEngine;
 
 /// <summary>
 /// 범위를 지정해 장판을 설치하는 액션.
-/// 설치 즉시 피해를 주고 이후 매 턴 시작마다 범위 내 적에게 틱 피해를 준다.
+/// 설치 즉시 화상을 부여하고 이후 매 턴 시작마다 범위 내 적에게 화상을 추가로 부여한다.
+/// 직접 피해를 주지 않고 화상 상태이상을 통해서만 피해가 들어간다.
 /// </summary>
 public class PersistentAOEAction : BaseAction
 {
     protected override string DefaultActionName() => "지속 범위";
+    public override ActionCategory GetActionCategory() => ActionCategory.Attack;
     [Header("Range")]
     [SerializeField] private int maxRange = 7;
     [SerializeField] private int zoneRadius = 1;          // 장판 반경 (칸)
 
-    [Header("Damage")]
-    [SerializeField] private int initialDamage = 15;      // 배치 즉시 피해
-    [SerializeField] private int tickDamage = 8;          // 매 턴 틱 피해
+    [Header("화상")]
+    [SerializeField] private int initialBurnStacks = 3;   // 배치 즉시 부여하는 화상 수치
+    [SerializeField] private int tickBurnStacks = 2;      // 매 턴 시작 시 추가로 부여하는 화상 수치
 
     [Header("Duration")]
     [SerializeField] private int duration = 3;            // 지속 턴 수
@@ -96,7 +98,7 @@ public class PersistentAOEAction : BaseAction
     }    public override string GetDescription()
     {
         int atk = unit.GetAttackPower();
-        return $"지정한 위치에 화염 장판을 설치한다. 설치 시 {initialDamage + atk} 피해, 매 턴 시작 시 {tickDamage + atk} 피해. ({duration}턴 지속, 반경 {zoneRadius}칸)";
+        return $"지정한 위치에 화염 장판을 설치한다. 설치 시 화상 {initialBurnStacks + atk}, 매 턴 시작 시 화상 {tickBurnStacks + atk} 추가 부여. ({duration}턴 지속, 반경 {zoneRadius}칸)";
     }
 
 
@@ -240,8 +242,8 @@ public class PersistentAOEAction : BaseAction
             zone = tempObj.AddComponent<DamageZone>();
         }
 
-        // 시전자 공격력을 Setup에 넘겨 장판 피해에 반영
-        zone.Setup(zonePositions, initialDamage, tickDamage, duration, unit.GetTeamType(), unit.GetAttackPower());
+        // 시전자 공격력을 Setup에 넘겨 화상 수치에 반영
+        zone.Setup(zonePositions, initialBurnStacks, tickBurnStacks, duration, unit.GetTeamType(), unit.GetAttackPower());
     }
 
     // ─── AI ──────────────────────────────────────────────────────────

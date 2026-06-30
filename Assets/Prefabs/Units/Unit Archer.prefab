@@ -137,6 +137,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 2398662422830635630}
   m_SourcePrefab: {fileID: 100100000, guid: 88be40e00122a904a99bfbb0b21b6eaf, type: 3}
+--- !u!4 &1625857155831741009 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -5675346609551496468, guid: 88be40e00122a904a99bfbb0b21b6eaf, type: 3}
+  m_PrefabInstance: {fileID: 2858987706457231549}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2273520581632889665 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4044233322314007548, guid: 88be40e00122a904a99bfbb0b21b6eaf, type: 3}
@@ -199,6 +204,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 278515026146484350, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: jobClass
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 1213345925212744562, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -284,6 +293,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5475714709096467997}
+    - targetCorrespondingSourceObject: {fileID: 8531198773615253123, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8097075763412014202}
   m_SourcePrefab: {fileID: 100100000, guid: 31ff398b13221204abf58d215dd04293, type: 3}
 --- !u!4 &4558920607288889001 stripped
 Transform:
@@ -307,10 +319,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 659678ae845819c4e933d064126c14ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BowAction
+  actionName: 
   actionCost: 1
   manaCost: 10
   jobPointCost: 0
   requiredJobClass: 0
+  aiPriorityBonus: 0
   maxShootDistance: 15
   shootDamage: 50
   ArrowProjectilePrefab: {fileID: 8288394526744401144, guid: 5227d29478847f44faf93cfb0450f0a2, type: 3}
@@ -331,10 +345,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1c7009ed56861c48a876502f23ee894, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AOEAction
+  actionName: 
   actionCost: 0
   manaCost: 10
   jobPointCost: 0
   requiredJobClass: 0
+  aiPriorityBonus: 0
   grenadeProjectilePrefab: {fileID: 627709876669706913, guid: e63eaddc83a11894e89299f2b5b19d92, type: 3}
   shootPointTransform: {fileID: 4486312566150377040}
   obstacleLayerMask:
@@ -356,12 +372,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5ef11a7b069ecc498cfbfef7d53852d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArrowEffectAction
+  actionName: 
   actionCost: 0
   manaCost: 0
   jobPointCost: 0
   requiredJobClass: 0
+  aiPriorityBonus: 0
   poisonStacks: 3
   vulnerableValue: 0.25
   vulnerableDuration: 2
   blindValue: 0.25
   blindDuration: 2
+--- !u!114 &8097075763412014202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6482590293035414360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1dd769a33ce99b4bba31f56f90b1bc8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PiercingArrowAction
+  actionName: "\uAD00\uD1B5 \uC0AC\uACA9"
+  actionCost: 1
+  manaCost: 20
+  jobPointCost: 0
+  requiredJobClass: 0
+  aiPriorityBonus: 0
+  maxShootDistance: 20
+  shootDamage: 25
+  hitForce: 800
+  lineAngleTolerance: 8
+  arrowProjectilePrefab: {fileID: 8288394526744401144, guid: 5adc1c634cde6f84487aaff57d0de065, type: 3}
+  shootPointTransform: {fileID: 4486312566150377040}
+  arrowInBow: {fileID: 1625857155831741009}
+  obstacleLayerMask:
+    serializedVersion: 2
+    m_Bits: 128

@@ -12,6 +12,7 @@ using UnityEngine;
 public class WhirlwindAction : BaseAction
 {
     protected override string DefaultActionName() => "회오리";
+    public override ActionCategory GetActionCategory() => ActionCategory.Attack;
     [Header("데미지")]
     [SerializeField] private int damage = 8;
     [SerializeField] private int hitCount = 4;

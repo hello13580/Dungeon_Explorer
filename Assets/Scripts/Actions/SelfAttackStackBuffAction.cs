@@ -15,7 +15,20 @@ public class SelfAttackStackBuffAction : BaseAction
     [SerializeField] private int duration = 3;
     [SerializeField] private int maxStacks = 5;
 
+    [Header("애니메이션")]
+    [Tooltip("애니메이션 재생 시간만큼 액션 완료를 지연시킨다.")]
+    [SerializeField] private float animationDuration = 0.3f;
+
+    [Header("이펙트")]
+    [SerializeField] private GameObject buffEffectPrefab;
+    [Tooltip("유닛 머리 위 기준 추가 높이 오프셋")]
+    [SerializeField] private float effectHeightOffset = 0.3f;
+    [SerializeField] private float effectLifetime = 2f;
+
     private int currentStacks = 0;
+
+    /// <summary>버프 적용 시점에 발생. UnitAnimator 등에서 구독해 트리거를 재생한다.</summary>
+    public event EventHandler OnSelfBuffStackStarted;
 
     protected override void Awake()
     {
@@ -36,8 +49,21 @@ public class SelfAttackStackBuffAction : BaseAction
     {
         currentStacks++;
         unit.GetComponent<AttackBuffSystem>()?.ApplyBuff(attackBonusPerStack, duration);
-        yield return new WaitForSeconds(0.3f);
+        OnSelfBuffStackStarted?.Invoke(this, EventArgs.Empty);
+        SpawnBuffEffect();
+        yield return new WaitForSeconds(animationDuration);
         ActionComplete();
+    }
+
+    private void SpawnBuffEffect()
+    {
+        if (buffEffectPrefab == null) return;
+
+        float headY = unit.GetCollider().bounds.max.y + effectHeightOffset;
+        Vector3 spawnPos = new Vector3(unit.GetWorldPosition().x, headY, unit.GetWorldPosition().z);
+
+        GameObject effect = Instantiate(buffEffectPrefab, spawnPos, Quaternion.identity);
+        Destroy(effect, effectLifetime);
     }
 
     public override List<GridPosition> GetValidActionGridPositionList()

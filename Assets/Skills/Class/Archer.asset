@@ -15,3 +15,4 @@ MonoBehaviour:
   unitClassId: Archer
   learnableSkills:
   - {fileID: 11400000, guid: 05668e50c1053e946b92b411d9a821aa, type: 2}
+  - {fileID: 11400000, guid: 696e5991aa03d364c8b6a4bc9d653f88, type: 2}

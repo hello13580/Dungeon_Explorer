@@ -20,10 +20,9 @@ MonoBehaviour:
   layers:
   - combatStages:
     - {fileID: 11400000, guid: 175b9b507a3c04549a21129c58a1f25c, type: 2}
-    eliteStages:
-    - {fileID: 11400000, guid: 27987960022a9b440af8b7d5781d4745, type: 2}
+    eliteStages: []
   - combatStages:
-    - {fileID: 11400000, guid: 175b9b507a3c04549a21129c58a1f25c, type: 2}
+    - {fileID: 11400000, guid: dd18a53c376c2e74d925237a3664ffb4, type: 2}
     eliteStages:
     - {fileID: 11400000, guid: 27987960022a9b440af8b7d5781d4745, type: 2}
   - combatStages:

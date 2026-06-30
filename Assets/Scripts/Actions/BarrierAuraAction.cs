@@ -23,7 +23,7 @@ public class BarrierAuraAction : BaseAction, IAuraAction
     private bool isAuraActive = false;
     private int turnsRemaining = 0;
 
-    // 턴 종료 감지용 플래그 — StatusEffectSystem의 Poison과 동일한 패턴
+    // 턴 종료 감지용 플래그 — StatusEffectSystem의 Burn과 동일한 패턴
     // 이 유닛의 턴이 시작되면 true, 다음 OnTurnChanged가 왔을 때 true이면 턴이 끝난 것
     private bool isTurnActive = false;
 

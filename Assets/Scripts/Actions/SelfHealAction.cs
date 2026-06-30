@@ -12,6 +12,10 @@ public class SelfHealAction : BaseAction
     [SerializeField] private float healthThreshold = 0.5f;  // 이 체력 % 이하일 때만 고려 (0~1)
     [SerializeField] private float castChance = 0.6f;       // 시전 확률 (0~1)
 
+    [Header("이펙트")]
+    [SerializeField] private GameObject healEffectPrefab;
+    [SerializeField] private float effectLifetime = 2f;
+
     public static event EventHandler<OnHealEventArgs> OnAnySelfHeal;
     public event EventHandler<OnHealEventArgs> OnSelfHeal;
 
@@ -44,10 +48,21 @@ public class SelfHealAction : BaseAction
         unit.Heal(healAmount);
         OnSelfHeal?.Invoke(this, new OnHealEventArgs { targetUnit = unit });
         OnAnySelfHeal?.Invoke(this, new OnHealEventArgs { targetUnit = unit });
+        SpawnHealEffect();
 
         yield return new WaitForSeconds(0.5f);
 
         ActionComplete();
+    }
+
+    private void SpawnHealEffect()
+    {
+        if (healEffectPrefab == null) return;
+
+        // 머리 위가 아니라 캐릭터 몸 중심(콜라이더 bounds center)에 겹치도록 스폰
+        Vector3 spawnPos = unit.GetCollider().bounds.center;
+        GameObject effect = Instantiate(healEffectPrefab, spawnPos, Quaternion.identity);
+        Destroy(effect, effectLifetime);
     }
 
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
