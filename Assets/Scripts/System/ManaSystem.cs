@@ -125,6 +125,13 @@ public class ManaSystem : MonoBehaviour
         OnManaChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    /// <summary>마나를 지정한 값으로 직접 설정한다. 0~maxMana 범위로 클램프.</summary>
+    public void SetMana(int amount)
+    {
+        currentMana = Mathf.Clamp(amount, 0, maxMana);
+        OnManaChanged?.Invoke(this, EventArgs.Empty);
+    }
+
     public int GetCurrentMana() => currentMana;
     public int GetMaxMana() => maxMana;
     public float GetManaNormalized() => (float)currentMana / maxMana;

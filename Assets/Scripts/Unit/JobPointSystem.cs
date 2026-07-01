@@ -49,6 +49,13 @@ public class JobPointSystem : MonoBehaviour
         return currentJobPoints >= cost;
     }
 
+    /// <summary>JP를 직접 추가한다. 최대치를 초과하지 않도록 클램프한다.</summary>
+    public void AddJobPoints(int amount)
+    {
+        currentJobPoints = Mathf.Min(currentJobPoints + amount, maxJobPoints);
+        OnJobPointsChanged?.Invoke(this, EventArgs.Empty);
+    }
+
     /// <summary>
     /// JP를 소모한다. 직업 불일치 또는 JP 부족이면 소모하지 않고 false를 반환한다.
     /// </summary>

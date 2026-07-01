@@ -201,7 +201,7 @@ public class UnitPanelUI : MonoBehaviour
     {
         // 마나 시스템이 없는 유닛은 재생력 텍스트도 숨긴다
         if (manaRegenText != null)
-            manaRegenText.text = manaSystem != null ? $"재생 : {manaSystem.GetTotalRegen()}" : "";
+            manaRegenText.text = manaSystem != null ? $"마나 재생 : {manaSystem.GetTotalRegen()}" : "";
 
         if (manaSystem == null) return;
         if (manaBarImage != null)

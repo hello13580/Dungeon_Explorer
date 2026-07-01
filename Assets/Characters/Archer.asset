@@ -15,5 +15,5 @@ MonoBehaviour:
   className: Archer
   description: "\uC6D0\uAC70\uB9AC\uC5D0\uC11C \uAC15\uB825\uD55C \uD55C\uBC1C\uB85C
     \uC801\uC744 \uACF5\uACA9\uD558\uB294 \uAD81\uC218 \uD074\uB798\uC2A4"
-  portrait: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  portrait: {fileID: 21300000, guid: 17c0034a14a660c40bbcd754ab81443a, type: 3}
   unitPrefab: {fileID: 6482590293035414360, guid: d62549445a4e15641b42d1b09bcc8666, type: 3}

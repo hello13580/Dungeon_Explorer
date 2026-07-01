@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Mage
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
   className: Mage
-  description: "\uAC15\uB825\uD55C \uB9C8\uBC95 \uACF5\uACA9\uC744 \uB2E4\uB8E8\uB294 \n\uB9C8\uBC95\uC0AC \uD074\uB798\uC2A4"
-  portrait: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  description: "\uAC15\uB825\uD55C \uB9C8\uBC95 \uACF5\uACA9\uC744 \uB2E4\uB8E8\uB294
+    \n\uB9C8\uBC95\uC0AC \uD074\uB798\uC2A4"
+  portrait: {fileID: 21300000, guid: 5466e503d06fe704e8fcf3302a983711, type: 3}
   unitPrefab: {fileID: 3042818206337043987, guid: 782fb2a40b286c04d9a10b82d5cc0815, type: 3}

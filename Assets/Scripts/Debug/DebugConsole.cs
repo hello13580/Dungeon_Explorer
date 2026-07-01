@@ -25,11 +25,9 @@ public class DebugConsole : MonoBehaviour
 
     private void Update()
     {
-        // ~ 키로 콘솔 열기/닫기
         if (Keyboard.current != null && Keyboard.current[Key.Backquote].wasPressedThisFrame)
             ToggleConsole();
 
-        // 콘솔이 열려있을 때 Enter로 커맨드 실행
         if (isOpen && Keyboard.current != null && Keyboard.current[Key.Enter].wasPressedThisFrame)
             SubmitCommand();
     }
@@ -39,7 +37,6 @@ public class DebugConsole : MonoBehaviour
         isOpen = !isOpen;
         if (panel != null) panel.SetActive(isOpen);
 
-        // 콘솔이 열려있는 동안 게임 입력을 차단해 캐릭터 이동·클릭 등이 발동되지 않게 한다
         if (InputManager.Instance != null)
             InputManager.Instance.SetInputEnabled(!isOpen);
 
@@ -57,14 +54,18 @@ public class DebugConsole : MonoBehaviour
         if (string.IsNullOrEmpty(input)) return;
 
         Log($"> {input}");
-        ExecuteCommand(input.ToLower());
+        ExecuteCommand(input);
 
         inputField.text = "";
         inputField.ActivateInputField();
     }
 
-    private void ExecuteCommand(string cmd)
+    private void ExecuteCommand(string raw)
     {
+        // 커맨드와 인자를 공백 기준으로 분리
+        string[] parts = raw.Trim().Split(' ');
+        string cmd = parts[0].ToLower();
+
         switch (cmd)
         {
             case "win":
@@ -74,19 +75,53 @@ public class DebugConsole : MonoBehaviour
 
             case "help":
                 Log("커맨드 목록:");
-                Log("  win / clear  — 현재 스테이지 즉시 클리어");
-                Log("  help         — 커맨드 목록 표시");
+                Log("  win / clear            — 현재 스테이지 즉시 클리어");
+                Log("  ap <값>                — 모든 아군 행동 포인트 추가");
+                Log("  hp <값>                — 모든 아군 체력 회복");
+                Log("  mana <값>              — 모든 아군 마나 설정");
+                Log("  jp <값>                — 모든 아군 직업 포인트 추가");
+                Log("  atk <값>               — 모든 아군 공격력 영구 증가");
+                Log("  def <값>               — 모든 아군 방어력 영구 증가");
+                Log("  manaregen <값>         — 모든 아군 마나 재생력 영구 증가");
+                Log("  help                   — 커맨드 목록 표시");
+                break;
+
+            case "ap":
+                CmdAddActionPoint(parts);
+                break;
+
+            case "hp":
+                CmdHeal(parts);
+                break;
+
+            case "mana":
+                CmdSetMana(parts);
+                break;
+
+            case "jp":
+                CmdAddJobPoint(parts);
+                break;
+
+            case "atk":
+                CmdAddAttack(parts);
+                break;
+
+            case "def":
+                CmdAddDefense(parts);
+                break;
+
+            case "manaregen":
+                CmdAddManaRegen(parts);
                 break;
 
             default:
-                Log($"알 수 없는 커맨드: {cmd}");
+                Log($"알 수 없는 커맨드: {cmd}  (help 입력시 목록 표시)");
                 break;
         }
     }
 
     // ── 커맨드 구현 ─────────────────────────────────────────────────────
 
-    /// <summary>모든 적 유닛을 즉시 제거해 스테이지 클리어를 트리거한다.</summary>
     private void CmdClearStage()
     {
         List<Unit> enemies = new List<Unit>(UnitManager.Instance.GetEnemyUnitList());
@@ -95,25 +130,106 @@ public class DebugConsole : MonoBehaviour
             Log("이미 적이 없습니다.");
             return;
         }
-
         foreach (Unit enemy in enemies)
         {
             HealthSystem hs = enemy.GetComponent<HealthSystem>();
-            if (hs != null)
-                hs.Damage(999999); // 즉사
+            if (hs != null) hs.Damage(999999);
         }
-
         Log($"적 {enemies.Count}명 제거 — 스테이지 클리어!");
     }
 
-    // ── 로그 출력 ────────────────────────────────────────────────────────
+    private void CmdAddActionPoint(string[] parts)
+    {
+        if (!TryParseInt(parts, out int val)) return;
+        foreach (Unit unit in UnitManager.Instance.GetFriendlyUnitList())
+            unit.RestoreActionPoints(val);
+        Log($"아군 전원 행동 포인트 +{val}");
+    }
+
+    private void CmdHeal(string[] parts)
+    {
+        if (!TryParseInt(parts, out int val)) return;
+        foreach (Unit unit in UnitManager.Instance.GetFriendlyUnitList())
+            unit.Heal(val);
+        Log($"아군 전원 체력 +{val}");
+    }
+
+    private void CmdSetMana(string[] parts)
+    {
+        if (!TryParseInt(parts, out int val)) return;
+        int count = 0;
+        foreach (Unit unit in UnitManager.Instance.GetFriendlyUnitList())
+        {
+            ManaSystem ms = unit.GetManaSystem();
+            if (ms == null) continue;
+            ms.SetMana(val);
+            count++;
+        }
+        Log($"마나 시스템 보유 아군 {count}명 마나 → {val}");
+    }
+
+    private void CmdAddJobPoint(string[] parts)
+    {
+        if (!TryParseInt(parts, out int val)) return;
+        int count = 0;
+        foreach (Unit unit in UnitManager.Instance.GetFriendlyUnitList())
+        {
+            JobPointSystem jps = unit.GetJobPointSystem();
+            if (jps == null) continue;
+            jps.AddJobPoints(val);
+            count++;
+        }
+        Log($"직업 포인트 보유 아군 {count}명에게 JP +{val}");
+    }
+
+    private void CmdAddAttack(string[] parts)
+    {
+        if (!TryParseInt(parts, out int val)) return;
+        foreach (Unit unit in UnitManager.Instance.GetFriendlyUnitList())
+            unit.AddPermanentAttackPower(val);
+        Log($"아군 전원 공격력 +{val}");
+    }
+
+    private void CmdAddDefense(string[] parts)
+    {
+        if (!TryParseInt(parts, out int val)) return;
+        foreach (Unit unit in UnitManager.Instance.GetFriendlyUnitList())
+            unit.AddPermanentDefensePower(val);
+        Log($"아군 전원 방어력 +{val}");
+    }
+
+    private void CmdAddManaRegen(string[] parts)
+    {
+        if (!TryParseInt(parts, out int val)) return;
+        int count = 0;
+        foreach (Unit unit in UnitManager.Instance.GetFriendlyUnitList())
+        {
+            ManaSystem ms = unit.GetManaSystem();
+            if (ms == null) continue;
+            ms.AddBonusRegen(val);
+            count++;
+        }
+        Log($"마나 시스템 보유 아군 {count}명에게 마나 재생력 +{val}");
+    }
+
+    // ── 유틸 ────────────────────────────────────────────────────────────
+
+    private bool TryParseInt(string[] parts, out int val)
+    {
+        if (parts.Length < 2 || !int.TryParse(parts[1], out val))
+        {
+            Log("숫자 인자가 필요합니다. 예: hp 50");
+            val = 0;
+            return false;
+        }
+        return true;
+    }
 
     private void Log(string message)
     {
         logLines.Add(message);
         if (logLines.Count > maxLogLines)
             logLines.RemoveAt(0);
-
         if (logText != null)
             logText.text = string.Join("\n", logLines);
     }

@@ -26,8 +26,11 @@ MonoBehaviour:
     eliteStages: []
   - combatStages:
     - {fileID: 11400000, guid: 7e47b90afaf3c83499f43ac8908dcfec, type: 2}
+    - {fileID: 11400000, guid: 629a61a1c720bbb4c8117cd236864e9c, type: 2}
+    - {fileID: 11400000, guid: b9950f9be65c2e24c8112aeadc14076a, type: 2}
     eliteStages:
     - {fileID: 11400000, guid: 27987960022a9b440af8b7d5781d4745, type: 2}
+    - {fileID: 11400000, guid: 6db16eac2c484684fa98581bdcdad988, type: 2}
   - combatStages:
     - {fileID: 11400000, guid: 629a61a1c720bbb4c8117cd236864e9c, type: 2}
     eliteStages:
