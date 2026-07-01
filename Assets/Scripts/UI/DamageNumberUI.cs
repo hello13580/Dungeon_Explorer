@@ -26,6 +26,23 @@ public class DamageNumberUI : MonoBehaviour
             healthSystem.OnDamageTaken += OnDamageTaken;
     }
 
+    private void OnEnable()
+    {
+        // [버그 수정] 유닛이 비활성화됐다가 다시 활성화될 때(부활 후 전투 입장 등)
+        // 이전에 Instantiate된 피해 숫자 텍스트 오브젝트를 전부 제거한다.
+        // 수정 전: 유닛이 피해를 받는 순간 AnimateRoutine 코루틴이 시작되는데,
+        //   마지막 피해 직후 SetActive(false)로 유닛이 비활성화되면 코루틴이 중단된 채
+        //   생성된 TextMeshPro 인스턴스가 자식 오브젝트로 남는다.
+        //   이후 부활해서 SetActive(true)가 호출되면 자식도 함께 활성화되어
+        //   이전 스테이지에서 받은 피해 숫자가 멈춰있는 채로 화면에 다시 나타났다.
+        if (numberText == null) return;
+        foreach (Transform child in transform)
+        {
+            if (child.gameObject != numberText.gameObject)
+                Destroy(child.gameObject);
+        }
+    }
+
     private void OnDestroy()
     {
         if (healthSystem != null)

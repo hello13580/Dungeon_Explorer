@@ -158,9 +158,17 @@ public class Unit : MonoBehaviour
 		LevelGrid.Instance.RemoveUnitAtGridPosition(savedPosition, this);
 		LevelGrid.Instance.AddUnitAtGridPosition(savedPosition, this);
 
-		// TurnSystem 이벤트 중복 구독 방지 후 재구독
+		// [버그 수정] 이벤트 중복 구독 방지 — 반드시 먼저 해제한 뒤 재구독한다.
+		// 수정 전: TurnSystem.OnTurnChanged는 이미 unsub → resub 처리가 돼 있었으나
+		//   healthSystem.OnUnitDeath는 그냥 += 만 했다.
+		//   유닛이 스테이지마다 RegisterForNewStage()를 호출하므로 N번째 스테이지에선
+		//   구독이 N회 누적된다. 부활한 유닛이 전투 중 사망하면 HealthSystem_OnUnitDeath가
+		//   여러 번 실행되어 OnAnyUnitDead가 중복 발생, TurnSystem이 NextTurn()을 두 번 호출,
+		//   두 개의 NextTurnRoutine 코루틴이 동시에 실행되면서 턴 시스템이 붕괴됐다.
 		TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
 		TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+		healthSystem.OnUnitDeath -= HealthSystem_OnUnitDeath;
+		healthSystem.OnUnitDeath += HealthSystem_OnUnitDeath;
 
 		// 마나 초기량으로 초기화
 		manaSystem?.ResetToInitialMana();

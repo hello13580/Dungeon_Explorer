@@ -134,6 +134,11 @@ public class TurnSystem : MonoBehaviour
 	{
 		if (sender is Unit unit && unit == currentTurnUnit)
 		{
+			// [버그 수정] currentTurnUnit을 먼저 null로 클리어한 뒤 NextTurn()을 호출한다.
+			// Unit.RegisterForNewStage()의 이벤트 중복 구독 버그가 수정됐으나,
+			// 다른 경로로 OnAnyUnitDead가 중복 발생하더라도 두 번째 호출에서
+			// unit == currentTurnUnit(null) 조건이 false가 되어 NextTurn()이 한 번만 실행된다.
+			currentTurnUnit = null;
 			NextTurn();
 		}
 	}
