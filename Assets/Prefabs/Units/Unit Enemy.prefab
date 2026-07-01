@@ -176,6 +176,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6281880740096184127, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: visionRange
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 6988814540745093479, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -251,10 +255,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a2fe95f482a2194eab12208e93d833a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeAction
+  actionName: 
   actionCost: 5
   manaCost: 0
   jobPointCost: 0
   requiredJobClass: 0
+  aiPriorityBonus: 0
   maxRange: 1
   damage: 10
   hitForce: 500

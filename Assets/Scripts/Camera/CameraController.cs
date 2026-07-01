@@ -84,10 +84,8 @@ public class CameraController : MonoBehaviour
     {
         if (!TurnSystem.Instance.IsPlayerTurn())
         {
-            // [버그 수정] 적 턴 시작 시 스프링을 즉시 취소한다.
-            //   플레이어 턴에 시작된 스프링이 완전히 감쇠되기 전에 적 턴이 시작되면,
-            //   잔여 velocity가 적 행동 중에도 카메라를 계속 밀어 화면이 흔들리는 버그가 있었다.
-            springActive = false;
+            // 적 턴 카메라 이동은 EnemyTurnManager.OnEnemyTurnRoutine()에서 처리한다.
+            // 여기서는 플레이어 턴에 남아있던 스프링 잔여 velocity만 초기화해 흔들림을 방지한다.
             springVelocity = Vector3.zero;
             return;
         }

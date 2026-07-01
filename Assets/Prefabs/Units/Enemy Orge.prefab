@@ -1057,7 +1057,7 @@ MonoBehaviour:
   rotateSpeed: 20
   approachRangeMin: 1
   approachRangeMax: 1
-  visionRange: 10
+  visionRange: 20
 --- !u!65 &5405260033335196679
 BoxCollider:
   m_ObjectHideFlags: 0

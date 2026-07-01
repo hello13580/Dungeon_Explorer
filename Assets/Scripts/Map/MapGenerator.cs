@@ -184,6 +184,7 @@ public class MapGenerator : MonoBehaviour
             Debug.LogWarning($"[MapGenerator] 엘리트 스테이지 풀이 있는 레이어 슬롯이 부족해 {remainingElite}개를 배정하지 못했습니다. 이벤트로 대체합니다.");
 
         // 3) 나머지(이벤트·상점·휴식 + 못 배정된 전투/엘리트분)를 남은 슬롯에 무작위 배정
+        // 단, 첫 번째 미들 레이어(middleLayer == 0)에는 이벤트·상점·휴식을 배정하지 않고 전투로 강제한다.
         var remainingTypes = new List<MapNodeType>();
         for (int i = 0; i < config.eventCount; i++) remainingTypes.Add(MapNodeType.Event);
         for (int i = 0; i < config.shopCount;  i++) remainingTypes.Add(MapNodeType.Shop);
@@ -195,6 +196,15 @@ public class MapGenerator : MonoBehaviour
         foreach (var slot in slots)
         {
             if (assigned[slot.nodeId]) continue;
+
+            // 첫 레이어는 전투 전용 — Event/Rest/Shop 배정 금지
+            if (slot.middleLayer == 0)
+            {
+                types[slot.nodeId] = MapNodeType.Combat;
+                assigned[slot.nodeId] = true;
+                continue;
+            }
+
             types[slot.nodeId] = remainingTypes[idx++];
             assigned[slot.nodeId] = true;
         }

@@ -307,6 +307,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6281880740096184127, guid: 31ff398b13221204abf58d215dd04293, type: 3}
+      propertyPath: visionRange
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 6841203341150570205, guid: 31ff398b13221204abf58d215dd04293, type: 3}
       propertyPath: unitAnimator
       value: 

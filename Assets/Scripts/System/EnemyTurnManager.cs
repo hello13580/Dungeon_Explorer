@@ -42,6 +42,11 @@ public class EnemyTurnManager : MonoBehaviour
 	private IEnumerator OnEnemyTurnRoutine()
 	{
 		state = State.Busy;
+
+		// 적 턴 시작 시 해당 유닛으로 카메라를 이동한다.
+		if (currentUnit != null && CameraController.Instance != null)
+			CameraController.Instance.MoveToPosition(currentUnit.GetWorldPosition());
+
 		yield return new WaitForSeconds(0.5f);
 		bool isActionTaking = true;
 		while (isActionTaking)
