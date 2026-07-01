@@ -81,9 +81,10 @@ public class EnemyTurnManager : MonoBehaviour
 		bool isActionTaking = true;
 		while (isActionTaking)
 		{
-			// 행동력이 0이면 AI 평가 자체를 건너뛰고 즉시 턴을 끝낸다.
-			// 평가/실행 도중 어딘가에서 멈추는 케이스에 대한 최종 안전장치.
-			if (currentUnit == null || currentUnit.GetCurrentActionPoint() <= 0)
+			// null 체크만 유지. AP가 0이어도 이동(0 코스트)이 남아있을 수 있으므로
+			// AP로 루프를 조기 종료하지 않는다.
+			// 실행 가능한 액션이 없으면 아래 else 블록에서 isActionTaking = false로 자연 종료된다.
+			if (currentUnit == null)
 			{
 				isActionTaking = false;
 				break;
