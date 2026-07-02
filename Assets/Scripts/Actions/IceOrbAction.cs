@@ -164,6 +164,10 @@ public class IceOrbAction : BaseAction
     /// <summary>애니메이션 이벤트에서 UnitAnimator.FireIceOrb()를 통해 호출됨.</summary>
     public void ShootOrb()
     {
+        // [버그 수정] WindBlast 등 isIceOrb 트리거를 재사용하는 스킬이 발동될 때
+        // FireIceOrb() 애니메이션 이벤트가 함께 호출되어 얼음탄이 오발되는 문제.
+        // 이 액션이 실제로 Shooting 상태일 때만 발사하도록 state 가드 추가.
+        if (state != State.Shooting) return;
         if (targetUnit == null) return;
 
         Vector3 spawnPos = shootPointTransform != null
