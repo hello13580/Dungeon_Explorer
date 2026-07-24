@@ -164,6 +164,8 @@ public class LightOrbAction : BaseAction
     /// <summary>애니메이션 이벤트에서 UnitAnimator.FireIceOrb()를 통해 호출됨.</summary>
     public void ShootOrb()
     {
+        // [버그 수정] isIceOrb 트리거를 재사용하는 스킬(WindBlast 등)이 FireLightOrb() 이벤트를 오발하는 문제 방지
+        if (state != State.Shooting) return;
         if (targetUnit == null) return;
 
         Vector3 spawnPos = shootPointTransform != null

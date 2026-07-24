@@ -260,6 +260,8 @@ public class HolyBurstAction : BaseAction
     /// <summary>애니메이션 이벤트에서 AnimationEventRelay.ShootIceOrb()를 통해 호출됨. 그 자리에서 즉시 터진다.</summary>
     public void ShootOrb()
     {
+        // [버그 수정] isIceOrb 트리거를 재사용하는 스킬(WindBlast 등)이 FireHolyBurst() 이벤트를 오발하는 문제 방지
+        if (state != State.Shooting) return;
         if (orbShot) return;
         orbShot = true;
 

@@ -23,6 +23,8 @@ public class MoveAction : BaseAction
     [SerializeField] private float visionRange = 10f;
 
     private float leftMoveDistance;
+    private bool hasMovedThisTurn = false; // AI가 이번 턴에 이미 이동했는지 여부
+    private HashSet<GridPosition> failedMovePositions = new HashSet<GridPosition>(); // 이번 턴 경로 없음 확인된 위치
     private List<Vector3> targetPosList;
     private List<bool> isLinkStep;
     private int currentPositionIndex;
@@ -73,6 +75,8 @@ public class MoveAction : BaseAction
     private void TurnSystem_OnTurnChanged(object sender, EventArgs empty)
     {
         if (unit == null) return;
+        hasMovedThisTurn = false;
+        failedMovePositions.Clear();
 
         float multiplier = 1f;
         StatusEffectSystem statusEffectSystem = unit.GetComponent<StatusEffectSystem>();
@@ -127,9 +131,16 @@ public class MoveAction : BaseAction
         // null을 SimplifyPath에 넘기면 NullReferenceException 발생하므로 여기서 처리
         if (path == null)
         {
+            // [버그 수정] 2x2 유닛이 flood fill에서 유효한 위치로 평가했지만 실제 A* 경로가 없는 경우:
+            // 이 위치를 실패 목록에 추가하고, hasMovedThisTurn은 세우지 않아 다음 최선 위치를 시도할 수 있게 한다.
+            failedMovePositions.Add(gridPosition);
             onMovingComplete?.Invoke();
             return;
         }
+
+        // [버그 수정] AI 루프에서 MoveAction이 반복 선택되는 무한루프 방지.
+        // 실제로 이동 가능한 경로가 확인된 후에만 플래그를 세운다.
+        hasMovedThisTurn = true;
         List<GridPosition> simplifiedPath = SimplifyPath(path);
 
         targetPosList = new List<Vector3>();
@@ -309,6 +320,7 @@ public class MoveAction : BaseAction
         cachedValidGridPositionList = validGridPositionList;
         cachedFromPosition = unitGridPosition;
         isCacheDirty = false;
+        if (unit.GetSize() > 1) Debug.Log($"[MoveAction:{unit.name}] 유효 이동 타일 수={validGridPositionList.Count}, leftMove={leftMoveDistance}, maxCost={maxCost}");
         return validGridPositionList;
     }
 
@@ -369,7 +381,10 @@ public class MoveAction : BaseAction
     //   이전의 N×M번보다 훨씬 가볍다). 경로가 없으면(층 분리 등) 직선 거리로 폴백한다.
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
     {
-        if (leftMoveDistance <= 0f) return null;
+        if (leftMoveDistance <= 0f) { if (unit.GetSize() > 1) Debug.Log($"[MoveAction:{unit.name}] null — leftMoveDistance<=0 ({leftMoveDistance})"); return null; }
+        if (gridPosition == unit.GetGridPosition()) return null;
+        if (hasMovedThisTurn) { if (unit.GetSize() > 1) Debug.Log($"[MoveAction:{unit.name}] null — hasMovedThisTurn=true"); return null; }
+        if (failedMovePositions.Contains(gridPosition)) return null;
 
         float cellSize = LevelGrid.Instance.GetCellSize();
         Vector3 fromWorld = LevelGrid.Instance.GetWorldPosition(gridPosition);

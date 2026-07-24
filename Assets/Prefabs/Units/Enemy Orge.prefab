@@ -971,7 +971,6 @@ GameObject:
   - component: {fileID: 7364901892537136982}
   - component: {fileID: 4346857445681205631}
   - component: {fileID: 4801007853815582824}
-  - component: {fileID: -5454886897658924754}
   - component: {fileID: 4920894320528578325}
   - component: {fileID: 3205401662026989563}
   - component: {fileID: 278515026146484350}
@@ -1132,28 +1131,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitRagdollSpawner
   ragdollPrefab: {fileID: 8840049495382940929, guid: 0b3e22eb36f07204faf77f3f1e6dd233, type: 3}
   originalRootBone: {fileID: 7429081916552760167}
---- !u!114 &-5454886897658924754
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8531198773615253123}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ffae0b56544bf81449bdfa5f88f5efef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InteractAction
-  actionName: 
-  actionCost: 0
-  manaCost: 0
-  jobPointCost: 0
-  requiredJobClass: 0
-  aiPriorityBonus: 0
-  maxRange: 0
-  obstacleLayerMask:
-    serializedVersion: 2
-    m_Bits: 128
 --- !u!114 &4920894320528578325
 MonoBehaviour:
   m_ObjectHideFlags: 0
