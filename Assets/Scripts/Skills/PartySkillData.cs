@@ -41,6 +41,13 @@ public class PartySkillData : MonoBehaviour
         return learnedSkills.TryGetValue(unitClassId, out var set) ? set : new HashSet<string>();
     }
 
+    /// <summary>
+    /// SaveSystem이 직렬화할 수 있도록 전체 습득 기록을 반환한다.
+    /// Dictionary를 직접 노출하므로 외부에서 수정하지 않도록 주의.
+    /// 읽기 전용이 필요하면 IReadOnlyDictionary로 변경할 것.
+    /// </summary>
+    public Dictionary<string, HashSet<string>> GetAllLearnedSkills() => learnedSkills;
+
     /// <summary>뉴 게임 시 호출해 모든 습득 기록을 초기화한다.</summary>
     public void ResetAll()
     {

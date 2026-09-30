@@ -22,6 +22,49 @@ public class MapGenerator : MonoBehaviour
 
     // ─── 공개 API ────────────────────────────────────────────────
 
+    /// <summary>SaveSystem이 ScriptableObject 검색에 사용할 수 있도록 설정 데이터를 노출한다.</summary>
+    public MapGenerationConfig GetConfig() => config;
+
+    /// <summary>
+    /// 세이브 복원 시 StageData ScriptableObject를 이름으로 찾아 반환한다.
+    /// MapGenerationConfig의 모든 스테이지 풀(전투·엘리트 레이어 전체, 보스)을 탐색한다.
+    /// 이름이 비어있으면 null 반환 (전투 노드가 아닌 경우 정상 동작).
+    /// </summary>
+    public StageData FindStageByName(string stageName)
+    {
+        if (string.IsNullOrEmpty(stageName)) return null;
+        // 보스 스테이지 확인
+        if (config.bossStage != null && config.bossStage.name == stageName) return config.bossStage;
+        // 레이어별 전투·엘리트 풀 탐색
+        if (config.layers != null)
+            foreach (LayerStageConfig layer in config.layers)
+            {
+                if (layer.combatStages != null)
+                    foreach (StageData s in layer.combatStages)
+                        if (s != null && s.name == stageName) return s;
+                if (layer.eliteStages != null)
+                    foreach (StageData s in layer.eliteStages)
+                        if (s != null && s.name == stageName) return s;
+            }
+        Debug.LogWarning($"[MapGenerator] StageData '{stageName}'을 찾을 수 없음");
+        return null;
+    }
+
+    /// <summary>
+    /// 세이브 복원 시 EventNodeData ScriptableObject를 이름으로 찾아 반환한다.
+    /// config.eventDatas 배열 전체를 탐색한다.
+    /// 이름이 비어있으면 null 반환 (이벤트 노드가 아닌 경우 정상 동작).
+    /// </summary>
+    public EventNodeData FindEventByName(string eventName)
+    {
+        if (string.IsNullOrEmpty(eventName)) return null;
+        if (config.eventDatas != null)
+            foreach (EventNodeData e in config.eventDatas)
+                if (e != null && e.name == eventName) return e;
+        Debug.LogWarning($"[MapGenerator] EventNodeData '{eventName}'을 찾을 수 없음");
+        return null;
+    }
+
     public MapData Generate()
     {
         for (int i = 0; i < MaxRetries; i++)

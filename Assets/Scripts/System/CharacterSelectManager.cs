@@ -61,7 +61,8 @@ public class CharacterSelectManager : MonoBehaviour
     {
         if (!CanStart()) return;
 
-        // 파티 초기화 후 선택한 캐릭터 등록
+        // 이전 런 세이브 삭제 후 파티 초기화
+        SaveSystem.Instance?.DeleteSave();
         PartyManager.Instance.ClearParty();
         foreach (CharacterData characterData in selectedCharacters)
         {
@@ -70,7 +71,7 @@ public class CharacterSelectManager : MonoBehaviour
                 Debug.LogWarning($"[CharacterSelectManager] {characterData.className}의 unitPrefab이 없습니다.");
                 continue;
             }
-            PartyManager.Instance.AddToParty(characterData.unitPrefab);
+            PartyManager.Instance.AddToParty(characterData);
         }
 
         // 맵 자동 생성 후 열기
@@ -87,6 +88,25 @@ public class CharacterSelectManager : MonoBehaviour
         MapData generated = MapGenerator.Instance.Generate();
         mapUI.SetMapData(generated);
         MapManager.Instance.InitializeMap(generated);
+        mapUI.OpenMapFromExternal();
+    }
+
+    /// <summary>
+    /// 이어하기 버튼 클릭 시 호출. 세이브 파일에서 런 상태를 복원하고 맵 화면을 연다.
+    ///
+    /// 흐름:
+    ///   1. ApplyLoadedSave() → 파티·골드·스킬·맵 상태 복원
+    ///   2. SetMapData()      → MapUI가 복원된 MapData를 참조하도록 업데이트
+    ///   3. OpenMapFromExternal() → 맵 패널 표시
+    ///
+    /// CharacterSelectUI.Hide()는 OnContinueButtonClicked()에서 처리한다.
+    /// </summary>
+    public void ContinueGame()
+    {
+        SaveSystem.Instance.ApplyLoadedSave();
+        // RestoreFromSave() 이후 MapManager.CurrentMapData가 복원된 맵을 가리키므로
+        // SetMapData()에 바로 전달해 MapUI가 올바른 맵을 렌더링하도록 한다
+        mapUI.SetMapData(MapManager.Instance.CurrentMapData);
         mapUI.OpenMapFromExternal();
     }
 }

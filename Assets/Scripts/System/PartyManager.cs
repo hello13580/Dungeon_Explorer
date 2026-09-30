@@ -13,6 +13,13 @@ public class PartyManager : MonoBehaviour
     private List<Unit> partyUnits = new List<Unit>();
     private List<Unit> incapacitatedUnits = new List<Unit>();
 
+    /// <summary>
+    /// 유닛 인스턴스 → 원본 프리팹 이름 매핑.
+    /// SaveSystem이 UnitSaveData.prefabName을 기록할 때 사용한다.
+    /// AddToParty()에서 채워지고, ClearParty()에서 초기화된다.
+    /// </summary>
+    private Dictionary<Unit, string> unitToPrefabName = new Dictionary<Unit, string>();
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -58,7 +65,42 @@ public class PartyManager : MonoBehaviour
 
         Unit unit = unitObj.GetComponent<Unit>();
         partyUnits.Add(unit);
+        unitToPrefabName[unit] = unitPrefab.name;
         return unit;
+    }
+
+    /// <summary>
+    /// CharacterData를 받아 파티원을 생성한다.
+    /// CharacterSelectManager와 SaveSystem 복원 양쪽에서 사용한다.
+    /// 내부적으로 AddToParty(GameObject)를 호출해 unitToPrefabName도 함께 등록된다.
+    /// </summary>
+    public Unit AddToParty(CharacterData characterData)
+    {
+        if (characterData == null || characterData.unitPrefab == null) return null;
+        return AddToParty(characterData.unitPrefab);
+    }
+
+    /// <summary>
+    /// 유닛 인스턴스에 대응하는 원본 프리팹 이름을 반환한다.
+    /// SaveSystem.BuildUnitData()에서 UnitSaveData.prefabName을 채울 때 사용.
+    /// 등록 기록이 없으면 GameObject 이름에서 "(Clone)" 접미어를 제거해 반환한다.
+    /// </summary>
+    public string GetPrefabName(Unit unit)
+    {
+        if (unitToPrefabName.TryGetValue(unit, out string name)) return name;
+        return unit.gameObject.name.Replace("(Clone)", "").Trim();
+    }
+
+    /// <summary>
+    /// 파티원을 무력화 리스트로 즉시 이동시킨다.
+    /// SaveSystem이 세이브 복원 시 무력화 유닛을 재구성할 때 호출한다.
+    /// 전투 중 사망은 Unit_OnAnyUnitDead에서 자동으로 처리되므로 이 메서드가 필요 없다.
+    /// </summary>
+    public void MoveToIncapacitated(Unit unit)
+    {
+        if (!partyUnits.Contains(unit)) return;
+        partyUnits.Remove(unit);
+        incapacitatedUnits.Add(unit);
     }
 
     /// <summary>
@@ -72,6 +114,7 @@ public class PartyManager : MonoBehaviour
         foreach (Unit unit in incapacitatedUnits)
             if (unit != null) Destroy(unit.gameObject);
         incapacitatedUnits.Clear();
+        unitToPrefabName.Clear();
     }
 
     /// <summary>무력화된 유닛을 부활시켜 파티에 복귀시킨다. 휴식 노드에서 호출.</summary>

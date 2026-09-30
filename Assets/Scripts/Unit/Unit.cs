@@ -414,7 +414,7 @@ public class Unit : MonoBehaviour
 
 	public void Damage(int damageAmount)
 	{
-		healthSystem.Damage(damageAmount);
+		healthSystem.Damage(damageAmount, defensePower);
 	}
 
 	public void Heal(int healAmount)
@@ -451,6 +451,42 @@ public class Unit : MonoBehaviour
 	public float GetCurrentSpeed()
 	{
 		return currentSpeed;
+	}
+
+	// ── 세이브/로드용 접근자 ────────────────────────────────────────
+
+	/// <summary>SaveSystem이 HP를 직접 다루기 위한 HealthSystem 참조.</summary>
+	public HealthSystem GetHealthSystem() => healthSystem;
+
+	/// <summary>
+	/// AttackBuffSystem(일시적 버프)을 제외한 순수 영구 공격력 스탯.
+	/// GetAttackPower()는 버프를 포함하므로 세이브에는 이 값을 사용해야 한다.
+	/// </summary>
+	public int GetBaseAttackPower()  => attackPower;
+
+	/// <summary>영구 방어력 스탯. GetDefensePower()와 동일하지만 의도를 명확히 하기 위해 별도 선언.</summary>
+	public int GetBaseDefensePower() => defensePower;
+
+	/// <summary>
+	/// 기준 이동 속도. AddPermanentSpeed()가 이 값도 수정하므로 저장·복원이 필요하다.
+	/// (currentSpeed만 저장하면 턴 시작 시 initialSpeed로 재설정될 때 손실이 생긴다)
+	/// </summary>
+	public float GetInitialSpeed() => initialSpeed;
+
+	/// <summary>
+	/// 세이브 복원 시 영구 스탯을 프리팹 기본값 위에 직접 덮어쓴다.
+	/// AddPermanentXxx() 메서드를 통한 누적 대신 최종값을 한 번에 설정하므로
+	/// 중복 적용 없이 정확한 상태를 재현할 수 있다.
+	/// currentActionPoint도 maxAP로 초기화해 스테이지 시작 시 전체 AP를 보장한다.
+	/// </summary>
+	public void OverridePermanentStats(int attack, int defense, float initSpeed, float currSpeed, int maxAP)
+	{
+		attackPower        = attack;
+		defensePower       = defense;
+		initialSpeed       = initSpeed;
+		currentSpeed       = currSpeed;
+		maxActionPoint     = maxAP;
+		currentActionPoint = maxAP;
 	}
 
 	public float GetCurrentGauge()

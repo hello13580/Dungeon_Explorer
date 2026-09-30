@@ -25,6 +25,6 @@ public class GoldUI : MonoBehaviour
     private void Refresh()
     {
         if (GoldSystem.Instance != null)
-            goldText.text = GoldSystem.Instance.GetGold().ToString();
+            goldText.text = "Gold: "+ GoldSystem.Instance.GetGold().ToString();
     }
 }
